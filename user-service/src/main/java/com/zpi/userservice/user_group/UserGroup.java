@@ -12,6 +12,7 @@ public class UserGroup {
     private UserGroupKey id;
 
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(name = "votes_remaining")
