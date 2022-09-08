@@ -6,6 +6,10 @@ app.config-server: localhost
 app.database: localhost
 
 spring:
+  cloud:
+    config:
+      import-check:
+        enabled: false
   datasource:
     url: jdbc:postgresql://${app.database}:5432/test_db
     username: postgres
