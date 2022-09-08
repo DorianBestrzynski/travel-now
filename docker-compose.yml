@@ -84,7 +84,7 @@ services:
       rabbitmq:
         condition: service_healthy
         
-   finance-optimizer:
+  finance-optimizer:
     build: finance-optimizer-service
     mem_limit: 512m
     environment:
