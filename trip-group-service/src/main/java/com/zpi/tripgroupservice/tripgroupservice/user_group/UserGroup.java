@@ -1,11 +1,13 @@
 package com.zpi.tripgroupservice.tripgroupservice.user_group;
 
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class UserGroup {
 

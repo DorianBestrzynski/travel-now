@@ -1,7 +1,7 @@
 server.port: 8081
 spring.application.name: user
 
-spring.config.import: "configserver:"
+#spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 
