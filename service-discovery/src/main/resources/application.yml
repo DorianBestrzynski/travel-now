@@ -1,0 +1,21 @@
+server.port: 8761
+
+spring.application.name: eureka
+spring.config.import: "configserver:"
+app.config-server: localhost
+
+
+spring:
+  cloud.config:
+    failFast: true
+    retry:
+      initialInterval: 3000
+      multiplier: 1.3
+      maxInterval: 10000
+      maxAttempts: 20
+    uri: http://${app.config-server}:8888
+
+---
+spring.config.activate.on-profile: docker
+
+app.config-server: config-server

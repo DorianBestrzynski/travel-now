@@ -1,0 +1,18 @@
+server.port: 8888
+
+logging:
+  level:
+    root: info
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Bo-Ba/config_server
+          clone-on-start: true
+  application:
+    name: config-server
+
+
+---
+spring.config.activate.on-profile: docker
