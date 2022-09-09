@@ -1,5 +1,5 @@
-server.port: 8082
-spring.application.name: trip-group
+server.port: 8084
+spring.application.name: day-plan
 
 spring.config.import: "configserver:"
 app.config-server: localhost
