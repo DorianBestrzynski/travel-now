@@ -117,6 +117,17 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  transport:
+    build: transport-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
   postgres:
     image: postgres
     mem_limit: 512m
