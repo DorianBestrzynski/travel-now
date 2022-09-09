@@ -1,7 +1,7 @@
 server.port: 8083
 spring.application.name: task-management
 
-#spring.config.import: "configserver:"
+spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 

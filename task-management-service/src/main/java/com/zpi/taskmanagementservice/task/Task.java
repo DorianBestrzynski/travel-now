@@ -17,7 +17,7 @@ public class Task {
             name = "task_sequence",
             sequenceName = "task_sequence", allocationSize = 10)
     @Column(unique = true, nullable = false)
-    private Long groupId;
+    private Long taskId;
 
     @Column(name = "assignee", nullable = false, length = 10)
     private Long assignee;
