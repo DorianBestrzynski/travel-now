@@ -95,6 +95,17 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  day-plan:
+    build: day-plan-service
+    mem_limit: 512m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
   postgres:
     image: postgres
     mem_limit: 512m
