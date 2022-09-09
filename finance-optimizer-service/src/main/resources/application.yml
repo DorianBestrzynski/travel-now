@@ -1,4 +1,4 @@
-server.port: 8084
+server.port: 8086
 spring.application.name: finance-optimizer
 
 spring.config.import: "configserver:"
