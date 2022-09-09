@@ -27,7 +27,7 @@ public class TransportController {
     public String addTransport(){
         var transport = new Transport(TransportType.CAR, Duration.ZERO, BigDecimal.ONE, "Barcelona", "Madrid", "https://dadadada.com");
         transportRepository.save(transport);
-        var accTrans = new AccommodationTransport(new AccommodationTransportId(transport.getTransport_id(),1L));
+        var accTrans = new AccommodationTransport(new AccommodationTransportId(transport.getTransportId(),1L));
         accommodationTransportRepository.save(accTrans);
         return "Added transport and accommodation transport";
     }

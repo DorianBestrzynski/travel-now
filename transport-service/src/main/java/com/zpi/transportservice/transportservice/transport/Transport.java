@@ -22,7 +22,7 @@ public class Transport {
             name = "transport_sequence",
             sequenceName = "transport_sequence", allocationSize = 10)
     @Column(name = "transport_id",unique = true, nullable = false)
-    private Long transport_id;
+    private Long transportId;
 
     @Column(name = "transport_type", nullable = false)
     @Enumerated(EnumType.STRING)
