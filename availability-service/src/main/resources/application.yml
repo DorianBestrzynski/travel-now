@@ -4,8 +4,12 @@ spring.application.name: availability
 spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
+app.user-service: localhost
 
 spring:
+  mvc:
+    format:
+      date: yyyy-MM-dd
   cloud:
     config:
       import-check:
@@ -35,3 +39,4 @@ spring.config.activate.on-profile: docker
 
 app.config-server: config-server
 app.database: postgres
+app.user-service: user
