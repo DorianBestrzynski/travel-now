@@ -8,8 +8,6 @@ import java.util.List;
 
 @FeignClient(name = "user", url = "${app.user-service}:8081/api/v1/user")
 public interface AppUserProxy {
-
     @PostMapping("/users")
     List<UserDto> getUsersDtos(List<Long> usersIds);
-
 }

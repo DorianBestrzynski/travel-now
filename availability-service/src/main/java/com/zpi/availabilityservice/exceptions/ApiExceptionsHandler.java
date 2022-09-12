@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class ApiExceptionsHandler {
-
     @ExceptionHandler(value = {IllegalDatesException.class})
     public ResponseEntity<Object> handleIllegalDatesException(IllegalDatesException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

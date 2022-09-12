@@ -15,34 +15,7 @@ import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class UserServiceApplication {
-
-	private final Integer threadPoolSize;
-	private final Integer taskQueueSize;
-
-	@Autowired
-	public UserServiceApplication(
-			@Value("${app.threadPoolSize:10}") Integer threadPoolSize,
-			@Value("${app.taskQueueSize:100}") Integer taskQueueSize
-	) {
-		this.threadPoolSize = threadPoolSize;
-		this.taskQueueSize = taskQueueSize;
-	}
-
 	public static void main(String[] args) {
-		var context = SpringApplication.run(UserServiceApplication.class, args);
-
-		var repo = context.getBean(AppUserRepository.class);
-		repo.save(new AppUser("BoBa", "test1", "test", "test", null, LocalDateTime.now(), null));
-		repo.save(new AppUser("BoBa", "test2", "test", "test", null, LocalDateTime.now(), null));
-		repo.save(new AppUser("BoBa", "test3", "test", "test", null, LocalDateTime.now(), null));
-
-
+		SpringApplication.run(UserServiceApplication.class, args);
 	}
-
-	@Bean
-	public Scheduler jdbcScheduler() {
-		return Schedulers.newBoundedElastic(threadPoolSize,
-											taskQueueSize, "jdbc-pool");
-	}
-
 }

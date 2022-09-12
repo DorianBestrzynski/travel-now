@@ -49,8 +49,9 @@ public class AvailabilityController {
     }
     @PatchMapping("/user/{availabilityId}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public ResponseEntity<Availability> changeAvailability(@PathVariable Long availabilityId, @RequestParam(name = "from", required = false) LocalDate newDateFrom,
-                                   @RequestParam(name = "to", required = false) LocalDate newDateTo) {
+    public ResponseEntity<Availability> changeAvailability(@PathVariable Long availabilityId,
+                                                           @RequestParam(name = "from", required = false) LocalDate newDateFrom,
+                                                           @RequestParam(name = "to", required = false) LocalDate newDateTo) {
         var result = availabilityService.changeAvailability(availabilityId, newDateFrom, newDateTo);
         return new ResponseEntity<>(result, HttpStatus.ACCEPTED );
     }
