@@ -1,6 +1,8 @@
 package com.zpi.availabilityservice.availability;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -20,16 +22,18 @@ public class Availability {
             sequenceName = "availability_sequence", allocationSize = 10)
     @Column(name = "availability_id", nullable = false, unique = true)
     private Long availabilityID;
-
+    @Getter
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(name = "group_id", nullable = false)
     private Long groupId;
-
+    @Getter
+    @Setter
     @Column(name = "date_from", nullable = false)
     private LocalDate dateFrom;
-
+    @Getter
+    @Setter
     @Column(name = "date_to", nullable = false)
     private LocalDate dateTo;
 
