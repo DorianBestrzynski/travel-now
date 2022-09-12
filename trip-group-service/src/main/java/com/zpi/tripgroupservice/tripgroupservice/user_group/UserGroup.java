@@ -21,7 +21,6 @@ public class UserGroup {
     @Column(name = "votes_remaining")
     private Integer votesRemaining;
 
-
 }
 
 
