@@ -23,6 +23,7 @@ public class TripGroup {
             name = "group_sequence",
             sequenceName = "group_sequence", allocationSize = 10)
     @Column(unique = true, nullable = false)
+    @Getter
     private Long groupId;
 
     @Column(name = "name", nullable = false, length = 20)
