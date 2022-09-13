@@ -28,6 +28,11 @@ public class ApiExceptionHandler {
         return handleExceptions(GROUP_CREATION_VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(value = {ApiPermissionException.class})
+    public ResponseEntity<Object> handleApiPermissionException(ApiPermissionException ex){
+        return handleExceptions(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
     private ResponseEntity<Object> handleExceptions(String message, HttpStatus request){
         ApiException apiException = new ApiException(message, request, ZonedDateTime.now(ZONE_ID));
         return new ResponseEntity<>(apiException, request);

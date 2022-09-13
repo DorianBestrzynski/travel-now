@@ -14,6 +14,7 @@ public class UserGroup {
     @EmbeddedId
     private UserGroupKey id;
 
+    @Getter
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     @Getter

@@ -2,16 +2,19 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
+import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroup;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupKey;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequestMapping("api/v1/trip-group")
@@ -32,13 +35,36 @@ public class TripGroupController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/group")
+    public ResponseEntity<TripGroup> createGroup(@RequestParam Long userId, @Valid @RequestBody TripGroupDto tripGroupDto){
+        var result = tripGroupService.createGroup(userId ,tripGroupDto);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+
+    }
+
+    @DeleteMapping("/group")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteGroup(@RequestParam(name = "groupId")Long groupId, @RequestParam(name = "userId")Long userId){
+        tripGroupService.deleteGroup(groupId,userId);
+    }
+
+    @PatchMapping("/group")
+    public ResponseEntity<TripGroup> changeGroup(@RequestParam Long groupId,@RequestParam Long userId,  @RequestBody TripGroupDto tripGroupDto){
+        var result = tripGroupService.updateGroup(groupId, userId, tripGroupDto);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+
+
+
+
     @GetMapping("/sampleData")
     public String creatingSampleData(){
-        var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona", GroupStage.PLANNING_STAGE, null);
-        var tripGroup1 = new TripGroup("Test2", Currency.PLN, "Opis2", 3, "Madryt", GroupStage.TRIP_STAGE, null);
-        var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw", GroupStage.AFTER_TRIP_STAGE, null);
-        var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva", GroupStage.PLANNING_STAGE, null);
-        var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa", GroupStage.TRIP_STAGE, null);
+        var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona");
+        var tripGroup1 = new TripGroup("Test2", Currency.PLN, "Opis2", 3, "Madryt");
+        var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw");
+        var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva");
+        var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa");
         tripGroupRepository.saveAll(List.of(tripGroup1,tripGroup2,tripGroup3,tripGroup4, tripGroup));
 
         var userData1 = new UserGroup(new UserGroupKey(1L,tripGroup.getGroupId()), Role.COORDINATOR, 1);
@@ -52,6 +78,6 @@ public class TripGroupController {
 
         return "Created sample data";
         }
-        
+
 
 }
