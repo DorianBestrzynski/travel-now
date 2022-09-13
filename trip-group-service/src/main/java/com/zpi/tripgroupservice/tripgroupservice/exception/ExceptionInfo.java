@@ -10,4 +10,6 @@ public final class ExceptionInfo {
 
     public final static String INVALID_GROUP_ID = "User id is invalid. Id must be a positive number";
 
+    public final static String GROUP_CREATION_VALIDATION_ERROR = "Error while validating group";
+
 }

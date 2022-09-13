@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface TripGroupRepository extends JpaRepository<TripGroup, Long> {
 
     @Query("SELECT tg FROM TripGroup tg JOIN UserGroup ug ON tg.groupId = ug.id.groupId AND ug.id.userId =?1")
-    Optional<List<TripGroup>> findAllGroupsForUser(Long userId);
+    List<TripGroup> findAllGroupsForUser(Long userId);
 
 }

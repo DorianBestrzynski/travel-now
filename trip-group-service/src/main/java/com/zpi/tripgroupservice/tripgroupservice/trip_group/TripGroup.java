@@ -7,12 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Getter
 @NoArgsConstructor
 public class TripGroup {
+
+    private static final String defaultDescription = "Welcome to group ";
+
+    private static final Integer defaultVotesLimit = 1;
 
     @Id
     @GeneratedValue(
@@ -48,14 +53,15 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
-    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, GroupStage groupStage, Set<Invitation> invitations) {
+    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, GroupStage groupStage) {
         this.name = name;
         this.currency = currency;
-        this.description = description;
-        this.votesLimit = votesLimit;
+        this.description = Objects.requireNonNullElse(description,defaultDescription + name);
+        this.votesLimit = Objects.requireNonNullElse(votesLimit,defaultVotesLimit);
         this.startLocation = startLocation;
         this.groupStage = groupStage;
-        this.invitations = invitations;
     }
+
+
 }
 
