@@ -5,6 +5,7 @@ import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.invitation.Invitation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor
+@Setter
 public class TripGroup {
 
     private static final String defaultDescription = "Welcome to group ";
@@ -46,6 +48,7 @@ public class TripGroup {
     @Column(name = "start_location", nullable = false, length = 100)
     private String startLocation;
 
+    @Setter
     @Column(name = "group_stage", nullable = false)
     @Enumerated(EnumType.STRING)
     private GroupStage groupStage;
@@ -53,13 +56,13 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
-    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, GroupStage groupStage) {
+    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation) {
         this.name = name;
         this.currency = currency;
         this.description = Objects.requireNonNullElse(description,defaultDescription + name);
         this.votesLimit = Objects.requireNonNullElse(votesLimit,defaultVotesLimit);
         this.startLocation = startLocation;
-        this.groupStage = groupStage;
+        this.groupStage = GroupStage.PLANNING_STAGE;
     }
 
 

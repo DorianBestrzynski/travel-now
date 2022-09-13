@@ -2,7 +2,7 @@ package com.zpi.tripgroupservice.tripgroupservice.user_group;
 
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -14,6 +14,7 @@ public class UserGroup {
     @EmbeddedId
     private UserGroupKey id;
 
+    @Getter
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
