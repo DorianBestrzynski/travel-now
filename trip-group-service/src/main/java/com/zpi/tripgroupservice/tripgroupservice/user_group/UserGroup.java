@@ -17,7 +17,6 @@ public class UserGroup {
     @Getter
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    @Getter
     private Role role;
 
     @Column(name = "votes_remaining")
