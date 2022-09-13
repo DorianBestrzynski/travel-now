@@ -4,6 +4,7 @@ spring.application.name: trip-group
 spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
+app.salt-length: 16
 
 spring:
   cloud:

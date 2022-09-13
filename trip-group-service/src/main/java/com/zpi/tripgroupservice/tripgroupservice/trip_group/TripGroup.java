@@ -4,12 +4,14 @@ import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.invitation.Invitation;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class TripGroup {
 
     @Id
@@ -21,6 +23,7 @@ public class TripGroup {
             name = "group_sequence",
             sequenceName = "group_sequence", allocationSize = 10)
     @Column(unique = true, nullable = false)
+    @Getter
     private Long groupId;
 
     @Column(name = "name", nullable = false, length = 20)
@@ -46,6 +49,14 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
-
+    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, GroupStage groupStage, Set<Invitation> invitations) {
+        this.name = name;
+        this.currency = currency;
+        this.description = description;
+        this.votesLimit = votesLimit;
+        this.startLocation = startLocation;
+        this.groupStage = groupStage;
+        this.invitations = invitations;
+    }
 }
 
