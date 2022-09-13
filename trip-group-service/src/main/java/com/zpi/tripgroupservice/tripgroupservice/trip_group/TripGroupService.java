@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.INVALID_USER_ID;
-import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.NO_GROUPS_FOR_USER;
+import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +30,14 @@ public class TripGroupService {
             throw new IllegalArgumentException(INVALID_USER_ID);
         }
         return tripGroupRepository.findAllGroupsForUser(userId).orElseThrow(() -> new ApiRequestException(NO_GROUPS_FOR_USER));
+    }
+
+    public TripGroup getTripGroupById(Long groupId) {
+        if (groupId == null || groupId < 0) {
+            throw new IllegalArgumentException(INVALID_GROUP_ID);
+        }
+        return tripGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ApiRequestException(GROUP_DOES_NOT_EXIST + groupId));
     }
 
     @Transactional

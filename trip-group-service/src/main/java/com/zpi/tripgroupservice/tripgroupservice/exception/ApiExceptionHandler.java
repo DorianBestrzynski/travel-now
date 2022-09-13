@@ -4,8 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import javax.persistence.EntityNotFoundException;
+import java.net.ConnectException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.NoSuchElementException;
+
 import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.GROUP_CREATION_VALIDATION_ERROR;
 
 @ControllerAdvice
@@ -31,6 +36,22 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {ApiPermissionException.class})
     public ResponseEntity<Object> handleApiPermissionException(ApiPermissionException ex){
         return handleExceptions(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    public ResponseEntity<Object> handleResourceNotFoundException(EntityNotFoundException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {ConnectException.class})
+    public ResponseEntity<Object> handleConnectException(ConnectException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(value = {NoSuchElementException.class})
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<Object> handleExceptions(String message, HttpStatus request){
