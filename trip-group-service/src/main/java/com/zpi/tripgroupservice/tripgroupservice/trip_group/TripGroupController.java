@@ -1,6 +1,5 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
-import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroup;
@@ -24,6 +23,8 @@ public class TripGroupController {
     private final TripGroupRepository tripGroupRepository;
 
     private final UserGroupRepository userGroupRepository;
+
+
 
 
     @GetMapping("/groups/{userId}")
