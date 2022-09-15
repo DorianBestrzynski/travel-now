@@ -11,15 +11,14 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.zpi.tripgroupservice.tripgroupservice.commons.Utils.DEFAULT_DESCRIPTION;
+import static com.zpi.tripgroupservice.tripgroupservice.commons.Utils.DEFAULT_VOTES_LIMIT;
+
 @Entity
 @Getter
 @NoArgsConstructor
 @Setter
 public class TripGroup {
-
-    private static final String defaultDescription = "Welcome to group ";
-
-    private static final Integer defaultVotesLimit = 1;
 
     @Id
     @GeneratedValue(
@@ -60,8 +59,8 @@ public class TripGroup {
     public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation) {
         this.name = name;
         this.currency = currency;
-        this.description = Objects.requireNonNullElse(description,defaultDescription + name);
-        this.votesLimit = Objects.requireNonNullElse(votesLimit,defaultVotesLimit);
+        this.description = Objects.requireNonNullElse(description,DEFAULT_DESCRIPTION + name);
+        this.votesLimit = Objects.requireNonNullElse(votesLimit,DEFAULT_VOTES_LIMIT);
         this.startLocation = startLocation;
         this.groupStage = GroupStage.PLANNING_STAGE;
     }

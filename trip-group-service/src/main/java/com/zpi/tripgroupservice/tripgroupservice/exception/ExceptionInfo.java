@@ -6,7 +6,7 @@ public final class ExceptionInfo {
     public final static String NO_GROUPS_FOR_USER = "There are no groups for requested user";
     public final static String GROUP_DOES_NOT_EXIST = "There are no group for given id: ";
     public final static String INVALID_USER_ID = "User id is invalid. Id must be a positive number";
-    public final static String INVALID_GROUP_ID = "User id is invalid. Id must be a positive number";
+    public final static String INVALID_GROUP_ID = "Group id is invalid. Id must be a positive number";
     public final static String GROUP_CREATION_VALIDATION_ERROR = "Error while validating group";
     public final static String INVALID_USER_ID_GROUP_ID = "User id and group id must be positive";
     public final static String USER_NOT_A_MEMBER = "User is not a member of the group";
