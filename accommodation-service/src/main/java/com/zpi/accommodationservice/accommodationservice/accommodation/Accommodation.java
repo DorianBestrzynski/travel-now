@@ -30,7 +30,7 @@ public class Accommodation {
     @Column(name = "name", length = 200)
     private String name;
 
-    @Column(name = "address", length = 200)
+    @Column(name = "address")
     private String address;
 
     @Column(name = "description")
@@ -48,7 +48,8 @@ public class Accommodation {
     @Column(name = "price")
     private BigDecimal price;
 
-    public Accommodation(Long groupId, Long creator_id, String name, String address, String description, String imageLink, String sourceLink, Integer givenVotes, BigDecimal price) {
+    public Accommodation(Long groupId, Long creator_id, String name, String address, String description,
+                         String imageLink, String sourceLink, Integer givenVotes, BigDecimal price) {
         this.groupId = groupId;
         this.creator_id = creator_id;
         this.name = name;
@@ -57,6 +58,18 @@ public class Accommodation {
         this.imageLink = imageLink;
         this.sourceLink = sourceLink;
         this.givenVotes = givenVotes;
+        this.price = price;
+    }
+
+    public Accommodation(Long groupId, Long creator_id, String name, String address, String description,
+                         String imageLink, String sourceLink, BigDecimal price) {
+        this.groupId = groupId;
+        this.creator_id = creator_id;
+        this.name = name;
+        this.address = address;
+        this.description = description;
+        this.imageLink = imageLink;
+        this.sourceLink = sourceLink;
         this.price = price;
     }
 }

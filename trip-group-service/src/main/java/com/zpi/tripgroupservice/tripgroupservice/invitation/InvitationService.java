@@ -30,7 +30,7 @@ public class InvitationService {
     @Transactional
     public String createInvitation(Long userId, Long groupId) {
         if (userId < 0 || groupId < 0) {
-            throw new IllegalArgumentException(NEGATIVE_USER_ID_GROUP_ID);
+            throw new IllegalArgumentException(INVALID_USER_ID_GROUP_ID);
         }
 
         TripGroup tripGroup = tripGroupService.getTripGroupById(groupId);

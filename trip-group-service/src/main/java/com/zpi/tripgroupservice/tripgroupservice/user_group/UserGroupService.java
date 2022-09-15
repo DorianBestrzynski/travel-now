@@ -1,21 +1,18 @@
 package com.zpi.tripgroupservice.tripgroupservice.user_group;
 
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
-import com.zpi.tripgroupservice.tripgroupservice.exception.ApiExceptionHandler;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.USER_NOT_A_MEMBER;
-
 import java.util.List;
 
 import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.USER_GROUP_ENTITY_NOT_FOUND;
+import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.USER_NOT_A_MEMBER;
 
 @Service
 @RequiredArgsConstructor
 public class UserGroupService {
-
     private final UserGroupRepository userGroupRepository;
 
     public UserGroup createUserGroup(Long creatorId, Long groupId, Integer votesInGroup) {
@@ -46,5 +43,9 @@ public class UserGroupService {
         List<UserGroup> userGroups = userGroupRepository.findAllById_GroupId(groupId);
         if(userGroups.isEmpty()) throw new ApiRequestException(USER_GROUP_ENTITY_NOT_FOUND);
         userGroupRepository.deleteAll(userGroups);
+    }
+
+    public Boolean isUserInGroup(Long userId, Long groupId) {
+        return userGroupRepository.existsById(new UserGroupKey(userId, groupId));
     }
 }
