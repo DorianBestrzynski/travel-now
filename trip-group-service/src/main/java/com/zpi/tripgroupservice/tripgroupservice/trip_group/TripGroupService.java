@@ -1,14 +1,10 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
-import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,19 +15,14 @@ import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.
 @Service
 @RequiredArgsConstructor
 public class TripGroupService {
-
     private final TripGroupRepository tripGroupRepository;
-
     private final UserGroupService userGroupService;
-
-
     public List<TripGroup> getAllGroupsForUser(Long userId){
         if(userId == null){
             throw new IllegalArgumentException(INVALID_USER_ID);
         }
         return tripGroupRepository.findAllGroupsForUser(userId).orElseThrow(() -> new ApiRequestException(NO_GROUPS_FOR_USER));
     }
-
     public TripGroup getTripGroupById(Long groupId) {
         if (groupId == null || groupId < 0) {
             throw new IllegalArgumentException(INVALID_GROUP_ID);
@@ -39,15 +30,12 @@ public class TripGroupService {
         return tripGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ApiRequestException(GROUP_DOES_NOT_EXIST + groupId));
     }
-
     @Transactional
     public TripGroup createGroup(Long userId, TripGroupDto groupDto) {
             var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation());
             tripGroupRepository.save(tripGroup);
             userGroupService.createUserGroup(userId, tripGroup.getGroupId(), groupDto.votesLimit());
             return tripGroup;
-
-
     }
     @Transactional
     public void deleteGroup(Long groupId, Long userId) {
@@ -59,9 +47,7 @@ public class TripGroupService {
             userGroupService.deletionGroupCleanUp(groupId);
         }
         else throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
-
     }
-
 
    @Transactional
     public TripGroup updateGroup(Long groupId, Long userId, TripGroupDto tripGroupDto) {
@@ -92,7 +78,12 @@ public class TripGroupService {
         }
 
         else throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
+    }
 
-
+    public Boolean checkIfUserIsInGroup(Long userId, Long groupId){
+        if(userId == null || groupId == null || userId < 0 || groupId < 0){
+            throw new IllegalArgumentException(INVALID_USER_ID_GROUP_ID);
+        }
+        return userGroupService.isUserInGroup(userId, groupId);
     }
 }
