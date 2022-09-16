@@ -15,11 +15,11 @@ public class UserGroup {
     private UserGroupKey id;
 
     @Getter
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "votes_remaining")
+    @Column(name = "votes_remaining", nullable = false)
     private Integer votesRemaining;
 
     public UserGroup(UserGroupKey id, Role role) {
