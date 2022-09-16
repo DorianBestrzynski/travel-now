@@ -56,7 +56,7 @@ public class TripGroupService {
     @Transactional
     public void deleteGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null){
-            throw new IllegalArgumentException(INVALID_GROUP_ID + INVALID_USER_ID);
+            throw new IllegalArgumentException(INVALID_GROUP_ID + "or" + INVALID_USER_ID);
         }
         if(userGroupService.isUserCoordinator(userId, groupId)){
             tripGroupRepository.deleteById(groupId);

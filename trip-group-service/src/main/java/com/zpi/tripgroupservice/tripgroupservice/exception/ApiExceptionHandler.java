@@ -56,7 +56,10 @@ public class ApiExceptionHandler {
 
     private ResponseEntity<Object> handleExceptions(String message, HttpStatus request){
         ApiException apiException = new ApiException(message, request, ZonedDateTime.now(ZONE_ID));
-        return new ResponseEntity<>(apiException, request);
+        return ResponseEntity
+                .status(request)
+                .body(apiException);
+
     }
 
 }
