@@ -29,6 +29,9 @@ public final class ExceptionInfo {
 
     public final static String INVALID_DAY_PLAN_ID = "Day plan id is invalid. Id must be a positive number";
 
+    public final static String NOT_A_GROUP_MEMBER = "This user is not a member of this group!";
+
+
 
 
 

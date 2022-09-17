@@ -20,9 +20,9 @@ public class DayPlanController {
 
 
 
-    @GetMapping("/{groupId}")
-    public ResponseEntity<List<DayPlan>> getAllDayPlansForGroup(@PathVariable Long groupId){
-        var result = dayPlanService.getAllDayPlansForGroup(groupId);
+    @GetMapping()
+    public ResponseEntity<List<DayPlan>> getAllDayPlansForGroup(@RequestParam Long groupId, @RequestParam Long userId){
+        var result = dayPlanService.getAllDayPlansForGroup(groupId, userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

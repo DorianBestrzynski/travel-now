@@ -22,13 +22,15 @@ public class DayPlanService {
     private final MapStructMapper mapstructMapper;
 
 
-    public List<DayPlan> getAllDayPlansForGroup(Long groupId) {
+    public List<DayPlan> getAllDayPlansForGroup(Long groupId, Long userId) {
         if(groupId == null){
             throw new IllegalArgumentException(INVALID_GROUP_ID);
         }
-        var dayPlans = dayPlanRepository.findAllByGroupId(groupId);
-        if(dayPlans.isEmpty()) throw new ApiRequestException(DAY_PLAN_NOT_FOUND);
-        return dayPlans;
+        var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(groupId, userId);
+        if (!isUserPartOfGroup)
+            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
+
+        return dayPlanRepository.findAllByGroupId(groupId);
 
     }
     @Transactional
