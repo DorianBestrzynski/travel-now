@@ -1,19 +1,17 @@
 package com.zpi.accommodationservice.accommodationservice.accomodation_strategy;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.SiteNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.boot.json.JsonParseException;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
-import java.util.Map;
-
 import static com.zpi.accommodationservice.accommodationservice.comons.BookingMapKeys.*;
+import static com.zpi.accommodationservice.accommodationservice.exceptions.ExceptionsInfo.PARSE_ERROR_JSON;
 
 @Component
 @RequiredArgsConstructor
@@ -34,17 +32,21 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
                             .substring(body.outerHtml()
                                            .indexOf('\n') + 1);
 
-        ObjectMapper mapper = new ObjectMapper();
-        Map dataMap;
+        String name, bookingUrl, imageLink, street, country, region;
         try {
-            dataMap = mapper.readValue(plainJson, Map.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            JSONObject json = new JSONObject(plainJson);
+            name = json.getString(NAME_KEY);
+            bookingUrl = json.getString(URL);
+            imageLink = json.getString(IMAGE_KEY);
+            var address = json.getJSONObject(ADDRESS_KEY);
+            street = address.getString(STREET_ADDRESS);
+            country = address.getString(ADDRESS_COUNTRY);
+            region = address.getString(ADDRESS_REGION);
+        }catch (JSONException ex){
+            throw new JsonParseException(new Throwable(PARSE_ERROR_JSON));
         }
 
-        return new AccommodationDataDto(dataMap.get(NAME_KEY).toString(),
-                                        dataMap.get(ADDRESS_KEY).toString(),
-                                        dataMap.get(IMAGE_KEY).toString());
+        return new AccommodationDataDto(name, street, country, region, imageLink, bookingUrl);
     }
 
     @Override

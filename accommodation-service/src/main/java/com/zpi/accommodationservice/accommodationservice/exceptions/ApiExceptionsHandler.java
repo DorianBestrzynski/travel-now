@@ -1,5 +1,7 @@
 package com.zpi.accommodationservice.accommodationservice.exceptions;
 
+import org.json.JSONException;
+import org.springframework.boot.json.JsonParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,5 +41,15 @@ public class ApiExceptionsHandler {
     @ExceptionHandler(value = {DataExtractionNotSupported.class})
     public ResponseEntity<Object> handleDataExtractionNotSupported(DataExtractionNotSupported e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {JsonParseException.class})
+    public ResponseEntity<Object> handleJsonParseException(JsonParseException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(value = {ApiPermissionException.class})
+    public ResponseEntity<Object> handleApiPermissionException(ApiPermissionException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
     }
 }
