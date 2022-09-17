@@ -65,10 +65,4 @@ public class TripGroupService {
         else throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
     }
 
-    public Boolean checkIfUserIsInGroup(Long userId, Long groupId){
-        if(userId == null || groupId == null || userId < 0 || groupId < 0){
-            throw new IllegalArgumentException(INVALID_USER_ID_GROUP_ID);
-        }
-        return userGroupService.isUserInGroup(userId, groupId);
-    }
 }

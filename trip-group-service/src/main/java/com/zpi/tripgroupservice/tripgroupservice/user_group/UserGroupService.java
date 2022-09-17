@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.USER_GROUP_ENTITY_NOT_FOUND;
-import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.USER_NOT_A_MEMBER;
+import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +46,12 @@ public class UserGroupService {
 
     public Boolean isUserInGroup(Long userId, Long groupId) {
         return userGroupRepository.existsById(new UserGroupKey(userId, groupId));
+    }
+
+    public Boolean checkIfUserIsInGroup(Long userId, Long groupId){
+        if(userId == null || groupId == null || userId < 0 || groupId < 0){
+            throw new IllegalArgumentException(INVALID_USER_ID_GROUP_ID);
+        }
+        return isUserInGroup(userId, groupId);
     }
 }

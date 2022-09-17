@@ -45,11 +45,7 @@ public class TripGroupController {
         var result = tripGroupService.updateGroup(groupId, userId, tripGroupDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-    @GetMapping("/group/{groupId}/{userId}")
-    public ResponseEntity<Boolean> checkIfUserIsPartOfTheGroup(@PathVariable Long groupId, @PathVariable Long userId) {
-        var result = tripGroupService.checkIfUserIsInGroup(userId, groupId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+
 
 
     @GetMapping("/sampleData")
