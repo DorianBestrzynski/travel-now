@@ -6,6 +6,7 @@ import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroup;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupKey;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupRepository;
+import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 public class TripGroupController {
     private final TripGroupService tripGroupService;
     private final TripGroupRepository tripGroupRepository;
+    private final UserGroupService userGroupService;
     private final UserGroupRepository userGroupRepository;
 
     @GetMapping("/groups/{userId}")
@@ -45,7 +47,6 @@ public class TripGroupController {
         var result = tripGroupService.updateGroup(groupId, userId, tripGroupDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 
 
     @GetMapping("/sampleData")

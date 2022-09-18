@@ -23,4 +23,5 @@ public class UserGroupController {
         var result = userGroupService.checkIfUserIsInGroup(userId, groupId);
         return ResponseEntity.ok(result);
     }
+
 }
