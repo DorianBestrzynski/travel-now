@@ -4,6 +4,9 @@ spring.application.name: day-plan
 spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
+app.trip-group-service: localhost
+
+
 
 spring:
   cloud:
@@ -33,5 +36,6 @@ spring:
 ---
 spring.config.activate.on-profile: docker
 
+app.trip-group-service: trip-group
 app.config-server: config-server
 app.database: postgres

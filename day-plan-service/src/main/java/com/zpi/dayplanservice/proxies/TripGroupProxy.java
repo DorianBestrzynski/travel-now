@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@FeignClient(name = "trip-group", url = "${app.trip-group-service}:8082/api/v1/user-group", configuration = CustomFeignConfiguration.class)
+@FeignClient(name = "user-group", url = "${app.trip-group-service}:8082/api/v1/user-group", configuration = CustomFeignConfiguration.class)
 public interface TripGroupProxy {
 
     @GetMapping("/role")
@@ -14,6 +14,7 @@ public interface TripGroupProxy {
 
     @GetMapping( "/group")
     Boolean isUserPartOfTheGroup(@RequestParam("groupId") Long groupId, @RequestParam("userId") Long userId);
+
 
 }
 

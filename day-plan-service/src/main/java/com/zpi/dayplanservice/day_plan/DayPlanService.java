@@ -32,6 +32,7 @@ public class DayPlanService {
 
         return dayPlanRepository.findAllByGroupId(groupId);
 
+
     }
     @Transactional
     public DayPlan createDayPlan(Long userId, DayPlanDto dayPlanDto) {
@@ -47,6 +48,7 @@ public class DayPlanService {
 
     }
 
+
     private boolean isDateAvailable(DayPlanDto dayPlanDto) {
         return dayPlanRepository.findDayPlanByGroupIdAndDate(dayPlanDto.groupId(), dayPlanDto.date()) == null;
     }
@@ -61,7 +63,6 @@ public class DayPlanService {
             dayPlanRepository.deleteById(dayPlanId);
         }
         else throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
-
 
     }
 
@@ -81,5 +82,7 @@ public class DayPlanService {
 
         throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
 
+
     }
+
 }

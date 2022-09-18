@@ -53,4 +53,5 @@ public class DayPlanController {
         dayPlanRepository.save(dayPlan1);
         return "Added sample data";
     }
+
 }
