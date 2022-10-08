@@ -13,4 +13,7 @@ public interface TripGroupRepository extends JpaRepository<TripGroup, Long> {
     @Query("SELECT tg FROM TripGroup tg JOIN UserGroup ug ON tg.groupId = ug.id.groupId AND ug.id.userId =?1")
     Optional<List<TripGroup>> findAllGroupsForUser(Long userId);
 
+    @Query("SELECT tg.startLocation FROM TripGroup  tg WHERE tg.groupId =?1")
+    String findStartingLocation(Long groupId);
+
 }

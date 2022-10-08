@@ -65,4 +65,7 @@ public class TripGroupService {
         else throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
     }
 
+    public String getStartLocation(Long groupId) {
+        return tripGroupRepository.findStartingLocation(groupId);
+    }
 }

@@ -42,8 +42,14 @@ public class AccommodationService {
                                               extractedData.imageLink(),
                                               extractedData.url(), accommodationDto.price());
 
-        return accommodationRepository.save(accommodation);
+        var savedAccommodation = accommodationRepository.save(accommodation);
+
+        var startingLocation = tripGroupProxy.getStartLocation(accommodation.getGroupId()).getBody();
+
+
     }
+
+    private
 
     private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
         var pattern = Pattern.compile(SERVICE_REGEX);

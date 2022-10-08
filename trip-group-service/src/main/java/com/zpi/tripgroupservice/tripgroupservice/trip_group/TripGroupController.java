@@ -47,7 +47,11 @@ public class TripGroupController {
         var result = tripGroupService.updateGroup(groupId, userId, tripGroupDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
+    @GetMapping("/location")
+    public ResponseEntity<String> getStartLocation(@RequestParam Long groupId){
+        var startingLocation = tripGroupService.getStartLocation(groupId);
+        return ResponseEntity.ok(startingLocation);
+    }
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {
