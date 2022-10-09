@@ -11,7 +11,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.AIR_BNB_JSON_EXTRACTION_REGEX;
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.SERVICE_REGEX;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -29,6 +33,14 @@ public class AccommodationServiceApplication {
 		return strategiesList.stream().collect(
 				Collectors.toMap(AccommodationDataExtractionStrategy::getServiceName, Function.identity(), (a, b) -> a,
 						HashMap::new));
+	}
+	@Bean
+	public Pattern airbnbRegexPattern() {
+		return Pattern.compile(AIR_BNB_JSON_EXTRACTION_REGEX);
+	}
+	@Bean()
+	public Pattern serviceRegexPattern() {
+		return Pattern.compile(SERVICE_REGEX);
 	}
 
 }

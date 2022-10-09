@@ -49,7 +49,7 @@ public class Accommodation {
     @Column(name = "image_link")
     private String imageLink;
 
-    @Column(name = "source_link")
+    @Column(name = "source_link", columnDefinition = "TEXT")
     private String sourceLink;
 
     @Column(name = "given_votes", nullable = false)
