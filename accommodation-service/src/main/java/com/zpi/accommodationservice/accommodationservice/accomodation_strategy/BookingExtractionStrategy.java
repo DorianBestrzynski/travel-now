@@ -11,6 +11,8 @@ import org.springframework.boot.json.JsonParseException;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import static com.zpi.accommodationservice.accommodationservice.comons.BookingMapKeys.*;
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.BOOKING_CSS_QUERY;
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.NEW_LINE;
 import static com.zpi.accommodationservice.accommodationservice.exceptions.ExceptionsInfo.PARSE_ERROR_JSON;
 
 @Component
@@ -21,23 +23,22 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
     public AccommodationDataDto extractDataFromUrl(String url) {
         Document doc;
         try {
-            doc = Jsoup.connect(url)
-                       .get();
+            doc = Jsoup.connect(url).get();
         } catch (IOException e) {
             throw new SiteNotFoundException(e.getMessage());
         }
 
-        Elements body = doc.select("head > script[type=application/ld+json]");
-        var plainJson = body.outerHtml()
-                            .substring(body.outerHtml()
-                                           .indexOf('\n') + 1);
+        Elements body = doc.select(BOOKING_CSS_QUERY);
+        var plainJson = body.outerHtml().substring(body.outerHtml().indexOf(NEW_LINE) + 1);
 
-        String name, bookingUrl, imageLink, street, country, region;
+        String name, sourceLink, imageLink, street, country, region;
         try {
             JSONObject json = new JSONObject(plainJson);
             name = json.getString(NAME_KEY);
-            bookingUrl = json.getString(URL);
+
+            sourceLink = json.getString(URL);
             imageLink = json.getString(IMAGE_KEY);
+
             var address = json.getJSONObject(ADDRESS_KEY);
             street = address.getString(STREET_ADDRESS);
             country = address.getString(ADDRESS_COUNTRY);
@@ -46,9 +47,8 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
             throw new JsonParseException(new Throwable(PARSE_ERROR_JSON));
         }
 
-        return new AccommodationDataDto(name, street, country, region, imageLink, bookingUrl);
+        return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink);
     }
-
     @Override
     public String getServiceName() {
         return BOOKING_URL;

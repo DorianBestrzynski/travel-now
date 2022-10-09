@@ -12,28 +12,23 @@ import java.util.List;
 @RequestMapping("api/v1/accommodation")
 @RequiredArgsConstructor
 public class AccommodationController {
-
     private final AccommodationService accommodationService;
-
     @GetMapping()
     public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId, @RequestParam Long userId){
         var result = accommodationService.getAllAccommodationsForGroup(groupId, userId);
         return ResponseEntity.ok(result);
     }
-
     @PostMapping()
     public ResponseEntity<Accommodation> addAccommodation(@RequestBody AccommodationDto accommodationDto) {
         var accommodation = accommodationService.addAccommodation(accommodationDto);
         return ResponseEntity.ok(accommodation);
     }
-
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteAccommodation(@RequestParam Long accommodationId, @RequestParam Long userId){
         accommodationService.deleteAccommodation(accommodationId, userId);
 
     }
-
     @PatchMapping()
     public ResponseEntity<Accommodation> editAccommodation(@RequestParam(name = "accommodationId")Long accommodationId,
                                                @RequestParam(name = "userId")Long userId,

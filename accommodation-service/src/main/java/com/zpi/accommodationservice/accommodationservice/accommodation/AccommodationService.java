@@ -8,6 +8,7 @@ import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtracti
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.accommodationservice.proxies.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.zpi.accommodationservice.accommodationservice.comons.Utils.SERVICE_REGEX;
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.OR_WORD;
 import static com.zpi.accommodationservice.accommodationservice.exceptions.ExceptionsInfo.*;
 
 @Service
@@ -26,7 +27,8 @@ public class AccommodationService {
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
     private final TripGroupProxy tripGroupProxy;
     private final MapStructMapper mapstructMapper;
-
+    @Qualifier("serviceRegexPattern")
+    private final Pattern pattern;
     @Transactional
     public Accommodation addAccommodation(AccommodationDto accommodationDto) {
         var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
@@ -44,9 +46,7 @@ public class AccommodationService {
 
         return accommodationRepository.save(accommodation);
     }
-
     private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
-        var pattern = Pattern.compile(SERVICE_REGEX);
         var matcher = pattern.matcher(bookingUrl);
 
         String serviceName;
@@ -58,23 +58,20 @@ public class AccommodationService {
         return extractionStrategies.get(serviceName)
                                    .extractDataFromUrl(bookingUrl);
     }
-
     public List<Accommodation> getAllAccommodationsForGroup(Long groupId, Long userId) {
-        if(groupId == null || userId == null){
+        if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
-        }
+
         var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(groupId, userId);
         if (!isUserPartOfGroup)
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
 
         return accommodationRepository.findAllByGroupId(groupId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
     }
-
     @Transactional
     public void deleteAccommodation(Long accommodationId, Long userId) {
         if(accommodationId == null || userId == null){
-            throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + " or " + INVALID_USER_ID);
+            throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + OR_WORD + INVALID_USER_ID);
         }
 
         var accommodation = accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
@@ -89,7 +86,7 @@ public class AccommodationService {
     @Transactional
     public Accommodation editAccommodation(Long accommodationId, Long userId, AccommodationDto accommodationDto) {
         if(accommodationDto == null || userId == null ){
-            throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + "or" + INVALID_USER_ID);
+            throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + OR_WORD + INVALID_USER_ID);
         }
 
         var accommodation =  accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
