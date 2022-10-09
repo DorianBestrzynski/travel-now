@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,17 +31,16 @@ public class TransportController {
 
     @GetMapping("/addtran")
     public String addTransport(){
-        var transport = new Transport(TransportType.CAR, Duration.ZERO, BigDecimal.ONE, "Barcelona", "Madrid", "https://dadadada.com");
+        var transport = new Transport(TransportType.CAR, Duration.ZERO, BigDecimal.ONE, "Barcelona", "Madrid", LocalDate.now(), LocalDate.of(2022,10,12), "https://dadadada.com");
         transportRepository.save(transport);
         var accTrans = new AccommodationTransport(new AccommodationTransportId(transport.getTransportId(),1L));
         accommodationTransportRepository.save(accTrans);
         return "Added transport and accommodation transport";
     }
 
-    @PostMapping
-    public ResponseEntity<List<AccommodationTransport>> generateTransportForAccommodation(AccommodationInfoDto accommodationInfoDto){
-        var generatedMeansOfTransport = transportService.generateTransportForAccommodation(accommodationInfoDto);
-        return new ResponseEntity<>(generatedMeansOfTransport, HttpStatus.CREATED);
+    @PostMapping()
+    public boolean generateTransportForAccommodation(AccommodationInfoDto accommodationInfoDto){
+        return transportService.generateTransportForAccommodation(accommodationInfoDto);
     }
 
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -40,15 +41,23 @@ public class Transport {
     @Column(name = "destination", length = 70)
     private String destination;
 
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
+
     @Column(name = "link")
     private String link;
 
-    public Transport(TransportType transportType, Duration duration, BigDecimal price, String source, String destination, String link) {
+    public Transport(TransportType transportType, Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate , String link) {
         this.transportType = transportType;
         this.duration = duration;
         this.price = price;
         this.source = source;
         this.destination = destination;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.link = link;
     }
 }

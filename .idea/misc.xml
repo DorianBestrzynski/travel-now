@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/user-service/pom.xml" />
+        <option value="$PROJECT_DIR$/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/day-plan-service/pom.xml" />
+        <option value="$PROJECT_DIR$/service-discovery/pom.xml" />
+        <option value="$PROJECT_DIR$/transport-service/pom.xml" />
+        <option value="$PROJECT_DIR$/trip-group-service/pom.xml" />
+        <option value="$PROJECT_DIR$/availability-service/pom.xml" />
+        <option value="$PROJECT_DIR$/accommodation-service/pom.xml" />
+        <option value="$PROJECT_DIR$/task-management-service/pom.xml" />
+        <option value="$PROJECT_DIR$/finance-optimizer-service/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="18" project-jdk-type="JavaSDK" />
+</project>

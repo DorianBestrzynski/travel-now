@@ -44,7 +44,7 @@ public class AvailabilityController {
 
     @DeleteMapping("/user/{availabilityId}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public void addAvailability(@PathVariable Long availabilityId) {
+    public void deleteAvailability(@PathVariable Long availabilityId) {
          availabilityService.deleteAvailability(availabilityId);
     }
     @PatchMapping("/user/{availabilityId}")

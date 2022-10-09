@@ -1,6 +1,7 @@
 package com.zpi.transportservice.transportservice.accommodation_transport;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class AccommodationTransportId implements Serializable {
 
     @Column(name = "accommodation_id")

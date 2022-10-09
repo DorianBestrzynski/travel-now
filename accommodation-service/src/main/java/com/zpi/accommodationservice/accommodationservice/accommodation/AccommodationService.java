@@ -3,14 +3,18 @@ package com.zpi.accommodationservice.accommodationservice.accommodation;
 import com.zpi.accommodationservice.accommodationservice.accomodation_strategy.AccommodationDataExtractionStrategy;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
+import com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.ApiPermissionException;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
+import com.zpi.accommodationservice.accommodationservice.proxies.TransportProxy;
 import com.zpi.accommodationservice.accommodationservice.proxies.TripGroupProxy;
+import com.zpi.accommodationservice.accommodationservice.proxies.UserGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Tuple;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +29,13 @@ public class AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
     private final TripGroupProxy tripGroupProxy;
+    private final UserGroupProxy userGroupProxy;
+    private final TransportProxy transportProxy;
     private final MapStructMapper mapstructMapper;
 
     @Transactional
     public Accommodation addAccommodation(AccommodationDto accommodationDto) {
-        var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
+        var isUserPartOfGroup = userGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
         if (!isUserPartOfGroup)
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
 
@@ -44,12 +50,19 @@ public class AccommodationService {
 
         var savedAccommodation = accommodationRepository.save(accommodation);
 
-        var startingLocation = tripGroupProxy.getStartLocation(accommodation.getGroupId()).getBody();
+        generateTransportForAccommodation(savedAccommodation);
 
-
+        return savedAccommodation;
     }
 
-    private
+    private void generateTransportForAccommodation(Accommodation accommodation){
+        var tripData = tripGroupProxy.getTripData(accommodation.getGroupId()).getBody();
+
+        var accommodationInfo = new AccommodationInfoDto(accommodation.getAccommodationId(), tripData.startingLocation(), accommodation.getName(), accommodation.getStreetAddress(), accommodation.getCountry(), tripData.startDate(), tripData.endDate());
+
+        var response = transportProxy.generateTransportForAccommodation(accommodationInfo);
+
+    }
 
     private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
         var pattern = Pattern.compile(SERVICE_REGEX);
@@ -69,7 +82,7 @@ public class AccommodationService {
         if(groupId == null || userId == null){
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
         }
-        var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(groupId, userId);
+        var isUserPartOfGroup = userGroupProxy.isUserPartOfTheGroup(groupId, userId);
         if (!isUserPartOfGroup)
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
 
@@ -114,8 +127,8 @@ public class AccommodationService {
     }
 
     private boolean hasEditingAccommodationPermissions(Long userId, Accommodation accommodation) {
-        return tripGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
-                (tripGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
+        return userGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
+                (userGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
     }
 
 
