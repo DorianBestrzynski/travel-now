@@ -8,7 +8,7 @@ public interface Utils {
     String AIR_BNB_JSON_EXTRACTION_REGEX = "(?<=>)\\{.*(?=</script>)";
     String WHITESPACE = "\\s+";
     String EMPTY_STRING = "";
-    String COMMA = "";
+    String COMMA = ",";
     String SECTION = "section";
     String NULL_STRING = "null";
     String SHARE_SAVE = "shareSave";
@@ -16,5 +16,6 @@ public interface Utils {
     Character NEW_LINE = '\n';
     Character COLON = ':';
     String OR_WORD = "or";
-
+    int LATITUDE_INDEX = 0;
+    int LONGITUDE_INDEX = 1;
 }

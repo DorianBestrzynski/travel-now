@@ -42,7 +42,9 @@ public class AccommodationService {
                                               extractedData.region(),
                                               accommodationDto.description(),
                                               extractedData.imageLink(),
-                                              extractedData.url(), accommodationDto.price());
+                                              extractedData.url(), accommodationDto.price(),
+                                              extractedData.latitude(),
+                                              extractedData.longitude());
 
         return accommodationRepository.save(accommodation);
     }
