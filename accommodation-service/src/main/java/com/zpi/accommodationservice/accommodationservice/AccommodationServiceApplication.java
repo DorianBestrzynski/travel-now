@@ -1,5 +1,6 @@
 package com.zpi.accommodationservice.accommodationservice;
 
+import com.google.maps.GeoApiContext;
 import com.zpi.accommodationservice.accommodationservice.accomodation_strategy.AccommodationDataExtractionStrategy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,25 +23,43 @@ import static com.zpi.accommodationservice.accommodationservice.comons.Utils.SER
 @EnableEurekaClient
 public class AccommodationServiceApplication {
 
-	public static void main(String[] args) throws IOException {
-		SpringApplication.run(AccommodationServiceApplication.class, args);
-	}
+    public static void main(String[] args) throws IOException {
+        SpringApplication.run(AccommodationServiceApplication.class, args);
+    }
 
-	@Bean
-	public HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies(
-			List<AccommodationDataExtractionStrategy> strategiesList) {
+    @Bean
+    public HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies(
+            List<AccommodationDataExtractionStrategy> strategiesList) {
 
-		return strategiesList.stream().collect(
-				Collectors.toMap(AccommodationDataExtractionStrategy::getServiceName, Function.identity(), (a, b) -> a,
-						HashMap::new));
-	}
-	@Bean
-	public Pattern airbnbRegexPattern() {
-		return Pattern.compile(AIR_BNB_JSON_EXTRACTION_REGEX);
-	}
-	@Bean()
-	public Pattern serviceRegexPattern() {
-		return Pattern.compile(SERVICE_REGEX);
-	}
+        return strategiesList.stream()
+							 .collect(Collectors.toMap(AccommodationDataExtractionStrategy::getServiceName,
+                                                      Function.identity(), (a, b) -> a,
+                                                      HashMap::new));
+    }
 
+    @Bean
+    public Pattern airbnbRegexPattern() {
+        return Pattern.compile(AIR_BNB_JSON_EXTRACTION_REGEX);
+    }
+
+    @Bean
+    public Pattern serviceRegexPattern() {
+        return Pattern.compile(SERVICE_REGEX);
+    }
+		
+    @Bean
+    public Pattern airbnbRegexPattern() {
+      return Pattern.compile(AIR_BNB_JSON_EXTRACTION_REGEX);
+    }
+    
+    @Bean()
+    public Pattern serviceRegexPattern() {
+      return Pattern.compile(SERVICE_REGEX);
+    }
+
+    @Bean
+    public GeoApiContext context() {
+        return new GeoApiContext.Builder().apiKey("AIzaSyAC2tGKS54hqw5tHf0kHjJn0hnzdFEQ9EY")
+                                          .build();
+    }
 }

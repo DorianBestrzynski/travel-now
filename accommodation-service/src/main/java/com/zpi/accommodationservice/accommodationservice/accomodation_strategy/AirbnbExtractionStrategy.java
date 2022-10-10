@@ -1,5 +1,7 @@
 package com.zpi.accommodationservice.accommodationservice.accomodation_strategy;
 
+
+import com.google.maps.GeoApiContext;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.exceptions.SiteNotFoundException;
@@ -27,6 +29,8 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
     private static final String BOOKING_URL = "airbnb.";
     @Qualifier("airbnbRegexPattern")
     private final Pattern pattern;
+    @Qualifier("context")
+    private final GeoApiContext context;
     @Override
     public AccommodationDataDto extractDataFromUrl(String url) {
         Document doc;
@@ -41,6 +45,7 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
         var tittlePlainJson = extractPlainJson(accommodationHtmlElem.outerHtml());
 
         String name, sourceLink, imageLink, street, country, region;
+        Double lat, lng;
         try {
             JSONObject json = new JSONObject(tittlePlainJson);
 
@@ -56,11 +61,15 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
             region = addressData[1];
             country = addressData[2];
 
+            var coordinates = getStreetCoordinates(street);
+            lat = coordinates[LATITUDE_INDEX];
+            lng = coordinates[LONGITUDE_INDEX];
+
         } catch (JSONException ex) {
             throw new JsonParseException(new Throwable(PARSE_ERROR_JSON));
         }
-
-        return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink);
+        
+        return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
     }
     private String extractPlainJson(String html) {
         var matcher = pattern.matcher(html);
@@ -98,8 +107,14 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
 
         return -1;
     }
+
     @Override
     public String getServiceName() {
         return BOOKING_URL;
+    }
+
+    @Override
+    public GeoApiContext context() {
+        return context;
     }
 }
