@@ -3,7 +3,10 @@ package com.zpi.transportservice.transportservice.transport;
 import com.zpi.transportservice.transportservice.accommodation_transport.AccommodationTransportService;
 import com.zpi.transportservice.transportservice.commons.TransportType;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
+import com.zpi.transportservice.transportservice.dto.AirportInfoDto;
 import lombok.RequiredArgsConstructor;
+import org.javatuples.Tuple;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -11,13 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import javax.transaction.Transactional;
-import java.net.URI;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.zpi.transportservice.transportservice.commons.Constants.*;
 
@@ -55,12 +54,16 @@ public class TransportService {
     }
 
     private void generateTransportAir(AccommodationInfoDto accommodationInfoDto) {
-        String nearestAirport = findNearestAirport(accommodationInfoDto);
-
+        var nearestAirport = findNearestAirport(accommodationInfoDto);
+        var flightProposals = findFlightProposals(nearestAirport);
 
     }
 
-    private String findNearestAirport(AccommodationInfoDto accommodationInfoDto) {
+    private String findFlightProposals(List<AirportInfoDto> nearestAirport) {
+        return "";
+    }
+
+    private List<AirportInfoDto> findNearestAirport(AccommodationInfoDto accommodationInfoDto) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization",bearerAccessToken);
@@ -79,13 +82,22 @@ public class TransportService {
 
             System.out.println(response.getBody());
 
+
             JSONObject nearestAirportResource = new JSONObject(response.getBody());
-            var airports = nearestAirportResource.getJSONObject("Airports");
-            return response.getBody();
+            var airports = (JSONArray) nearestAirportResource.query("/NearestAirportResource/Airports/Airport");
+            List<AirportInfoDto> airportInfo = new ArrayList<>();
+            for(int x=0; x < airports.length(); x++){
+                var airportCode =airports.getJSONObject(x).getString("AirportCode");
+                var distance = (JSONObject) airports.getJSONObject(x).query("/Distance");
+                var actualDistance = distance.getInt("Value");
+                airportInfo.add(new AirportInfoDto(airportCode, actualDistance));
+
+            }
+            return airportInfo;
         }catch (Exception ex){
             System.out.println(ex.getMessage());
 //            generateAccessToken();
-            return "";
+            throw new RuntimeException("Error while getting data from Lufthansa");
         }
     }
 
