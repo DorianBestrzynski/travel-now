@@ -1,5 +1,6 @@
 package com.zpi.accommodationservice.accommodationservice.accomodation_strategy;
 
+
 import com.google.maps.GeoApiContext;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
@@ -63,10 +64,11 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
             var coordinates = getStreetCoordinates(street);
             lat = coordinates[LATITUDE_INDEX];
             lng = coordinates[LONGITUDE_INDEX];
+
         } catch (JSONException ex) {
             throw new JsonParseException(new Throwable(PARSE_ERROR_JSON));
         }
-
+        
         return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
     }
     private String extractPlainJson(String html) {

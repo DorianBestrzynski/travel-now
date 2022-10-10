@@ -14,6 +14,8 @@ import java.io.IOException;
 import static com.zpi.accommodationservice.accommodationservice.comons.BookingMapKeys.*;
 import static com.zpi.accommodationservice.accommodationservice.comons.Utils.*;
 import static com.zpi.accommodationservice.accommodationservice.comons.Utils.LONGITUDE_INDEX;
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.BOOKING_CSS_QUERY;
+import static com.zpi.accommodationservice.accommodationservice.comons.Utils.NEW_LINE;
 import static com.zpi.accommodationservice.accommodationservice.exceptions.ExceptionsInfo.PARSE_ERROR_JSON;
 
 @Component
@@ -56,7 +58,6 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
 
         return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
     }
-
     @Override
     public String getServiceName() {
         return BOOKING_URL;

@@ -46,6 +46,16 @@ public class AccommodationServiceApplication {
     public Pattern serviceRegexPattern() {
         return Pattern.compile(SERVICE_REGEX);
     }
+		
+    @Bean
+    public Pattern airbnbRegexPattern() {
+      return Pattern.compile(AIR_BNB_JSON_EXTRACTION_REGEX);
+    }
+    
+    @Bean()
+    public Pattern serviceRegexPattern() {
+      return Pattern.compile(SERVICE_REGEX);
+    }
 
     @Bean
     public GeoApiContext context() {
