@@ -5,7 +5,6 @@ import com.zpi.transportservice.transportservice.commons.TransportType;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
 import com.zpi.transportservice.transportservice.dto.AirportInfoDto;
 import lombok.RequiredArgsConstructor;
-import org.javatuples.Tuple;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +22,6 @@ import static com.zpi.transportservice.transportservice.commons.Constants.*;
 @Service
 @RequiredArgsConstructor
 public class TransportService {
-
     private final TransportRepository transportRepository;
     private final AccommodationTransportService accommodationTransportService;
     private final RestTemplate restTemplate;
