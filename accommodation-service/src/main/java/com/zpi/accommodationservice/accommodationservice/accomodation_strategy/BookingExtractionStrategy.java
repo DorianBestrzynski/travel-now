@@ -21,8 +21,11 @@ import static com.zpi.accommodationservice.accommodationservice.exceptions.Excep
 @Component
 @RequiredArgsConstructor
 public class BookingExtractionStrategy implements AccommodationDataExtractionStrategy {
+
     private static final String BOOKING_URL = "booking.com";
+
     private final GeoApiContext context;
+
     @Override
     public AccommodationDataDto extractDataFromUrl(String url) {
         Document doc;
@@ -58,6 +61,7 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
 
         return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
     }
+
     @Override
     public String getServiceName() {
         return BOOKING_URL;

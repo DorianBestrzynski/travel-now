@@ -14,10 +14,13 @@ import static com.zpi.accommodationservice.accommodationservice.comons.Utils.LAT
 import static com.zpi.accommodationservice.accommodationservice.comons.Utils.LONGITUDE_INDEX;
 
 public interface AccommodationDataExtractionStrategy {
+
     AccommodationDataDto extractDataFromUrl(String url);
+
     String getServiceName();
 
     GeoApiContext context();
+
     default Double[] getStreetCoordinates(String street) {
         var result = new Double[2];
         try {

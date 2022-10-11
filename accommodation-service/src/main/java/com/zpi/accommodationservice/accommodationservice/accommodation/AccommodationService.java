@@ -23,12 +23,18 @@ import static com.zpi.accommodationservice.accommodationservice.exceptions.Excep
 @Service
 @RequiredArgsConstructor
 public class AccommodationService {
+
     private final AccommodationRepository accommodationRepository;
+
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
+
     private final TripGroupProxy tripGroupProxy;
+
     private final MapStructMapper mapstructMapper;
+
     @Qualifier("serviceRegexPattern")
     private final Pattern pattern;
+
     @Transactional
     public Accommodation addAccommodation(AccommodationDto accommodationDto) {
         var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
@@ -48,6 +54,7 @@ public class AccommodationService {
 
         return accommodationRepository.save(accommodation);
     }
+
     private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
         var matcher = pattern.matcher(bookingUrl);
 
@@ -60,6 +67,7 @@ public class AccommodationService {
         return extractionStrategies.get(serviceName)
                                    .extractDataFromUrl(bookingUrl);
     }
+
     public List<Accommodation> getAllAccommodationsForGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
@@ -70,6 +78,7 @@ public class AccommodationService {
 
         return accommodationRepository.findAllByGroupId(groupId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
     }
+
     @Transactional
     public void deleteAccommodation(Long accommodationId, Long userId) {
         if(accommodationId == null || userId == null){
@@ -85,6 +94,7 @@ public class AccommodationService {
             throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
 
     }
+
     @Transactional
     public Accommodation editAccommodation(Long accommodationId, Long userId, AccommodationDto accommodationDto) {
         if(accommodationDto == null || userId == null ){
@@ -110,6 +120,4 @@ public class AccommodationService {
         return tripGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
                 (tripGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
     }
-
-
 }

@@ -26,11 +26,14 @@ import static com.zpi.accommodationservice.accommodationservice.exceptions.Excep
 @Component
 @RequiredArgsConstructor
 public class AirbnbExtractionStrategy implements AccommodationDataExtractionStrategy {
+
     private static final String BOOKING_URL = "airbnb.";
     @Qualifier("airbnbRegexPattern")
     private final Pattern pattern;
+
     @Qualifier("context")
     private final GeoApiContext context;
+
     @Override
     public AccommodationDataDto extractDataFromUrl(String url) {
         Document doc;
@@ -71,6 +74,7 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
         
         return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
     }
+
     private String extractPlainJson(String html) {
         var matcher = pattern.matcher(html);
 
@@ -79,6 +83,7 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
 
         throw new DataExtractionNotSupported("Cannot extract json from html");
     }
+
     private String[] extractAddressData(String address) {
         var streetAddress = address.substring(address.indexOf(COLON) + 1).strip();
         address = streetAddress.replaceAll(WHITESPACE, EMPTY_STRING);
@@ -87,6 +92,7 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
         result[0] = streetAddress;
         return result;
     }
+
     private int findSectionWithData(JSONObject json) {
         var sections = (JSONArray) json.query(SECTIONS_KEY);
 
