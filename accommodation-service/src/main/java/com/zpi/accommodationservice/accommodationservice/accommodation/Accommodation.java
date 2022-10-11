@@ -24,30 +24,43 @@ public class Accommodation {
             sequenceName = "accommodation_sequence", allocationSize = 10)
     @Column(name = "accommodation_id",unique = true, nullable = false)
     private Long accommodationId;
+
     @Column(name = "group_id", nullable = false)
     private Long groupId;
+
     @Column(name = "creator_id", nullable = false)
     private Long creator_id;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "street_address")
     private String streetAddress;
+
     @Column(name = "country", length = 80)
     private String country;
+
     @Column(name = "region", length = 100)
     private String region;
+
     @Column(name = "description")
     private String description;
+
     @Column(name = "image_link")
     private String imageLink;
+
     @Column(name = "source_link", columnDefinition = "TEXT")
     private String sourceLink;
+
     @Column(name = "given_votes", nullable = false)
     private Integer givenVotes;
+
     @Column(name = "price")
     private BigDecimal price;
+
     @Column(name = "latitude")
     private Double latitude;
+
     @Column(name = "longitude")
     private Double longitude;
 
