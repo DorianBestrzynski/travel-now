@@ -46,20 +46,10 @@ public class AccommodationServiceApplication {
     public Pattern serviceRegexPattern() {
         return Pattern.compile(SERVICE_REGEX);
     }
-		
-    @Bean
-    public Pattern airbnbRegexPattern() {
-      return Pattern.compile(AIR_BNB_JSON_EXTRACTION_REGEX);
-    }
-    
-    @Bean()
-    public Pattern serviceRegexPattern() {
-      return Pattern.compile(SERVICE_REGEX);
-    }
 
     @Bean
     public GeoApiContext context() {
-        return new GeoApiContext.Builder().apiKey("AIzaSyAC2tGKS54hqw5tHf0kHjJn0hnzdFEQ9EY")
+        return new GeoApiContext.Builder().apiKey("AIzaSyAxkOcEdJGvIgKshGSZUcPWlzg8GcVzKS4")
                                           .build();
     }
 }
