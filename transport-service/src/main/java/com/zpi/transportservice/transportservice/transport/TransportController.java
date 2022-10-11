@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class TransportController {
 
     @GetMapping("/addtran")
     public String addTransport(){
-        var transport = new Transport(TransportType.CAR, Duration.ZERO, BigDecimal.ONE, "Barcelona", "Madrid", LocalDate.now(), LocalDate.of(2022,10,12), "https://dadadada.com");
+        var transport = new Transport(TransportType.CAR, Duration.ZERO, BigDecimal.ONE, "Barcelona", "Madrid", LocalDateTime.now(), LocalDateTime.of(2022,10,12,22,15), "https://dadadada.com", "LH1139");
         transportRepository.save(transport);
         var accTrans = new AccommodationTransport(new AccommodationTransportId(transport.getTransportId(),1L));
         accommodationTransportRepository.save(accTrans);

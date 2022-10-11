@@ -4,6 +4,7 @@ import com.zpi.transportservice.transportservice.accommodation_transport.Accommo
 import com.zpi.transportservice.transportservice.commons.TransportType;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
 import com.zpi.transportservice.transportservice.dto.AirportInfoDto;
+import com.zpi.transportservice.transportservice.dto.FlighScheduleDto;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +27,14 @@ public class TransportService {
     private final TransportRepository transportRepository;
     private final AccommodationTransportService accommodationTransportService;
     private final RestTemplate restTemplate;
-    private String bearerAccessToken = "Bearer a4uam932aqcpeegu4zyu2azy";
+    private String bearerAccessToken = "Bearer un5hpkj546n88cnkndyhnbdx";
     @Value("${client_id}")
     private String client_id;
     @Value("${client_secret}")
     private String client_secret;
     @Value("${grant_type}")
     private String grant_type;
+
 
     @Transactional
     public boolean generateTransportForAccommodation(AccommodationInfoDto accommodationInfoDto){
@@ -53,12 +56,49 @@ public class TransportService {
 
     private void generateTransportAir(AccommodationInfoDto accommodationInfoDto) {
         var nearestAirport = findNearestAirport(accommodationInfoDto);
-        var flightProposals = findFlightProposals(nearestAirport);
+        var flightProposals = findFlightProposals(nearestAirport, accommodationInfoDto.startDate());
 
     }
 
-    private String findFlightProposals(List<AirportInfoDto> nearestAirport) {
+    private String findFlightProposals(List<AirportInfoDto> nearestAirport, LocalDate startDate) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", bearerAccessToken);
+            headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+            String startAirport = "WRO";
+            var airportsCloserThan100Km = nearestAirport.stream()
+                    .filter(airport -> airport.distance() < THRESHOLD_DISTANCE)
+                    .limit(3)
+                    .toList();
+
+            StringBuilder url = new StringBuilder(BASE_URL + FLIGHT_SCHEDULES);
+            for(var airport: airportsCloserThan100Km) {
+                url.append(startAirport).append("/").append(airport.airportCode()).append("/").append(LocalDate.of(2022,10,22));
+                ResponseEntity<String> response = restTemplate.exchange(
+                        url.toString(),
+                        HttpMethod.GET,
+                        entity,
+                        String.class);
+                var flightProposal = pareResponseToFlight(response.getBody());
+
+            }
+
+        } catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+
         return "";
+    }
+
+    private FlighScheduleDto pareResponseToFlight(String flightSchedule) {
+        JSONObject flightSchedules = new JSONObject(flightSchedule);
+        var scheduleResource = flightSchedules.get("ScheduleResource");
+        var flights =(JSONArray) flightSchedules.query("/Schedule");
+//        var arrival = (JSONObject) flights.query("Departure/ScheduledTimeLocal");
+//        var arrivalDate = arrival.getString("DateTime");
+        return null;
+
     }
 
     private List<AirportInfoDto> findNearestAirport(AccommodationInfoDto accommodationInfoDto) {
