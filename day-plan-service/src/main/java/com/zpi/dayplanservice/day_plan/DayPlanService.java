@@ -16,9 +16,7 @@ import static com.zpi.dayplanservice.exception.ExceptionInfo.*;
 public class DayPlanService {
 
     private final DayPlanRepository dayPlanRepository;
-
     private final TripGroupProxy tripGroupProxy;
-
     private final MapStructMapper mapstructMapper;
 
 

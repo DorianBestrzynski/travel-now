@@ -6,7 +6,7 @@ import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.ApiPermissionException;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
-import com.zpi.accommodationservice.accommodationservice.proxies.TripGroupProxy;
+import com.zpi.accommodationservice.accommodationservice.proxies.UserGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,8 @@ public class AccommodationService {
 
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
 
+    private final UserGroupProxy userGroupProxy;
+
     private final TripGroupProxy tripGroupProxy;
 
     private final MapStructMapper mapstructMapper;
@@ -37,7 +39,7 @@ public class AccommodationService {
 
     @Transactional
     public Accommodation addAccommodation(AccommodationDto accommodationDto) {
-        var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
+        var isUserPartOfGroup = userGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
         if (!isUserPartOfGroup)
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
 
@@ -55,6 +57,7 @@ public class AccommodationService {
         return accommodationRepository.save(accommodation);
     }
 
+
     private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
         var matcher = pattern.matcher(bookingUrl);
 
@@ -71,8 +74,9 @@ public class AccommodationService {
     public List<Accommodation> getAllAccommodationsForGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
-
+            
         var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(groupId, userId);
+
         if (!isUserPartOfGroup)
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
 
@@ -117,7 +121,7 @@ public class AccommodationService {
     }
 
     private boolean hasEditingAccommodationPermissions(Long userId, Accommodation accommodation) {
-        return tripGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
-                (tripGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
+        return userGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
+                (userGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
     }
 }

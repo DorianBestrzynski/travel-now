@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,7 +49,12 @@ public class TripGroup {
     @Column(name = "start_location", nullable = false, length = 100)
     private String startLocation;
 
-    @Setter
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
     @Column(name = "group_stage", nullable = false)
     @Enumerated(EnumType.STRING)
     private GroupStage groupStage;
@@ -63,6 +69,8 @@ public class TripGroup {
         this.votesLimit = Objects.requireNonNullElse(votesLimit,DEFAULT_VOTES_LIMIT);
         this.startLocation = startLocation;
         this.groupStage = GroupStage.PLANNING_STAGE;
+        this.startDate = LocalDate.of(2022,10,22);
+        this.endDate = LocalDate.of(2022, 11,1);
     }
 
 

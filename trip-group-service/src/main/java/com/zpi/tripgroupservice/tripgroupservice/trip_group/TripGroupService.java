@@ -1,5 +1,6 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
+import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.*;
@@ -64,5 +67,10 @@ public class TripGroupService {
 
         else throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
     }
+
+    public TripDataDto getTripData(Long groupId) {
+        return tripGroupRepository.findTripData(groupId);
+    }
+
 
 }
