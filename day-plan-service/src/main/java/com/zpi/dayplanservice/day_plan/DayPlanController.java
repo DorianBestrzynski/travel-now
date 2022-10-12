@@ -18,8 +18,6 @@ public class DayPlanController {
 
     private final DayPlanRepository dayPlanRepository;
 
-
-
     @GetMapping()
     public ResponseEntity<List<DayPlan>> getAllDayPlansForGroup(@RequestParam Long groupId, @RequestParam Long userId){
         var result = dayPlanService.getAllDayPlansForGroup(groupId, userId);
