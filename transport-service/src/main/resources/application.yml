@@ -1,10 +1,13 @@
 server.port: 8087
 spring.application.name: transport
 
-spring.config.import: "configserver:"
+#spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 
+client_id: yu9gyeetpbdpkrwg8k5hr3qt
+client_secret: vrrkmvP2VUtJknqB6JkG
+grant_type: client_credentials
 spring:
   cloud:
     config:
