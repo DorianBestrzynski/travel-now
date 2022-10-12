@@ -30,8 +30,6 @@ public class AccommodationService {
 
     private final UserGroupProxy userGroupProxy;
 
-    private final TripGroupProxy tripGroupProxy;
-
     private final MapStructMapper mapstructMapper;
 
     @Qualifier("serviceRegexPattern")
@@ -75,7 +73,7 @@ public class AccommodationService {
         if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
             
-        var isUserPartOfGroup = tripGroupProxy.isUserPartOfTheGroup(groupId, userId);
+        var isUserPartOfGroup = userGroupProxy.isUserPartOfTheGroup(groupId, userId);
 
         if (!isUserPartOfGroup)
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
