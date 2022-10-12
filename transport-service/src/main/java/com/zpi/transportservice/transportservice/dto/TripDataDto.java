@@ -1,4 +1,4 @@
-package com.zpi.accommodationservice.accommodationservice.dto;
+package com.zpi.transportservice.transportservice.dto;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

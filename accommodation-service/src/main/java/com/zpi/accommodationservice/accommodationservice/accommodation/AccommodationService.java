@@ -8,7 +8,6 @@ import com.zpi.accommodationservice.accommodationservice.exceptions.ApiPermissio
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.accommodationservice.proxies.TransportProxy;
-import com.zpi.accommodationservice.accommodationservice.proxies.TripGroupProxy;
 import com.zpi.accommodationservice.accommodationservice.proxies.UserGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ import static com.zpi.accommodationservice.accommodationservice.exceptions.Excep
 public class AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
-    private final TripGroupProxy tripGroupProxy;
     private final UserGroupProxy userGroupProxy;
     private final TransportProxy transportProxy;
     private final MapStructMapper mapstructMapper;
@@ -48,21 +46,9 @@ public class AccommodationService {
                                               extractedData.imageLink(),
                                               extractedData.url(), accommodationDto.price());
 
-        var savedAccommodation = accommodationRepository.save(accommodation);
-
-        generateTransportForAccommodation(savedAccommodation);
-
-        return savedAccommodation;
+        return accommodationRepository.save(accommodation);
     }
 
-    private void generateTransportForAccommodation(Accommodation accommodation){
-        var tripData = tripGroupProxy.getTripData(accommodation.getGroupId()).getBody();
-
-        var accommodationInfo = new AccommodationInfoDto(accommodation.getAccommodationId(), tripData.startingLocation(), accommodation.getName(), accommodation.getStreetAddress(), accommodation.getCountry(), tripData.startDate(), tripData.endDate());
-
-        var response = transportProxy.generateTransportForAccommodation(accommodationInfo);
-
-    }
 
     private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
         var pattern = Pattern.compile(SERVICE_REGEX);

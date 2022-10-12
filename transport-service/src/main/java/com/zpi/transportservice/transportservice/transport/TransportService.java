@@ -4,7 +4,7 @@ import com.zpi.transportservice.transportservice.accommodation_transport.Accommo
 import com.zpi.transportservice.transportservice.commons.TransportType;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
 import com.zpi.transportservice.transportservice.dto.AirportInfoDto;
-import com.zpi.transportservice.transportservice.dto.FlighScheduleDto;
+import com.zpi.transportservice.transportservice.dto.FlightDto;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,20 +67,20 @@ public class TransportService {
             headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
             HttpEntity<?> entity = new HttpEntity<>(headers);
             String startAirport = "WRO";
-            var airportsCloserThan100Km = nearestAirport.stream()
+            var airportsCloserThanThreshold = nearestAirport.stream()
                     .filter(airport -> airport.distance() < THRESHOLD_DISTANCE)
                     .limit(3)
                     .toList();
 
             StringBuilder url = new StringBuilder(BASE_URL + FLIGHT_SCHEDULES);
-            for(var airport: airportsCloserThan100Km) {
+            for(var airport: airportsCloserThanThreshold) {
                 url.append(startAirport).append("/").append(airport.airportCode()).append("/").append(LocalDate.of(2022,10,22));
                 ResponseEntity<String> response = restTemplate.exchange(
                         url.toString(),
                         HttpMethod.GET,
                         entity,
                         String.class);
-                var flightProposal = pareResponseToFlight(response.getBody());
+                var flightProposal = parseResponseToFlight(response.getBody());
 
             }
 
@@ -91,10 +91,23 @@ public class TransportService {
         return "";
     }
 
-    private FlighScheduleDto pareResponseToFlight(String flightSchedule) {
+    private FlightDto parseResponseToFlight(String flightSchedule) {
         JSONObject flightSchedules = new JSONObject(flightSchedule);
-        var scheduleResource = flightSchedules.get("ScheduleResource");
-        var flights =(JSONArray) flightSchedules.query("/Schedule");
+        var scheduleResource = flightSchedules.getJSONObject("ScheduleResource").getJSONArray("Schedule");
+        for(int i = 0; i < scheduleResource.length(); i++){
+            var t = scheduleResource.getJSONObject(i);
+            var t3 = t.getJSONArray("Flight");
+            for(int j = 0 ; j < t.length(); j++){
+                var t4 = t3.getJSONObject(j);
+                var t5 = t4.getJSONObject("Departure");
+                var firstAirportCode = t5.getString("AirportCode");
+                var departureTime = t5.getJSONObject("ScheduledTimeLocal").getString("DateTime");
+
+            }
+//            var t2 = t.getJSONObject("ScheduledTimeLocal");
+//            var res = t2.getString("DateTime");
+        }
+        var t = scheduleResource.getJSONObject(0);
 //        var arrival = (JSONObject) flights.query("Departure/ScheduledTimeLocal");
 //        var arrivalDate = arrival.getString("DateTime");
         return null;
