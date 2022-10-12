@@ -3,6 +3,7 @@ package com.zpi.accommodationservice.accommodationservice.accommodation;
 import com.zpi.accommodationservice.accommodationservice.accomodation_strategy.AccommodationDataExtractionStrategy;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
+import com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.ApiPermissionException;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
@@ -121,5 +122,9 @@ public class AccommodationService {
     private boolean hasEditingAccommodationPermissions(Long userId, Accommodation accommodation) {
         return userGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
                 (userGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
+    }
+
+    public AccommodationInfoDto getAccommodationInfo(Long accommodationId) {
+        return accommodationRepository.getAccommodationInfoDto(accommodationId);
     }
 }

@@ -1,6 +1,7 @@
 package com.zpi.transportservice.transportservice.transport;
 
 import com.zpi.transportservice.transportservice.commons.TransportType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@DiscriminatorColumn(name = "transport_type",
+                    discriminatorType = DiscriminatorType.INTEGER)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Transport {
 
     @Id
@@ -25,10 +30,6 @@ public class Transport {
             sequenceName = "transport_sequence", allocationSize = 10)
     @Column(name = "transport_id",unique = true, nullable = false)
     private Long transportId;
-
-    @Column(name = "transport_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransportType transportType;
 
     @Column(name = "duration")
     private Duration duration;
@@ -43,19 +44,16 @@ public class Transport {
     private String destination;
 
     @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date", nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Column(name = "link")
     private String link;
 
-    @Column(name = "flight_number")
-    private String flightNumber;
 
-    public Transport(TransportType transportType, Duration duration, BigDecimal price, String source, String destination, LocalDateTime startDate, LocalDateTime endDate , String link, String flightNumber) {
-        this.transportType = transportType;
+    public Transport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate , String link) {
         this.duration = duration;
         this.price = price;
         this.source = source;
@@ -63,6 +61,5 @@ public class Transport {
         this.startDate = startDate;
         this.endDate = endDate;
         this.link = link;
-        this.flightNumber = flightNumber;
     }
 }

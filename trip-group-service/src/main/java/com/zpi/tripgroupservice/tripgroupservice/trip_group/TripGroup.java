@@ -55,6 +55,12 @@ public class TripGroup {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     @Column(name = "group_stage", nullable = false)
     @Enumerated(EnumType.STRING)
     private GroupStage groupStage;
@@ -71,6 +77,9 @@ public class TripGroup {
         this.groupStage = GroupStage.PLANNING_STAGE;
         this.startDate = LocalDate.of(2022,10,22);
         this.endDate = LocalDate.of(2022, 11,1);
+        this.latitude = 11.5;
+        this.longitude = 56.22;
+
     }
 
 

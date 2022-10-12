@@ -10,7 +10,9 @@ public class Constants {
     public static final String GRANT_TYPE = "grant_type";
     public static final String NEAREST_AIRPORT = "/v1/mds-references/airports/nearest/";
     public static final String FLIGHT_SCHEDULES = "/v1/operations/schedules/";
-    public static final Integer THRESHOLD_DISTANCE = 200;
+    public static final Integer THRESHOLD_DISTANCE_DESTINATION = 200;
+    public static final Integer THRESHOLD_DISTANCE_SOURCE = 1350;
+
 
 
 

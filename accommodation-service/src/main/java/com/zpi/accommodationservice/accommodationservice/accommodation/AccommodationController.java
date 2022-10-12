@@ -1,6 +1,7 @@
 package com.zpi.accommodationservice.accommodationservice.accommodation;
 
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
+import com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,4 +38,10 @@ public class AccommodationController {
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
+    @GetMapping("/info")
+    public ResponseEntity<AccommodationInfoDto> getAccommodationInfo(@RequestParam Long accommodationId){
+        var result = accommodationService.getAccommodationInfo(accommodationId);
+        return ResponseEntity.ok(result);
+    }
+
 }

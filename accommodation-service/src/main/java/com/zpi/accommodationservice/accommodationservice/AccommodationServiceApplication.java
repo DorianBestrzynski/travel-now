@@ -49,7 +49,7 @@ public class AccommodationServiceApplication {
 
     @Bean
     public GeoApiContext context() {
-        return new GeoApiContext.Builder().apiKey("AIzaSyAxkOcEdJGvIgKshGSZUcPWlzg8GcVzKS4")
+        return new GeoApiContext.Builder().apiKey("AIzaSyAFtTPuDCYIQrU_KYFWS7cCMlOGNYHTKRU")
                                           .build();
     }
 }

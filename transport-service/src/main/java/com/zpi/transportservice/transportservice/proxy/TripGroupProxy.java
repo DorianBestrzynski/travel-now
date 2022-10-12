@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface TripGroupProxy {
 
     @GetMapping("/data")
-    ResponseEntity<TripDataDto> getTripData(@RequestParam Long groupId);
+    TripDataDto getTripData(@RequestParam Long groupId);
 
 }
