@@ -3,17 +3,14 @@ package com.zpi.accommodationservice.accommodationservice.accommodation;
 import com.zpi.accommodationservice.accommodationservice.accomodation_strategy.AccommodationDataExtractionStrategy;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
-import com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto;
 import com.zpi.accommodationservice.accommodationservice.exceptions.ApiPermissionException;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
-import com.zpi.accommodationservice.accommodationservice.proxies.TransportProxy;
 import com.zpi.accommodationservice.accommodationservice.proxies.UserGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.Tuple;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +25,6 @@ public class AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
     private final UserGroupProxy userGroupProxy;
-    private final TransportProxy transportProxy;
     private final MapStructMapper mapstructMapper;
 
     @Transactional
