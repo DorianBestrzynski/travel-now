@@ -49,7 +49,7 @@ public class Accommodation {
     @Column(name = "image_link")
     private String imageLink;
 
-    @Column(name = "source_link")
+    @Column(name = "source_link", columnDefinition = "TEXT")
     private String sourceLink;
 
     @Column(name = "given_votes", nullable = false)
@@ -58,7 +58,13 @@ public class Accommodation {
     @Column(name = "price")
     private BigDecimal price;
 
-    public Accommodation(Long groupId, Long creator_id, String name, String streetAddress, String country, String region, String description, String imageLink, String sourceLink, BigDecimal price) {
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    public Accommodation(Long groupId, Long creator_id, String name, String streetAddress, String country, String region, String description, String imageLink, String sourceLink, BigDecimal price, Double latitude, Double longitude) {
         this.groupId = groupId;
         this.creator_id = creator_id;
         this.name = name;
@@ -70,8 +76,7 @@ public class Accommodation {
         this.sourceLink = sourceLink;
         this.price = price;
         this.givenVotes = DEFAULT_VOTES;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
-
-
-
 }
