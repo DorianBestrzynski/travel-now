@@ -25,9 +25,6 @@ public class Attraction {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "location", nullable = false, length = 100)
-    private String location;
-
     @Column(name = "description", nullable = false, length = 200)
     private String description;
 
@@ -40,18 +37,29 @@ public class Attraction {
     @Column(name = "attraction_link", nullable = false, length = 255)
     private String attractionLink;
 
+    @Column(name = "photo_link", nullable = false, length = 255)
+    private String photoLink;
+
     @ManyToMany(mappedBy = "dayAttractions")
     private Set<DayPlan> days;
 
-    public Attraction(String name, String location, String description, LocalTime openingHours, LocalTime closingHour,
-                      String attractionLink, Set<DayPlan> days) {
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    public Attraction(String name, String description, LocalTime openingHours, LocalTime closingHour,
+                      String attractionLink, Set<DayPlan> days, Double latitude, Double longitude, String photoLink) {
         this.name = name;
-        this.location = location;
         this.description = description;
         this.openingHours = openingHours;
         this.closingHour = closingHour;
         this.attractionLink = attractionLink;
         this.days = days;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.photoLink = photoLink;
     }
 
     @Override
