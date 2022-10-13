@@ -70,7 +70,7 @@ public class TransportService {
     public AirTransport generateTransportForAccommodationAir(List<Long> accommodationTransportIds, AccommodationInfoDto accommodationInfo, TripDataDto tripData, Long accommodationId) {
         var transportAir = shouldGenerateTransportAir(accommodationTransportIds, accommodationInfo, tripData, accommodationId);
         if(transportAir == null){
-            return generateTransportAir(accommodationInfo, tripData);
+            return generateTransportAir(accommodationInfo, tripData, accommodationId);
         }
         return transportAir;
     }
@@ -89,7 +89,7 @@ public class TransportService {
         return transportAir.get(0);
     }
 
-    private AirTransport generateTransportAir(AccommodationInfoDto accommodationInfoDto, TripDataDto tripData) {
+    private AirTransport generateTransportAir(AccommodationInfoDto accommodationInfoDto, TripDataDto tripData, Long accommodationId) {
         var nearestAirportSource = findNearestAirport(tripData.latitude(), tripData.longitude());
         var nearestAirportDestination = findNearestAirport(accommodationInfoDto.destinationLatitude(), accommodationInfoDto.destinationLongitude());
         var flightProposals = findFlightProposals(nearestAirportSource, nearestAirportDestination, tripData.startDate());
@@ -98,7 +98,8 @@ public class TransportService {
             var totalDuration = Duration.ofSeconds(bestOption.getKey());
             var flights = flightProposals.get(bestOption.getValue());
             AirTransport airTransport = new AirTransport(totalDuration, BigDecimal.ZERO, tripData.startingLocation(), accommodationInfoDto.streetAddress(), tripData.startDate(), tripData.endDate(), "Why link", flights);
-//            transportRepository.save(airTransport);
+            var airTransportSaved = transportRepository.save(airTransport);
+            accommodationTransportService.createAccommodationTransport(accommodationId, airTransportSaved.getTransportId());
             return airTransport;
         }
         return null;
