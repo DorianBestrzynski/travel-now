@@ -37,6 +37,7 @@ import static com.zpi.transportservice.transportservice.exception.ExceptionsInfo
 @Slf4j
 public class TransportService {
     private final TransportRepository transportRepository;
+    private final AirTransportRepository airTransportRepository;
     private final AccommodationTransportService accommodationTransportService;
     private final RestTemplate restTemplate;
     private final TripGroupProxy tripGroupProxy;
@@ -44,7 +45,7 @@ public class TransportService {
     private final FlightService flightService;
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
-    private String bearerAccessToken = "Bearer un5hpkj546n88cnkndyhnbdx";
+    private String bearerAccessToken = "Bearer 8kax5yttbwuvz5ydcxfe2pqp";
     @Value("${client_id}")
     private String client_id;
     @Value("${client_secret}")
@@ -62,9 +63,7 @@ public class TransportService {
         var accommodationInfo = accommodationProxy.getAccommodationInfo(accommodationId);
         var tripInfo = tripGroupProxy.getTripData(accommodationInfo.groupId());
 
-        var airTransport = generateTransportForAccommodationAir(accommodationTransportIdList, accommodationInfo, tripInfo, accommodationId);
-        System.out.println(airTransport.getFlight());
-        return airTransport;
+        return generateTransportForAccommodationAir(accommodationTransportIdList, accommodationInfo, tripInfo, accommodationId);
     }
 
     public AirTransport generateTransportForAccommodationAir(List<Long> accommodationTransportIds, AccommodationInfoDto accommodationInfo, TripDataDto tripData, Long accommodationId) {
@@ -76,16 +75,17 @@ public class TransportService {
     }
 
     private AirTransport shouldGenerateTransportAir(List<Long> accommodationTransportIds, AccommodationInfoDto accommodationInfo, TripDataDto tripData, Long accommodationId) {
-        var transportAir = transportRepository.findTransportAir(accommodationTransportIds);
+        var transportAir = airTransportRepository.findAllById(accommodationTransportIds);
         if(transportAir.isEmpty()) {
             var matchingAccommodationTransportAir = transportRepository.findMatchingTransportAir(tripData.startingLocation(),
                     accommodationInfo.streetAddress(), tripData.startDate());
-            if(matchingAccommodationTransportAir.isEmpty()){
+            if(matchingAccommodationTransportAir.isEmpty()) {
                 return null;
             }
             accommodationTransportService.createAccommodationTransport(accommodationId, matchingAccommodationTransportAir.get(0).getTransportId());
             return matchingAccommodationTransportAir.get(0);
         }
+        var temp = transportAir.get(0).getFlight();
         return transportAir.get(0);
     }
 
@@ -98,6 +98,7 @@ public class TransportService {
             var totalDuration = Duration.ofSeconds(bestOption.getKey());
             var flights = flightProposals.get(bestOption.getValue());
             AirTransport airTransport = new AirTransport(totalDuration, BigDecimal.ZERO, tripData.startingLocation(), accommodationInfoDto.streetAddress(), tripData.startDate(), tripData.endDate(), "Why link", flights);
+            flightService.setFlights(flights, airTransport);
             var airTransportSaved = transportRepository.save(airTransport);
             accommodationTransportService.createAccommodationTransport(accommodationId, airTransportSaved.getTransportId());
             return airTransport;

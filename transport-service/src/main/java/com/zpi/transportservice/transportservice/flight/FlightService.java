@@ -12,11 +12,10 @@ public class FlightService {
 
     private final FlightRepository flightRepository;
 
-    public List<Flight> saveFlights(List<Flight> flight, AirTransport airTransport){
+    public void setFlights(List<Flight> flight, AirTransport airTransport){
         for(var f : flight){
             f.setTransport(airTransport);
         }
-        return flightRepository.saveAll(flight);
     }
 
 

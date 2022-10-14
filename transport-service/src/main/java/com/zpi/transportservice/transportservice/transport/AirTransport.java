@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.FetchMode;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -20,14 +21,13 @@ import java.util.List;
 @Getter
 public class AirTransport extends Transport {
 
-    @OneToMany(cascade=CascadeType.ALL, fetch= FetchType.LAZY, mappedBy = "flightId")
+    @OneToMany(cascade=CascadeType.ALL, fetch= FetchType.LAZY)
     @JsonManagedReference
     private List<Flight> flight;
 
 
     public AirTransport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link, List<Flight> flight) {
         super(duration, price, source, destination, startDate, endDate, link);
-
         this.flight = flight;
     }
 }

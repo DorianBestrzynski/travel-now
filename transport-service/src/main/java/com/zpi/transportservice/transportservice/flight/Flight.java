@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class Flight {
-
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
