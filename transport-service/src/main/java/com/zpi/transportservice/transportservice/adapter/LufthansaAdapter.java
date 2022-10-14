@@ -99,12 +99,13 @@ public class LufthansaAdapter {
     private TreeMap<Long,List<Flight>> findFlightProposals(List<AirportInfoDto> nearestAirportSource, List<AirportInfoDto> nearestAirportDestination, LocalDate startDate) {
         try {
             HttpEntity<?> entity = getHttpEntity();
-            if(nearestAirportSource.isEmpty() || nearestAirportDestination.isEmpty()){
-                throw new LufthansaApiException(LUFTHANSA_NO_AIRPORT_MATCHING);
-            }
+
             var sourceAirportsCloserThanThreshold = onlyAirportsToGivenThreshold(nearestAirportSource, THRESHOLD_DISTANCE_SOURCE);
             var departureAirportsCloserThanThreshold = onlyAirportsToGivenThreshold(nearestAirportDestination, THRESHOLD_DISTANCE_DESTINATION);
 
+            if(sourceAirportsCloserThanThreshold.isEmpty() || departureAirportsCloserThanThreshold.isEmpty()){
+                throw new LufthansaApiException(LUFTHANSA_NO_AIRPORT_MATCHING);
+            }
             StringBuilder url = new StringBuilder(BASE_URL + FLIGHT_SCHEDULES);
             return findPossibleFlights(sourceAirportsCloserThanThreshold, departureAirportsCloserThanThreshold, url, startDate, entity);
 

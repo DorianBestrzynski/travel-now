@@ -23,7 +23,7 @@ import static com.zpi.accommodationservice.accommodationservice.comons.Utils.SER
 @EnableEurekaClient
 public class AccommodationServiceApplication {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         SpringApplication.run(AccommodationServiceApplication.class, args);
     }
 
@@ -49,7 +49,7 @@ public class AccommodationServiceApplication {
 
     @Bean
     public GeoApiContext context() {
-        return new GeoApiContext.Builder().apiKey("AIzaSyAFtTPuDCYIQrU_KYFWS7cCMlOGNYHTKRU")
+        return new GeoApiContext.Builder().apiKey("nope")
                                           .build();
     }
 }
