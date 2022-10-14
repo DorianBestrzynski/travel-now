@@ -49,11 +49,20 @@ public class TripGroup {
     @Column(name = "start_location", nullable = false, length = 100)
     private String startLocation;
 
+    @Column(name = "start_city", nullable = false, length = 100)
+    private String startCity;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
 
     @Column(name = "group_stage", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -62,15 +71,19 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
-    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation) {
+    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity) {
         this.name = name;
         this.currency = currency;
         this.description = Objects.requireNonNullElse(description,DEFAULT_DESCRIPTION + name);
         this.votesLimit = Objects.requireNonNullElse(votesLimit,DEFAULT_VOTES_LIMIT);
         this.startLocation = startLocation;
+        this.startCity = startingCity;
         this.groupStage = GroupStage.PLANNING_STAGE;
         this.startDate = LocalDate.of(2022,10,22);
         this.endDate = LocalDate.of(2022, 11,1);
+        this.latitude = 52.50;
+        this.longitude = 13.36;
+
     }
 
 

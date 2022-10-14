@@ -22,5 +22,10 @@ public record TripGroupDto(
         @NotEmpty
         @Length(max = 100)
         @JsonProperty("startLocation")
-        String startLocation) {
+        String startLocation,
+        @NotEmpty
+        @Length(max = 100)
+        @JsonProperty("startCity")
+        String startCity)
+{
 }

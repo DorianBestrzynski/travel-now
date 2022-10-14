@@ -9,5 +9,9 @@ public record TripDataDto(
         @NotNull
         LocalDate startDate,
         @NotNull
-        LocalDate endDate) {
+        LocalDate endDate,
+        @NotNull
+        Double latitude,
+        @NotNull
+        Double longitude) {
 }

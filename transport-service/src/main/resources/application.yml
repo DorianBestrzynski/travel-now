@@ -4,6 +4,9 @@ spring.application.name: transport
 #spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
+app.group-service: localhost
+app.accommodation-service: localhost
+
 
 client_id: yu9gyeetpbdpkrwg8k5hr3qt
 client_secret: vrrkmvP2VUtJknqB6JkG
@@ -19,7 +22,7 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -38,3 +41,7 @@ spring.config.activate.on-profile: docker
 
 app.config-server: config-server
 app.database: postgres
+app.group-service: group
+app.accommodation-service: accommodation
+
+

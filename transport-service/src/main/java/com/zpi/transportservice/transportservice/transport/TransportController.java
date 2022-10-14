@@ -8,10 +8,7 @@ import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -32,7 +29,7 @@ public class TransportController {
 
     @GetMapping("/addtran")
     public String addTransport(){
-        var transport = new Transport(TransportType.CAR, Duration.ZERO, BigDecimal.ONE, "Barcelona", "Madrid", LocalDateTime.now(), LocalDateTime.of(2022,10,12,22,15), "https://dadadada.com", "LH1139");
+        var transport = new CarTransport(1L,Duration.ZERO, BigDecimal.ONE, "Wrocław", "Mallorca", LocalDate.now(), LocalDate.now(), "link");
         transportRepository.save(transport);
         var accTrans = new AccommodationTransport(new AccommodationTransportId(transport.getTransportId(),1L));
         accommodationTransportRepository.save(accTrans);
@@ -40,8 +37,9 @@ public class TransportController {
     }
 
     @PostMapping()
-    public boolean generateTransportForAccommodation(AccommodationInfoDto accommodationInfoDto){
-        return transportService.generateTransportForAccommodation(accommodationInfoDto);
+    public ResponseEntity<List<Transport>> getTransportForAccommodation (@RequestParam Long accommodationId) {
+       var transport = transportService.getTransportForAccommodation(accommodationId);
+        return ResponseEntity.ok(transport);
     }
 
 

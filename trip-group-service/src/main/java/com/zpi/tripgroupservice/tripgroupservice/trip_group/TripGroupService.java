@@ -39,7 +39,7 @@ public class TripGroupService {
     }
     @Transactional
     public TripGroup createGroup(Long userId, TripGroupDto groupDto) {
-            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation());
+            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation(), groupDto.startCity());
             tripGroupRepository.save(tripGroup);
             userGroupService.createUserGroup(userId, tripGroup.getGroupId(), tripGroup.getVotesLimit());
             return tripGroup;

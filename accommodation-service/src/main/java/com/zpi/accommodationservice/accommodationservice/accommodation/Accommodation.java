@@ -37,6 +37,9 @@ public class Accommodation {
     @Column(name = "street_address")
     private String streetAddress;
 
+    @Column(name = "city")
+    private String city;
+
     @Column(name = "country", length = 80)
     private String country;
 
@@ -76,6 +79,23 @@ public class Accommodation {
         this.sourceLink = sourceLink;
         this.price = price;
         this.givenVotes = DEFAULT_VOTES;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public Accommodation(Long groupId, Long creator_id, String name, String streetAddress, String city, String country, String region, String description, String imageLink, String sourceLink, BigDecimal price, Double latitude, Double longitude) {
+        this.groupId = groupId;
+        this.creator_id = creator_id;
+        this.name = name;
+        this.streetAddress = streetAddress;
+        this.city = city;
+        this.country = country;
+        this.region = region;
+        this.givenVotes = DEFAULT_VOTES;
+        this.description = description;
+        this.imageLink = imageLink;
+        this.sourceLink = sourceLink;
+        this.price = price;
         this.latitude = latitude;
         this.longitude = longitude;
     }

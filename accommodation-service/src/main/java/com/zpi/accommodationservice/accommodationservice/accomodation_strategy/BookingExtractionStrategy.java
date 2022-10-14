@@ -38,7 +38,7 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
         Elements body = doc.select(BOOKING_CSS_QUERY);
         var plainJson = body.outerHtml().substring(body.outerHtml().indexOf(NEW_LINE) + 1);
 
-        String name, sourceLink, imageLink, street, country, region;
+        String name, sourceLink, imageLink, street, city, country, region;
         Double lat, lng;
         try {
             JSONObject json = new JSONObject(plainJson);
@@ -49,6 +49,7 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
 
             var address = json.getJSONObject(ADDRESS_KEY);
             street = address.getString(STREET_ADDRESS);
+            city = getCity(street);
             country = address.getString(ADDRESS_COUNTRY);
             region = address.getString(ADDRESS_REGION);
 
@@ -59,7 +60,14 @@ public class BookingExtractionStrategy implements AccommodationDataExtractionStr
             throw new JsonParseException(new Throwable(PARSE_ERROR_JSON));
         }
 
-        return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
+        return new AccommodationDataDto(name, street, city, country, region, imageLink, sourceLink, lat, lng);
+    }
+
+    private String getCity(String street) {
+        var removedLastComma = street.substring(0, street.lastIndexOf(","));
+        var cityAndCode = removedLastComma.substring(removedLastComma.lastIndexOf(",") + 1);
+        return cityAndCode.replaceAll("\\d", "").replace("-","").replaceAll("\\s", "");
+
     }
 
     @Override
