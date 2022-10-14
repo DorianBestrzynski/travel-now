@@ -47,7 +47,7 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
         Elements accommodationHtmlElem = doc.select(AIRBNB_CSS_QUERY);
         var tittlePlainJson = extractPlainJson(accommodationHtmlElem.outerHtml());
 
-        String name, sourceLink, imageLink, street, country, region;
+        String name, sourceLink, imageLink, street, city, country, region;
         Double lat, lng;
         try {
             JSONObject json = new JSONObject(tittlePlainJson);
@@ -61,6 +61,7 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
             var address = json.query(ADDRESS_KEY).toString();
             var addressData = extractAddressData(address);
             street = addressData[0];
+            city = getCity(street);
             region = addressData[1];
             country = addressData[2];
 
@@ -72,7 +73,11 @@ public class AirbnbExtractionStrategy implements AccommodationDataExtractionStra
             throw new JsonParseException(new Throwable(PARSE_ERROR_JSON));
         }
         
-        return new AccommodationDataDto(name, street, country, region, imageLink, sourceLink, lat, lng);
+        return new AccommodationDataDto(name, street, city, country, region, imageLink, sourceLink, lat, lng);
+    }
+
+    private String getCity(String street) {
+        return street.substring(0, street.indexOf(","));
     }
 
     private String extractPlainJson(String html) {

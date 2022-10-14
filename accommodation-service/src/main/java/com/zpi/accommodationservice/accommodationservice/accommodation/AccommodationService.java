@@ -45,6 +45,7 @@ public class AccommodationService {
         var extractedData = extractDataFromUrl(accommodationDto.accommodationLink());
         var accommodation = new Accommodation(accommodationDto.groupId(), accommodationDto.creatorId(),
                                               extractedData.name(), extractedData.streetAddress(),
+                                              extractedData.city(),
                                               extractedData.country(),
                                               extractedData.region(),
                                               accommodationDto.description(),

@@ -13,6 +13,6 @@ public interface AccommodationRepository extends JpaRepository<Accommodation,Lon
 
     Optional<List<Accommodation>> findAllByGroupId(Long groupId);
 
-    @Query("SELECT new com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto(a.streetAddress, a.latitude, a.longitude, a.groupId) FROM Accommodation a WHERE a.accommodationId=?1")
+    @Query("SELECT new com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto(a.streetAddress, a.city, a.latitude, a.longitude, a.groupId) FROM Accommodation a WHERE a.accommodationId=?1")
     AccommodationInfoDto getAccommodationInfoDto(Long accommodationInfo);
 }

@@ -59,11 +59,11 @@ public class TripGroupController {
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {
-        var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona");
-        var tripGroup1 = new TripGroup("Test2", Currency.PLN, "Opis2", 3, "Madryt");
-        var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw");
-        var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva");
-        var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa");
+        var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona", "Barcelona");
+        var tripGroup1 = new TripGroup("Test2", Currency.PLN, "Opis2", 3, "Madryt", "Madryt");
+        var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw", "Wroclaw");
+        var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva", "Huelva");
+        var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa", "Pisa");
         tripGroupRepository.saveAll(List.of(tripGroup1, tripGroup2, tripGroup3, tripGroup4, tripGroup));
 
         var userData1 = new UserGroup(new UserGroupKey(1L, tripGroup.getGroupId()), Role.COORDINATOR, 1);

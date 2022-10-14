@@ -37,7 +37,7 @@ public class TransportController {
     }
 
     @PostMapping()
-    public ResponseEntity<AirTransport> getTransportForAccommodation (@RequestParam Long accommodationId) {
+    public ResponseEntity<List<Transport>> getTransportForAccommodation (@RequestParam Long accommodationId) {
        var transport = transportService.getTransportForAccommodation(accommodationId);
         return ResponseEntity.ok(transport);
     }
