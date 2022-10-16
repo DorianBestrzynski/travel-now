@@ -1,11 +1,17 @@
 package com.zpi.dayplanservice.attraction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zpi.dayplanservice.day_plan.DayPlan;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,41 +26,62 @@ public class Attraction {
     @SequenceGenerator(
             name = "attraction_sequence",
             sequenceName = "attraction_sequence", allocationSize = 10)
+    @Getter
     private Long attraction_id;
 
+    @Getter
+    @Setter
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description", nullable = false, length = 200)
+    @Getter
+    @Setter
+    @Column(name = "description", nullable = true, length = 200)
     private String description;
 
-    @Column(name = "opening_hours", nullable = false, length = 10)
-    private LocalTime openingHours;
+    @Getter
+    @Setter
+    @JsonProperty("openingHours")
+    @Column(name = "opening_hours", nullable = false, length = 100)
+    private String openingHours;
 
-    @Column(name = "closing_hour", nullable = false, length = 10)
-    private LocalTime closingHour;
+    @Getter
+    @Setter
+    @Column(name = "address", nullable = false, length = 100)
+    private String address;
 
+    @Getter
+    @Setter
     @Column(name = "attraction_link", nullable = false, length = 255)
     private String attractionLink;
 
+    @Getter
+    @Setter
     @Column(name = "photo_link", nullable = false, length = 255)
     private String photoLink;
 
+    @Getter
+    @Setter
     @ManyToMany(mappedBy = "dayAttractions")
-    private Set<DayPlan> days;
+    @JsonIgnore
+    private Set<DayPlan> days = new HashSet<>();
 
+    @Getter
+    @Setter
     @Column(name = "latitude")
     private Double latitude;
 
+    @Getter
+    @Setter
     @Column(name = "longitude")
     private Double longitude;
 
-    public Attraction(String name, String description, LocalTime openingHours, LocalTime closingHour,
-                      String attractionLink, Set<DayPlan> days, Double latitude, Double longitude, String photoLink) {
+    public Attraction(String name, String description, String openingHours, LocalTime closingHour,
+                      String address, String attractionLink, Set<DayPlan> days, Double latitude, Double longitude, String photoLink) {
         this.name = name;
         this.description = description;
         this.openingHours = openingHours;
-        this.closingHour = closingHour;
+        this.address = address;
         this.attractionLink = attractionLink;
         this.days = days;
         this.latitude = latitude;
@@ -73,5 +100,16 @@ public class Attraction {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public Boolean addDays(List<DayPlan>  days) {
+        return this.days.addAll(days);
+    }
+
+    public Boolean removeDay(DayPlan  day) {
+        if(!days.isEmpty())
+            return this.days.remove(day);
+        else
+            return false;
     }
 }
