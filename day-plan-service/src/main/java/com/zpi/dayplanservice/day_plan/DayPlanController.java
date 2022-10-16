@@ -31,7 +31,7 @@ public class DayPlanController {
     }
 
     @DeleteMapping()
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteDayPlan(@RequestParam(name = "dayPlanId")Long dayPlanId, @RequestParam(name = "userId")Long userId) {
         dayPlanService.deleteDayPlan(dayPlanId, userId);
     }
@@ -47,7 +47,7 @@ public class DayPlanController {
 
     @GetMapping("sampleData")
     public String getAllDayPlansForGroup(){
-        var dayPlan1 = new DayPlan(1L, LocalDate.now(),"Test");
+        var dayPlan1 = new DayPlan(22L, LocalDate.now(),"Test");
         dayPlanRepository.save(dayPlan1);
         return "Added sample data";
     }
