@@ -43,7 +43,7 @@ public class LufthansaAdapter {
     private Instant tokenExpirationDate;
     private final FlightService flightService;
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
-    private String bearerAccessToken = "Bearer 2t85hmbeqy5vv7axkg4wy8gg";
+    private String bearerAccessToken = "Bearer 7pkz2byx5tpep45jtz8v353p";
     @Value("${client_id}")
     private String client_id;
     @Value("${client_secret}")
