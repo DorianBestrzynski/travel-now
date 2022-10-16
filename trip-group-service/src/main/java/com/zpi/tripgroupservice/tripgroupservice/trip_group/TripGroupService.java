@@ -1,20 +1,22 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
+
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
-//import com.zpi.tripgroupservice.tripgroupservice.mapper.MapStructMapper;
+import com.zpi.tripgroupservice.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.tripgroupservice.mapper.MapStructMapper;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.util.HashMap;
+
 import java.util.List;
 
+import static com.zpi.tripgroupservice.tripgroupservice.commons.Utils.LATITUDE_INDEX;
+import static com.zpi.tripgroupservice.tripgroupservice.commons.Utils.LONGITUDE_INDEX;
 import static com.zpi.tripgroupservice.tripgroupservice.exception.ExceptionInfo.*;
 
 @Service
@@ -23,6 +25,7 @@ public class TripGroupService {
     private final TripGroupRepository tripGroupRepository;
     private final UserGroupService userGroupService;
     private final MapStructMapper mapstructMapper;
+    private final Geolocation geolocation;
 
     public List<TripGroup> getAllGroupsForUser(Long userId){
         if(userId == null){
@@ -40,10 +43,15 @@ public class TripGroupService {
     @Transactional
     public TripGroup createGroup(Long userId, TripGroupDto groupDto) {
             var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation(), groupDto.startCity());
+            var coordinates = geolocation.findCoordinates(groupDto.startLocation());
+            tripGroup.setLatitude(coordinates[LATITUDE_INDEX]);
+            tripGroup.setLatitude(coordinates[LONGITUDE_INDEX]);
             tripGroupRepository.save(tripGroup);
             userGroupService.createUserGroup(userId, tripGroup.getGroupId(), tripGroup.getVotesLimit());
             return tripGroup;
     }
+
+
     @Transactional
     public void deleteGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null){
