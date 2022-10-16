@@ -1,5 +1,6 @@
 package com.zpi.dayplanservice.attraction;
 
+import com.zpi.dayplanservice.dto.AttractionCandidateDto;
 import com.zpi.dayplanservice.dto.AttractionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,9 @@ public class AttractionController {
     }
 
     @PostMapping()
-    public ResponseEntity<Attraction> addAttraction(@RequestBody AttractionDto attractionDto) {
-        var accommodation = attractionService.addAttraction(attractionDto);
-        return ResponseEntity.ok(accommodation);
+    public ResponseEntity<List<AttractionCandidateDto>> addAttraction(@RequestBody AttractionDto attractionDto) {
+        var attractionCandidates = attractionService.findCandidates(attractionDto);
+        return ResponseEntity.ok(attractionCandidates);
     }
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
