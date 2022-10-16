@@ -1,42 +1,64 @@
 package com.zpi.dayplanservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalTime;
 
-public record AttractionCandidateDto(
+public class AttractionCandidateDto {
+        @Setter
+        @Getter
         @NotNull
         @JsonProperty("attractionName")
-        String attractionName,
+        private String attractionName;
 
+        @Setter
+        @Getter
+        @JsonProperty("address")
+        private String address;
+
+        @Setter
+        @Getter
         @JsonProperty("openingHours")
-        LocalTime openingHours,
+        private String[] openingHours;
 
-        @JsonProperty("closingHours")
-        LocalTime closingHours,
-
+        @Setter
+        @Getter
         @NotNull
         @JsonProperty("latitude")
-        Double latitude,
+        private Double latitude;
 
+        @Setter
+        @Getter
         @NotNull
         @JsonProperty("longitude")
-        Double longitude,
+        private Double longitude;
 
+        @Setter
+        @Getter
         @NotNull
         @JsonProperty("placeId")
-        String placeId,
+        private String placeId;
 
+        @Setter
+        @Getter
         @NotNull
         @JsonProperty("photoLink")
-        String photoLink,
+        private String photoLink;
 
+        @Setter
+        @Getter
         @JsonProperty("url")
-        String url
+        private String url;
 
-) {
+
         public AttractionCandidateDto(String attractionName, Double latitude, Double longitude, String placeId, String photoLink) {
-                this(attractionName, null, null, latitude, longitude, placeId, photoLink, null);
+            this.attractionName = attractionName;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.placeId = placeId;
+            this.photoLink = photoLink;
         }
+
 }
