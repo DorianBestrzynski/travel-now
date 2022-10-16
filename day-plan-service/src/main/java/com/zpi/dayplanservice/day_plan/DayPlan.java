@@ -38,6 +38,9 @@ public class DayPlan {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    @Column(name = "icon_type", nullable = true, length = 10)
+    private Integer iconType;
+
     @ManyToMany
     @JoinTable(
             name = "Day_Plan_Atraction",
@@ -64,5 +67,23 @@ public class DayPlan {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public boolean addAttraction(Attraction attraction) {
+        return this.dayAttractions.add(attraction);
+    }
+
+    public Attraction deleteAttraction(Long attractionId) {
+        var attractionToDelete = this.dayAttractions.stream()
+                .filter(attraction -> attraction.getAttraction_id().equals(attractionId))
+                .findFirst()
+                .orElse(null);
+        if (attractionToDelete != null) {
+            this.dayAttractions.remove(attractionToDelete);
+            return attractionToDelete;
+        }
+        else {
+            throw new IllegalArgumentException("Attraction with id " + attractionId + " not found");
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.zpi.dayplanservice.attraction;
 
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
-import com.zpi.dayplanservice.dto.AttractionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,22 +20,30 @@ public class AttractionController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping()
-    public ResponseEntity<List<AttractionCandidateDto>> addAttraction(@RequestBody AttractionDto attractionDto) {
-        var attractionCandidates = attractionService.findCandidates(attractionDto);
+    @GetMapping("/find")
+    public ResponseEntity<List<AttractionCandidateDto>> getCandidates(@RequestParam(name = "name") String name) {
+        var attractionCandidates = attractionService.findCandidates(name);
         return ResponseEntity.ok(attractionCandidates);
     }
-    @DeleteMapping
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteAttraction(@RequestParam Long attractionId, @RequestParam Long dayPlanId){
-        attractionService.deleteAccommodation(attractionId, dayPlanId);
-    }
-    @PatchMapping()
-    public ResponseEntity<Attraction> editAccommodation(@RequestParam(name = "attractionId") Long attractionId,
-                                                           @RequestParam(name = "userId") Long userId,
-                                                           @RequestBody AttractionDto attractionDto){
-        var result = attractionService.editAccommodation(attractionId, userId, attractionDto);
-        return new ResponseEntity<>(result, HttpStatus.OK);
 
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAttraction(@RequestParam Long attractionId, @RequestParam Long dayPlanId){
+        attractionService.deleteAttraction(attractionId, dayPlanId);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Attraction> addAttraction(@RequestParam(name = "dayPlanId") List<Long> dayPlanIds,
+                                                    @RequestParam(name = "userId") Long userId,
+                                                    @RequestBody AttractionCandidateDto attractionCandidateDto){
+        var result = attractionService.addAttraction(dayPlanIds, userId,  attractionCandidateDto);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping()
+    public ResponseEntity<Attraction> editAttraction(@RequestParam(name = "userId") Long userId,
+                                                    @RequestBody Attraction attraction) {
+        var result = attractionService.editAttraction(userId, attraction);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
