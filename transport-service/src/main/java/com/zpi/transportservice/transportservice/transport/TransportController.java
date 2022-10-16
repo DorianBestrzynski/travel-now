@@ -5,7 +5,10 @@ import com.zpi.transportservice.transportservice.accommodation_transport.Accommo
 import com.zpi.transportservice.transportservice.accommodation_transport.AccommodationTransportRepository;
 import com.zpi.transportservice.transportservice.commons.TransportType;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
+import com.zpi.transportservice.transportservice.dto.UserTransportDto;
+import com.zpi.transportservice.transportservice.mapper.MapStructMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +25,7 @@ import java.util.List;
 public class TransportController {
 
     private final TransportRepository transportRepository;
-
     private final TransportService transportService;
-
     private final AccommodationTransportRepository accommodationTransportRepository;
 
     @GetMapping("/addtran")
@@ -37,10 +38,19 @@ public class TransportController {
     }
 
     @PostMapping()
-    public ResponseEntity<List<Transport>> getTransportForAccommodation (@RequestParam Long accommodationId) {
+    public ResponseEntity<List<Transport>> getTransportForAccommodation(@RequestParam Long accommodationId) {
        var transport = transportService.getTransportForAccommodation(accommodationId);
+       return ResponseEntity.ok(transport);
+    }
+
+    @PostMapping("/user-transport")
+    public ResponseEntity<UserTransport> createUserTransport(@RequestParam Long accommodationId, @RequestBody UserTransportDto userTransportDto) {
+        var transport = transportService.createUserTransport(accommodationId, userTransportDto);
         return ResponseEntity.ok(transport);
     }
+
+
+
 
 
 }
