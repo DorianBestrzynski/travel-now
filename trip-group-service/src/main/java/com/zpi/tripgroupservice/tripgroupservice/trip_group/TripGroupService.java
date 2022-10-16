@@ -45,7 +45,7 @@ public class TripGroupService {
             var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation(), groupDto.startCity());
             var coordinates = geolocation.findCoordinates(groupDto.startLocation());
             tripGroup.setLatitude(coordinates[LATITUDE_INDEX]);
-            tripGroup.setLatitude(coordinates[LONGITUDE_INDEX]);
+            tripGroup.setLongitude(coordinates[LONGITUDE_INDEX]);
             tripGroupRepository.save(tripGroup);
             userGroupService.createUserGroup(userId, tripGroup.getGroupId(), tripGroup.getVotesLimit());
             return tripGroup;
