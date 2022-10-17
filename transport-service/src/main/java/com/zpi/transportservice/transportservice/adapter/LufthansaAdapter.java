@@ -1,5 +1,9 @@
 package com.zpi.transportservice.transportservice.adapter;
 
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DirectionsResult;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
 import com.zpi.transportservice.transportservice.dto.AirportInfoDto;
 import com.zpi.transportservice.transportservice.dto.TripDataDto;
@@ -19,9 +23,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
@@ -42,8 +47,10 @@ public class LufthansaAdapter {
     private final RestTemplate restTemplate;
     private Instant tokenExpirationDate;
     private final FlightService flightService;
+
+    private final GeoApiContext context;
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
-    private String bearerAccessToken = "Bearer 7pkz2byx5tpep45jtz8v353p";
+    private String bearerAccessToken = "Bearer g7d4snug8gvumkuuewftysn3";
     @Value("${client_id}")
     private String client_id;
     @Value("${client_secret}")
@@ -57,7 +64,7 @@ public class LufthansaAdapter {
         }
         var nearestAirportSource = findNearestAirport(tripData.latitude(), tripData.longitude());
         var nearestAirportDestination = findNearestAirport(accommodationInfoDto.destinationLatitude(), accommodationInfoDto.destinationLongitude());
-        return findFlightProposals(nearestAirportSource, nearestAirportDestination, tripData.startDate());
+        return findFlightProposals(nearestAirportSource, nearestAirportDestination, tripData, accommodationInfoDto);
     }
 
     private List<AirportInfoDto> findNearestAirport(Double latitude, Double longitude) {
@@ -96,7 +103,7 @@ public class LufthansaAdapter {
         return new HttpEntity<>(headers);
     }
 
-    private TreeMap<Long,List<Flight>> findFlightProposals(List<AirportInfoDto> nearestAirportSource, List<AirportInfoDto> nearestAirportDestination, LocalDate startDate) {
+    private TreeMap<Long, List<Flight>> findFlightProposals(List<AirportInfoDto> nearestAirportSource, List<AirportInfoDto> nearestAirportDestination, TripDataDto tripInfo, AccommodationInfoDto accommodationInfoDto) {
         try {
             HttpEntity<?> entity = getHttpEntity();
 
@@ -107,7 +114,7 @@ public class LufthansaAdapter {
                 throw new LufthansaApiException(LUFTHANSA_NO_AIRPORT_MATCHING);
             }
             StringBuilder url = new StringBuilder(BASE_URL + FLIGHT_SCHEDULES);
-            return findPossibleFlights(sourceAirportsCloserThanThreshold, departureAirportsCloserThanThreshold, url, startDate, entity);
+            return findPossibleFlights(sourceAirportsCloserThanThreshold, departureAirportsCloserThanThreshold, url, tripInfo, entity, accommodationInfoDto);
 
         } catch(Exception ex){
             System.out.println(ex.getMessage());
@@ -116,11 +123,12 @@ public class LufthansaAdapter {
 
     }
 
-    private TreeMap<Long,List<Flight>> findPossibleFlights(List<AirportInfoDto> startAirports, List<AirportInfoDto> destinationAirports, StringBuilder url, LocalDate startDate, HttpEntity<?> entity) {
+    private TreeMap<Long, List<Flight>> findPossibleFlights(List<AirportInfoDto> startAirports, List<AirportInfoDto> destinationAirports, StringBuilder url, TripDataDto tripInfo, HttpEntity<?> entity,
+                                                            AccommodationInfoDto accommodationInfoDto) {
         TreeMap<Long, List<Flight>> allPossibleFlights = new TreeMap<>();
         for (var sourceAirport : startAirports){
             for (var destinationAirport : destinationAirports) {
-                String finalUrl = url.toString() + sourceAirport.airportCode() + "/" + destinationAirport.airportCode() + "/" + startDate;
+                String finalUrl = url.toString() + sourceAirport.airportCode() + "/" + destinationAirport.airportCode() + "/" + tripInfo.startDate();
                 UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(finalUrl).queryParam("limit", FLIGHT_PROPOSAL_LIMIT);
                 try {
                     ResponseEntity<String> response = restTemplate.exchange(
@@ -129,7 +137,7 @@ public class LufthansaAdapter {
                             entity,
                             String.class);
 
-                    var flightProposal = parseResponseToFlight(response.getBody());
+                    var flightProposal = parseResponseToFlight(response.getBody(), tripInfo, accommodationInfoDto);
                     allPossibleFlights.put(flightProposal.getKey(), flightProposal.getValue());
 
                 } catch (Exception ex) {
@@ -141,7 +149,8 @@ public class LufthansaAdapter {
         return allPossibleFlights;
     }
 
-    private Map.Entry<Long, List<Flight>> parseResponseToFlight(String flightSchedule) {
+    private Map.Entry<Long, List<Flight>> parseResponseToFlight(String flightSchedule,
+                                                                TripDataDto tripInfo, AccommodationInfoDto accommodationInfoDto) {
         List<Flight> flightList = new ArrayList<>();
         JSONObject flightSchedules = new JSONObject(flightSchedule);
         var scheduleResource = flightSchedules.getJSONObject("ScheduleResource").getJSONObject("Schedule");
@@ -168,7 +177,25 @@ public class LufthansaAdapter {
             flightList.add(flight);
 
         }
+
+        var firstFlight = flightList.get(0);
+        var lastFlight = flightList.get(flightList.size() - 1);
+        firstFlight.setTravelToAirportDuration(findTravelDuration(firstFlight.getDepartureAirport(), tripInfo.startingLocation()));
+        lastFlight.setTravelToAccommodationDuration(findTravelDuration(lastFlight.getArrivalAirport(), accommodationInfoDto.streetAddress()));
+        totalDuration = totalDuration.plus(firstFlight.getTravelToAirportDuration());
+        totalDuration = totalDuration.plus(lastFlight.getTravelToAccommodationDuration());
+
         return Map.entry(totalDuration.getSeconds(), flightList);
+    }
+
+    private Duration findTravelDuration(String airport, String location)  {
+        DirectionsResult route = null;
+        try {
+            route = DirectionsApi.getDirections(context, location, "airport" + airport).await();
+        } catch (ApiException | InterruptedException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return Duration.ofSeconds(route.routes[0].legs[0].duration.inSeconds);
     }
 
     private List<AirportInfoDto> onlyAirportsToGivenThreshold(List<AirportInfoDto> airportInfo, Integer thresholdDistance){
@@ -200,7 +227,7 @@ public class LufthansaAdapter {
             var expirationTime = json.getLong(EXPIRATION);
             this.tokenExpirationDate = Instant.now().plusSeconds(expirationTime);
 
-        }catch (Exception ex){
+        } catch (Exception ex){
             throw new RuntimeException("Exception while getting Lufthansa access token");
         }
     }

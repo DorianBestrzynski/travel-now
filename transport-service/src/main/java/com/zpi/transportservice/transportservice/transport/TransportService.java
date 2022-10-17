@@ -1,5 +1,8 @@
 package com.zpi.transportservice.transportservice.transport;
 
+import com.google.maps.DirectionsApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.errors.ApiException;
 import com.zpi.transportservice.transportservice.accommodation_transport.AccommodationTransportService;
 import com.zpi.transportservice.transportservice.adapter.LufthansaAdapter;
 import com.zpi.transportservice.transportservice.dto.AccommodationInfoDto;
@@ -11,15 +14,18 @@ import com.zpi.transportservice.transportservice.mapper.MapStructMapper;
 import com.zpi.transportservice.transportservice.proxy.AccommodationProxy;
 import com.zpi.transportservice.transportservice.proxy.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.*;
-import java.util.*;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeMap;
 
 
 @Service
@@ -33,45 +39,104 @@ public class TransportService {
     private final LufthansaAdapter lufthansaAdapter;
     private final FlightService flightService;
     private final MapStructMapper mapper;
+    private final GeoApiContext context;
 
     @Transactional
-    public List<Transport> getTransportForAccommodation(Long accommodationId){
+    public List<Transport> getTransportForAccommodation(Long accommodationId) {
         List<Transport> transports = new ArrayList<>();
         var accommodationTransportIdList = accommodationTransportService.findAccommodationTransport(accommodationId)
-                .stream()
-                .map(accommodationTransport -> accommodationTransport.getId().getTransportId())
-                .toList();
+                                                                        .stream()
+                                                                        .map(accommodationTransport -> accommodationTransport.getId().getTransportId())
+                                                                        .toList();
         var accommodationInfo = accommodationProxy.getAccommodationInfo(accommodationId);
         var tripInfo = tripGroupProxy.getTripData(accommodationInfo.groupId());
         var userTransport = getUserTransport(accommodationTransportIdList);
-        var airTransport = generateTransportForAccommodationAir(accommodationTransportIdList, accommodationInfo, tripInfo, accommodationId);
+        var airTransport = generateAirTransportForAccommodation(accommodationTransportIdList, accommodationInfo,
+                                                                tripInfo, accommodationId);
         //TODO here car transport logic and return type List<Transport> with best AirTransport and CarTransport
-        if(airTransport != null){
+        var carTransport = generateCarTransportForAccommodation(accommodationTransportIdList, accommodationInfo,
+                                                                tripInfo, accommodationId);
+        if (airTransport != null) {
             transports.add(airTransport);
+        }
+
+        if (carTransport != null) {
+            transports.add(carTransport);
         }
         transports.addAll(userTransport);
         return transports;
+    }
+
+    private CarTransport generateCarTransportForAccommodation(List<Long> accommodationTransportIdList,
+                                                              AccommodationInfoDto accommodationInfo,
+                                                              TripDataDto tripData, Long accommodationId) {
+        var carTransport = shouldGenerateCarTransport(accommodationTransportIdList, accommodationInfo, tripData,
+                                                      accommodationId);
+        if (carTransport == null) {
+            try {
+                var route = DirectionsApi.getDirections(context, tripData.startingLocation(), accommodationInfo.streetAddress()).await();
+                var distance = route.routes[0].legs[0].distance.inMeters;
+                var duration = Duration.ofSeconds(route.routes[0].legs[0].duration.inSeconds);
+                var endDate = tripData.startDate().plus(duration.toDays(), ChronoUnit.DAYS);
+
+                var newCarTransport = new CarTransport(duration, distance, null, tripData.startingLocation(),
+                                                       accommodationInfo.streetAddress(), tripData.startDate(), endDate,
+                                                       null);
+                var carTransportSaved = transportRepository.save(newCarTransport);
+                accommodationTransportService.createAccommodationTransport(accommodationId, carTransportSaved.getTransportId());
+
+                return carTransportSaved;
+            } catch (ApiException | InterruptedException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return carTransport;
+    }
+
+    private CarTransport shouldGenerateCarTransport(List<Long> accommodationTransportIds,
+                                                    AccommodationInfoDto accommodationInfo, TripDataDto tripData,
+                                                    Long accommodationId) {
+        var carTransports = transportRepository.findCarTransport(accommodationTransportIds);
+        if (carTransports.isEmpty()) {
+            var matchingAccommodationCarTransport = transportRepository.findMatchingCarTransport(
+                    tripData.startingLocation(),
+                    accommodationInfo.city(), tripData.startDate());
+            if (matchingAccommodationCarTransport.isEmpty()) {
+                return null;
+            }
+            accommodationTransportService.createAccommodationTransport(accommodationId,
+                                                                       matchingAccommodationCarTransport.get(0)
+                                                                                                        .getTransportId());
+            return matchingAccommodationCarTransport.get(0);
+        }
+        return carTransports.get(0);
     }
 
     private List<UserTransport> getUserTransport(List<Long> transportList) {
         return transportRepository.findUserTransport(transportList);
     }
 
-    public AirTransport generateTransportForAccommodationAir(List<Long> accommodationTransportIds, AccommodationInfoDto accommodationInfo, TripDataDto tripData, Long accommodationId) {
-        var transportAir = shouldGenerateTransportAir(accommodationTransportIds, accommodationInfo, tripData, accommodationId);
-        if(transportAir == null){
+    public AirTransport generateAirTransportForAccommodation(List<Long> accommodationTransportIds,
+                                                             AccommodationInfoDto accommodationInfo,
+                                                             TripDataDto tripData, Long accommodationId) {
+
+        var transportAir = shouldGenerateAirTransport(accommodationTransportIds, accommodationInfo, tripData, accommodationId);
+        if (transportAir == null) {
             var flightProposals = lufthansaAdapter.generateTransportAir(accommodationInfo, tripData);
             return selectBestFlight(flightProposals, accommodationId, accommodationInfo, tripData);
         }
         return transportAir;
     }
 
-    private AirTransport selectBestFlight(TreeMap<Long, List<Flight>> flightProposals, Long accommodationId, AccommodationInfoDto accommodationInfoDto, TripDataDto tripData) {
-        if(flightProposals != null){
+    private AirTransport selectBestFlight(TreeMap<Long, List<Flight>> flightProposals, Long accommodationId,
+                                          AccommodationInfoDto accommodationInfoDto, TripDataDto tripData) {
+        if (flightProposals != null) {
             var bestOption = flightProposals.firstEntry();
             var totalDuration = Duration.ofSeconds(bestOption.getKey());
             var flights = bestOption.getValue();
-            AirTransport airTransport = new AirTransport(totalDuration, BigDecimal.ZERO, tripData.startingLocation(), accommodationInfoDto.city(), tripData.startDate(), tripData.endDate(), "Why link", flights);
+            AirTransport airTransport = new AirTransport(totalDuration, BigDecimal.ZERO, tripData.startingLocation(),
+                                                         accommodationInfoDto.city(), tripData.startDate(),
+                                                         tripData.endDate(), "Why link", flights);
             flightService.setFlights(flights, airTransport);
             var airTransportSaved = transportRepository.save(airTransport);
             accommodationTransportService.createAccommodationTransport(accommodationId, airTransportSaved.getTransportId());
@@ -80,15 +145,17 @@ public class TransportService {
         return null;
     }
 
-    private AirTransport shouldGenerateTransportAir(List<Long> accommodationTransportIds, AccommodationInfoDto accommodationInfo, TripDataDto tripData, Long accommodationId) {
-        var transportAir = transportRepository.findTransportAir(accommodationTransportIds);
-        if(transportAir.isEmpty()) {
-            var matchingAccommodationTransportAir = transportRepository.findMatchingTransportAir(tripData.startingLocation(),
-                    accommodationInfo.city(), tripData.startDate());
-            if(matchingAccommodationTransportAir.isEmpty()) {
+    private AirTransport shouldGenerateAirTransport(List<Long> accommodationTransportIds,
+                                                    AccommodationInfoDto accommodationInfo, TripDataDto tripData,
+                                                    Long accommodationId) {
+        var transportAir = transportRepository.findAirTransport(accommodationTransportIds);
+        if (transportAir.isEmpty()) {
+            var matchingAccommodationTransportAir = transportRepository.findMatchingAirTransport(tripData.startingLocation(), accommodationInfo.city(), tripData.startDate());
+            if (matchingAccommodationTransportAir.isEmpty()) {
                 return null;
             }
-            accommodationTransportService.createAccommodationTransport(accommodationId, matchingAccommodationTransportAir.get(0).getTransportId());
+            accommodationTransportService.createAccommodationTransport(accommodationId, matchingAccommodationTransportAir.get(0)
+                                                                                                        .getTransportId());
             return matchingAccommodationTransportAir.get(0);
         }
         return transportAir.get(0);
@@ -96,11 +163,15 @@ public class TransportService {
 
     @Transactional
     public UserTransport createUserTransport(Long accommodationId, @Valid UserTransportDto userTransportDto) {
-        UserTransport userTransport = new UserTransport(userTransportDto.duration(), userTransportDto.price(), userTransportDto.source(),
-                userTransportDto.destination(), userTransportDto.startDate(), userTransportDto.endDate(), userTransportDto.link(),
-                userTransportDto.meanOfTransport(), userTransportDto.description(), userTransportDto.meetingTime());
+        UserTransport userTransport = new UserTransport(userTransportDto.duration(), userTransportDto.price(),
+                                                        userTransportDto.source(),
+                                                        userTransportDto.destination(), userTransportDto.startDate(),
+                                                        userTransportDto.endDate(), userTransportDto.link(),
+                                                        userTransportDto.meanOfTransport(),
+                                                        userTransportDto.description(), userTransportDto.meetingTime());
         var userTransportSaved = transportRepository.save(userTransport);
-        accommodationTransportService.createAccommodationTransport(accommodationId, userTransportSaved.getTransportId());
+        accommodationTransportService.createAccommodationTransport(accommodationId,
+                                                                   userTransportSaved.getTransportId());
         return userTransportSaved;
     }
 }

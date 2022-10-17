@@ -43,6 +43,14 @@ public class Flight {
     @Column(name = "flight_duration")
     private Duration flightDuration;
 
+    @Setter
+    @Column(name = "travel_to_airport_duration")
+    private Duration travelToAirportDuration = Duration.ZERO;
+
+    @Setter
+    @Column(name = "travel_to_accommodation_duration")
+    private Duration travelToAccommodationDuration = Duration.ZERO;
+
     @ManyToOne
     @JoinColumn(name = "transport_id", nullable = false)
     @JsonBackReference
