@@ -24,8 +24,4 @@ public class Password implements Serializable  {
         this.hashedPassword = hashedPassword;
     }
 
-
-
-
-
 }

@@ -1,14 +1,12 @@
 package com.zpi.userservice.user;
 
+import com.zpi.userservice.dto.RegisterRequestDto;
 import com.zpi.userservice.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +20,27 @@ public class AppUserService {
 
         return usersList.parallelStream()
                         .map(u -> new UserDto(u.getUserId(),
+                                              u.getEmail(),
                                               u.getUsername(),
                                               u.getFirstName(),
                                               u.getSurname()))
                         .toList();
+    }
+
+    public AppUser getAppUserByEmail(String email) {
+        return appUserRepository.findAppUserByEmail(email).orElseThrow();
+    }
+
+    public void registerUser(RegisterRequestDto registerRequestDto) {
+        var password = new Password(registerRequestDto.password());
+        var user = new AppUser(registerRequestDto.email(),
+                               registerRequestDto.username(),
+                               registerRequestDto.firstName(),
+                               registerRequestDto.surname(),
+                               registerRequestDto.birthday(),
+                               LocalDateTime.now(),
+                               password);
+        password.setAppUser(user);
+        appUserRepository.save(user);
     }
 }

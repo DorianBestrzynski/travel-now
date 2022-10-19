@@ -1,7 +1,10 @@
 package com.zpi.userservice.user;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -59,7 +62,6 @@ public class AppUser {
         this.registrationDate = registrationDate;
         this.password = password;
     }
-
 
     @Override
     public boolean equals(Object o) {
