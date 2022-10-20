@@ -5,6 +5,9 @@ spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 
+jwt:
+  signing-secret: secret
+
 spring:
   cloud:
     config:

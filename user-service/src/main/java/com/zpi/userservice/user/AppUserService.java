@@ -3,6 +3,7 @@ package com.zpi.userservice.user;
 import com.zpi.userservice.dto.RegisterRequestDto;
 import com.zpi.userservice.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppUserService {
     private final AppUserRepository appUserRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     public List<UserDto> getUsers(List<Long> usersIds) {
@@ -32,7 +34,8 @@ public class AppUserService {
     }
 
     public void registerUser(RegisterRequestDto registerRequestDto) {
-        var password = new Password(registerRequestDto.password());
+        var encodedPassword = passwordEncoder.encode(registerRequestDto.password());
+        var password = new Password(encodedPassword);
         var user = new AppUser(registerRequestDto.email(),
                                registerRequestDto.username(),
                                registerRequestDto.firstName(),
