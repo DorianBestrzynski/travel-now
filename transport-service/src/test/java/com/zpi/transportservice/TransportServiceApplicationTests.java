@@ -1,4 +1,4 @@
-package com.zpi.transportservice.transportservice;
+package com.zpi.transportservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
