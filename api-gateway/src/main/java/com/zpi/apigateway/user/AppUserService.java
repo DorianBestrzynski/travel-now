@@ -1,7 +1,7 @@
 package com.zpi.apigateway.user;
 
-import com.zpi.userservice.dto.RegisterRequestDto;
-import com.zpi.userservice.dto.UserDto;
+import com.zpi.apigateway.dto.RegisterRequestDto;
+import com.zpi.apigateway.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

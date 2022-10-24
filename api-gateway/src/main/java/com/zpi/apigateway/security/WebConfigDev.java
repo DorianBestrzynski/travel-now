@@ -1,8 +1,9 @@
-package security;
+package com.zpi.apigateway.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 @Configuration
 public class WebConfigDev implements WebMvcConfigurer

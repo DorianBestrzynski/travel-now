@@ -1,13 +1,13 @@
-package auth;
+package com.zpi.apigateway.auth;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.zpi.userservice.dto.LoginRequestBodyDto;
-import com.zpi.userservice.dto.RegisterRequestDto;
-import com.zpi.userservice.dto.UserDto;
-import com.zpi.userservice.mapstruct.MapStructMapper;
-import com.zpi.userservice.security.JwtTokenFilter;
-import com.zpi.userservice.user.AppUserService;
+import com.zpi.apigateway.dto.LoginRequestBodyDto;
+import com.zpi.apigateway.dto.RegisterRequestDto;
+import com.zpi.apigateway.dto.UserDto;
+import com.zpi.apigateway.mapstruct.MapStructMapper;
+import com.zpi.apigateway.security.JwtTokenFilter;
+import com.zpi.apigateway.user.AppUserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

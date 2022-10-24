@@ -1,6 +1,6 @@
-package security;
+package com.zpi.apigateway.security;
 
-import com.zpi.userservice.user.AppUserService;
+import com.zpi.apigateway.user.AppUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
