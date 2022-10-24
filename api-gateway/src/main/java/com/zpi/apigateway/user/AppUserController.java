@@ -1,6 +1,6 @@
 package com.zpi.apigateway.user;
 
-import com.zpi.userservice.dto.UserDto;
+import com.zpi.apigateway.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

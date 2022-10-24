@@ -1,8 +1,10 @@
 package com.zpi.apigateway.user;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
