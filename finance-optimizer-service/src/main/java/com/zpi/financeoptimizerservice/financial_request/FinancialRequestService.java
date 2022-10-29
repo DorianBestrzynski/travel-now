@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
+
 @Service
 @RequiredArgsConstructor
 public class FinancialRequestService {
@@ -54,5 +55,9 @@ public class FinancialRequestService {
 
     public void deleteAllFinancialRequests() {
         financialRequestRepository.deleteAll();
+    }
+
+    public Set<FinancialRequest> getAllActiveInGroup(Long groupId) {
+        return financialRequestRepository.getAllActiveInGroup(groupId);
     }
 }
