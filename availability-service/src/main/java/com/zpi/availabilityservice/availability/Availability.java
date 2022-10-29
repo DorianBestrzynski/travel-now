@@ -21,7 +21,7 @@ public class Availability {
             name = "availability_sequence",
             sequenceName = "availability_sequence", allocationSize = 10)
     @Column(name = "availability_id", nullable = false, unique = true)
-    private Long availabilityID;
+    private Long availabilityId;
     @Getter
     @Column(name = "user_id", nullable = false)
     private Long userId;
@@ -49,7 +49,7 @@ public class Availability {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Availability that = (Availability) o;
-        return availabilityID != null && Objects.equals(availabilityID, that.availabilityID);
+        return availabilityId != null && Objects.equals(availabilityId, that.availabilityId);
     }
 
     @Override

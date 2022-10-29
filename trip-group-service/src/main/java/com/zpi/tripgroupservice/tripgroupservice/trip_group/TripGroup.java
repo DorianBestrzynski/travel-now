@@ -71,7 +71,13 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
-    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity) {
+    @Column(name = "minimal_number_of_days", nullable = false)
+    private Integer minimalNumberOfDays;
+
+    @Column(name = "minimal_number_of_participants", nullable = false)
+    private Integer minimalNumberOfParticipants;
+
+    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity, Integer minimalNumberOfDays, Integer minimalNumberOfParticipants) {
         this.name = name;
         this.currency = currency;
         this.description = Objects.requireNonNullElse(description,DEFAULT_DESCRIPTION + name);
@@ -83,6 +89,8 @@ public class TripGroup {
         this.endDate = LocalDate.of(2022, 11,1);
         this.latitude = 52.50;
         this.longitude = 13.36;
+        this.minimalNumberOfDays = 3;
+        this.minimalNumberOfParticipants = 3;
 
     }
 

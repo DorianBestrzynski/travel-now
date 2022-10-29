@@ -2,6 +2,7 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
+import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroup;
@@ -14,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 
 @RequestMapping("api/v1/trip-group")
@@ -56,15 +55,21 @@ public class TripGroupController {
         return ResponseEntity.ok(tripData);
     }
 
+    @GetMapping("/availability-info")
+    public ResponseEntity<AvailabilityConstraintsDto> getAvailabilityConstraints(@RequestParam Long groupId){
+        var availabilityConstraints = tripGroupService.getAvailabilityConstraints(groupId);
+        return ResponseEntity.ok(availabilityConstraints);
+    }
+
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {
-        var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona", "Barcelona");
-        var tripGroup1 = new TripGroup("Test2", Currency.PLN, "Opis2", 3, "Madryt", "Madryt");
-        var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw", "Wroclaw");
-        var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva", "Huelva");
-        var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa", "Pisa");
-        var tripGroup5 = new TripGroup("Finance Optimizer", Currency.PLN, "Grupa testujaca optymalizacje", 6, "Pisa", "Pisa");
+        var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona", "Barcelona",3,3);
+        var tripGroup1 = new TripGroup("Test2", Currency.PLN, "Opis2", 3, "Madryt", "Madryt",3,5);
+        var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw", "Wroclaw",2,5);
+        var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva", "Huelva",3,4);
+        var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa", "Pisa",4,6);
+        var tripGroup5 = new TripGroup("Finance Optimizer", Currency.PLN, "Grupa testujaca optymalizacje", 6, "Pisa", "Pisa", 2 ,5);
         tripGroupRepository.saveAll(List.of(tripGroup1, tripGroup2, tripGroup3, tripGroup4, tripGroup, tripGroup5));
 
         var userData1 = new UserGroup(new UserGroupKey(1L, tripGroup.getGroupId()), Role.COORDINATOR, 1);

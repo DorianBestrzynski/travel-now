@@ -13,4 +13,5 @@ public interface AvailabilityRepository extends JpaRepository<Availability, Long
     List<Availability> findAvailabilitiesByUserIdAndGroupId(Long userId, Long groupId);
     List<Availability> findAvailabilitiesByGroupId(Long groupId);
 
+
 }
