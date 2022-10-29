@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/finance-optimizer")
+@RequestMapping("api/v1/finance-request")
 @RequiredArgsConstructor
 public class FinancialRequestController {
 
@@ -31,4 +31,5 @@ public class FinancialRequestController {
         financialRequestService.acceptFinancialRequest(requestId, userId);
         return ResponseEntity.ok().build();
     }
+
 }

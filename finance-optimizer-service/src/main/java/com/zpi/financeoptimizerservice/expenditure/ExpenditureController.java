@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -39,6 +38,12 @@ public class ExpenditureController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteExpenditure(@RequestParam Long expenditureId, @RequestParam Long userId, @RequestParam Long groupId){
         expenditureService.deleteExpenditure(expenditureId, userId, groupId);
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<Map<Long, Double>> getGroupBalance(@RequestParam Long groupId, @RequestParam Long userId){
+        var result = expenditureService.getGroupBalance(groupId, userId);
+        return ResponseEntity.ok(result);
     }
 
 }
