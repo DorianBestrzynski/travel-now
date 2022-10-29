@@ -27,8 +27,8 @@ public class FinancialRequestController {
     }
 
     @PatchMapping("/accept")
-    public ResponseEntity<?> acceptRequest(@RequestParam Long requestId, @RequestParam Long userId) {
-        financialRequestService.acceptFinancialRequest(requestId, userId);
+    public ResponseEntity<?> acceptRequest(@RequestParam Long requestId, @RequestParam Long userId, @RequestParam Long groupId) {
+        financialRequestService.acceptFinancialRequest(requestId, userId, groupId);
         return ResponseEntity.ok().build();
     }
 
