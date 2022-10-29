@@ -14,7 +14,6 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-//@NoArgsConstructor
 public class AppUser {
     @Id
     @GeneratedValue(
@@ -43,20 +42,19 @@ public class AppUser {
     private LocalDate birthday;
 
     @Column(name = "registration_date", nullable = false)
-    private LocalDateTime registrationDate;
+    private LocalDateTime registrationDate = LocalDateTime.now();
 
     @JsonManagedReference
     @OneToOne(cascade=CascadeType.ALL, mappedBy = "appUser", fetch = FetchType.LAZY)
     @ToString.Exclude
     private Password password;
 
-    public AppUser(String username, String email, String firstName, String surname, LocalDate birthday, LocalDateTime registrationDate, Password password){
+    public AppUser(String username, String email, String firstName, String surname, LocalDate birthday, Password password){
         this.username = username;
         this.email = email;
         this.firstName = firstName;
         this.surname = surname;
         this.birthday = birthday;
-        this.registrationDate = registrationDate;
         this.password = password;
     }
 

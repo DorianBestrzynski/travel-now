@@ -64,7 +64,8 @@ public class TripGroupController {
         var tripGroup2 = new TripGroup("Test3", Currency.USD, "Opis3", 4, "Wroclaw", "Wroclaw");
         var tripGroup3 = new TripGroup("Test4", Currency.PLN, "Opis4", 5, "Huelva", "Huelva");
         var tripGroup4 = new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa", "Pisa");
-        tripGroupRepository.saveAll(List.of(tripGroup1, tripGroup2, tripGroup3, tripGroup4, tripGroup));
+        var tripGroup5 = new TripGroup("Finance Optimizer", Currency.PLN, "Grupa testujaca optymalizacje", 6, "Pisa", "Pisa");
+        tripGroupRepository.saveAll(List.of(tripGroup1, tripGroup2, tripGroup3, tripGroup4, tripGroup, tripGroup5));
 
         var userData1 = new UserGroup(new UserGroupKey(1L, tripGroup.getGroupId()), Role.COORDINATOR, 1);
         var userData2 = new UserGroup(new UserGroupKey(1L, tripGroup1.getGroupId()), Role.COORDINATOR, 1);
@@ -72,8 +73,13 @@ public class TripGroupController {
         var userData4 = new UserGroup(new UserGroupKey(1L, tripGroup3.getGroupId()), Role.COORDINATOR, 1);
         var userData5 = new UserGroup(new UserGroupKey(2L, tripGroup4.getGroupId()), Role.COORDINATOR, 1);
         var userData6 = new UserGroup(new UserGroupKey(2L, tripGroup1.getGroupId()), Role.PARTICIPANT, 1);
+        var userData7 = new UserGroup(new UserGroupKey(1L, tripGroup5.getGroupId()), Role.COORDINATOR, 1);
+        var userData8 = new UserGroup(new UserGroupKey(2L, tripGroup5.getGroupId()), Role.PARTICIPANT, 1);
+        var userData9 = new UserGroup(new UserGroupKey(3L, tripGroup5.getGroupId()), Role.PARTICIPANT, 1);
+        var userData10 = new UserGroup(new UserGroupKey(4L, tripGroup5.getGroupId()), Role.PARTICIPANT, 1);
 
-        userGroupRepository.saveAll(List.of(userData1, userData2, userData3, userData4, userData5, userData6));
+
+        userGroupRepository.saveAll(List.of(userData1, userData2, userData3, userData4, userData5, userData6, userData7, userData8, userData9, userData10));
 
         return "Created sample data";
     }

@@ -1,4 +1,4 @@
-package com.zpi.financeoptimizerservice.financeoptimazerservice;
+package com.zpi.financeoptimizerservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
