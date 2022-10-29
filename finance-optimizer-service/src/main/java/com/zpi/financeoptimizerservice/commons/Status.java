@@ -1,4 +1,4 @@
-package com.zpi.financeoptimizerservice.financeoptimazerservice.commons;
+package com.zpi.financeoptimizerservice.commons;
 
 import lombok.Getter;
 

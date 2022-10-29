@@ -28,8 +28,8 @@ public class AccommodationController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteAccommodation(@RequestParam Long accommodationId, @RequestParam Long userId){
         accommodationService.deleteAccommodation(accommodationId, userId);
-
     }
+
     @PatchMapping()
     public ResponseEntity<Accommodation> editAccommodation(@RequestParam(name = "accommodationId")Long accommodationId,
                                                @RequestParam(name = "userId")Long userId,
