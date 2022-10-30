@@ -9,4 +9,6 @@ import java.util.List;
 public interface SharedGroupAvailabilityRepository extends JpaRepository<SharedGroupAvailability, Long> {
 
     List<SharedGroupAvailability> findAllByGroupId(Long groupId);
+
+    void deleteAllByGroupId(Long groupId);
 }

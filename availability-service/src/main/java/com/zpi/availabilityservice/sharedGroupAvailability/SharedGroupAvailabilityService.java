@@ -42,8 +42,9 @@ public class SharedGroupAvailabilityService {
 
         var availabilities = findLongestSubset(userToDatesMap, groupId);
 
-
+        sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
         sharedGroupAvailabilityRepository.saveAll(availabilities);
+
 
     }
 
