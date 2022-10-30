@@ -46,4 +46,10 @@ public class AttractionController {
         var result = attractionService.editAttraction(userId, attraction);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @GetMapping("/optimize/{dayPlanId}")
+    public ResponseEntity<List<Attraction>> getOptimizedDay(@PathVariable Long dayPlanId) {
+        var result = attractionService.findOptimalDayPlan(dayPlanId);
+        return ResponseEntity.ok(result);
+    }
 }

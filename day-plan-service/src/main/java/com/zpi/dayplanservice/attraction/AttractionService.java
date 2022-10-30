@@ -1,21 +1,26 @@
 package com.zpi.dayplanservice.attraction;
 
+import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
-import com.google.maps.errors.ApiException;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResult;
 import com.zpi.dayplanservice.day_plan.DayPlanService;
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
+import com.zpi.dayplanservice.dto.RouteDto;
 import com.zpi.dayplanservice.mapstruct.MapStructMapper;
 import com.zpi.dayplanservice.proxies.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -36,37 +41,33 @@ public class AttractionService {
 
     public List<AttractionCandidateDto> findCandidates(String name) {
         List<AttractionCandidateDto> result = new ArrayList<>();
-        try {
-            var foundCandidates = PlacesApi.textSearchQuery(context, name).await();
+        var foundCandidates = PlacesApi.textSearchQuery(context, name)
+                                       .awaitIgnoreError();
 
-            result = convertToAttractionCandidateDto(foundCandidates.results);
-            getUrl(result);
-            System.out.println(foundCandidates);
-        } catch (ApiException | InterruptedException | IOException e) {
-            e.printStackTrace();
-        }
+        result = convertToAttractionCandidateDto(foundCandidates.results);
+        getUrl(result);
+        System.out.println(foundCandidates);
         return result;
     }
 
     @Transactional
     public Attraction deleteAttraction(Long attractionId, Long dayPlanId) {
-        if(attractionId == null || dayPlanId == null) {
+        if(attractionId == null || dayPlanId == null)
             throw new IllegalArgumentException("Attraction id or day plan id is null");
-        }
+
         var dayPlan = dayPlanService.getDayPlanById(dayPlanId);
 
         var toDelete = dayPlan.deleteAttraction(attractionId);
         toDelete.removeDay(dayPlan);
 
-        if(toDelete.getDays().isEmpty()) {
+        if(toDelete.getDays().isEmpty())
             attractionRepository.delete(toDelete);
-        }
 
         return toDelete;
     }
 
     @Transactional
-    public Attraction addAttraction(List<Long> dayPlanIds, Long userId,  AttractionCandidateDto attractionCandidateDto) {
+    public Attraction addAttraction(List<Long> dayPlanIds, Long userId, AttractionCandidateDto attractionCandidateDto) {
         if(dayPlanIds.isEmpty())
             throw new IllegalArgumentException("Day plan ids cannot be empty");
 
@@ -88,9 +89,8 @@ public class AttractionService {
     }
 
     private List<AttractionCandidateDto> convertToAttractionCandidateDto(PlacesSearchResult[] foundCandidates) {
-        if (foundCandidates == null) {
+        if(foundCandidates == null)
             return new ArrayList<>();
-        }
 
         var result = new ArrayList<AttractionCandidateDto>();
         for (PlacesSearchResult foundCandidate : foundCandidates) {
@@ -106,21 +106,17 @@ public class AttractionService {
     }
 
     private List<AttractionCandidateDto> getUrl(List<AttractionCandidateDto> candidates) {
-        if (candidates == null) {
+        if(candidates == null)
             return new ArrayList<>();
-        }
 
         for (AttractionCandidateDto candidate : candidates) {
-            try {
-                var placeDetails = PlacesApi.placeDetails(context, candidate.getPlaceId())
-                                            .fields(PlaceDetailsRequest.FieldMask.URL,
-                                                    PlaceDetailsRequest.FieldMask.OPENING_HOURS)
-                                            .await();
-                candidate.setUrl(placeDetails.url.toString());
-                candidate.setOpeningHours(placeDetails.openingHours == null ? null : placeDetails.openingHours.weekdayText);
-            } catch (ApiException | InterruptedException | IOException e) {
-                throw new RuntimeException(e);
-            }
+            var placeDetails = PlacesApi.placeDetails(context, candidate.getPlaceId())
+                                        .fields(PlaceDetailsRequest.FieldMask.URL,
+                                                PlaceDetailsRequest.FieldMask.OPENING_HOURS)
+                                        .awaitIgnoreError();
+            candidate.setUrl(placeDetails.url.toString());
+            candidate.setOpeningHours(placeDetails.openingHours == null ? null : placeDetails.openingHours.weekdayText);
+
         }
         return candidates;
     }
@@ -129,10 +125,92 @@ public class AttractionService {
         if(userId == null || attraction == null)
             throw new IllegalArgumentException("User id or attraction candidate dto is null");
 
-        var toUpdate = attractionRepository.existsById(attraction.getAttraction_id());
-        if(!toUpdate)
+        if(!attractionRepository.existsById(attraction.getAttractionId()))
             throw new IllegalArgumentException("Attraction not found");
 
         return attractionRepository.save(attraction);
+    }
+
+    public List<Attraction> findOptimalDayPlan(Long dayPlanId) {
+        var dayPlan = dayPlanService.getDayPlanById(dayPlanId);
+        var attractions = new ArrayList<>(dayPlan.getDayAttractions());
+
+        if(dayPlan.getDayPlanStartingPointId() == null) {
+            var accommodation = tripGroupProxy.getGroupAccommodation(dayPlan.getGroupId());
+            if(accommodation == null || accommodation.destinationLatitude() == null || accommodation.destinationLongitude() == null)
+                return findBestAttractionsOrder(attractions).attractions();
+
+            attractions.add(new Attraction(accommodation.destinationLatitude(), accommodation.destinationLongitude()));
+            var result = findBestAttractionsOrder(attractions, attractions.size() - 1).attractions();
+            result.remove(0);
+            return result;
+        }
+        else return findBestAttractionsOrder(attractions, IntStream.range(0, attractions.size())
+                                                           .filter(i -> attractions.get(i).getAttractionId().equals(dayPlan.getDayPlanStartingPointId()))
+                                                           .findAny()
+                                                           .orElse(0)).attractions();
+
+    }
+
+    public RouteDto findBestAttractionsOrder(List<Attraction> attractions) {
+        long minDistance = Long.MAX_VALUE;
+        RouteDto minRoute = null;
+        for (int i = 0; i < attractions.size(); i++) {
+            var route = findBestAttractionsOrder(attractions, i);
+            if (route.distance() < minDistance) {
+                minDistance = route.distance();
+                minRoute = route;
+            }
+        }
+        return minRoute;
+    }
+
+    public RouteDto findBestAttractionsOrder(List<Attraction> attractions, int startingPointIndex) {
+        var distanceMatrix = getDistanceMatrix(attractions);
+        var attractionList = new LinkedHashSet<Attraction>();
+
+        int currentAttractionIndex = startingPointIndex;
+        attractionList.add(attractions.get(currentAttractionIndex));
+
+        var routeDistance = 0L;
+
+        while(attractions.size() != attractionList.size()) {
+            var minDistance = Long.MAX_VALUE;
+            var rowElems = distanceMatrix.rows[currentAttractionIndex].elements;
+            int bestAttractionIndex = -1;
+
+            for(int i = 0; i < rowElems.length; i++) {
+                if(i == currentAttractionIndex)
+                    continue;
+
+                if(rowElems[i].distance.inMeters < minDistance && !attractionList.contains(attractions.get(i))) {
+                    bestAttractionIndex = i;
+                    minDistance = rowElems[i].distance.inMeters;
+                }
+            }
+            if(minDistance != Long.MAX_VALUE)
+                routeDistance += minDistance;
+
+            attractionList.add(attractions.get(bestAttractionIndex));
+            currentAttractionIndex = bestAttractionIndex;
+        }
+
+        return new RouteDto(new ArrayList<>(attractionList), routeDistance);
+    }
+
+
+    private DistanceMatrix getDistanceMatrix(List<Attraction> attractions) {
+        var attractionsCoordinates = getCoordinates(attractions);
+        var attractionsCoordinatesArray = attractionsCoordinates.toArray(new LatLng[0]);
+        return DistanceMatrixApi.newRequest(context)
+                                              .origins(attractionsCoordinatesArray)
+                                              .destinations(attractionsCoordinatesArray)
+                                              .awaitIgnoreError();
+    }
+
+    private List<LatLng> getCoordinates(List<Attraction> attractions) {
+        return attractions.stream()
+                          .map(attraction -> new LatLng(attraction.getLatitude(), attraction.getLongitude()))
+                          .collect(Collectors.toList());
     }
 }
