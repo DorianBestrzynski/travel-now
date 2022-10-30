@@ -27,7 +27,7 @@ public class Attraction {
             name = "attraction_sequence",
             sequenceName = "attraction_sequence", allocationSize = 10)
     @Getter
-    private Long attraction_id;
+    private Long attractionId;
 
     @Getter
     @Setter
@@ -42,7 +42,7 @@ public class Attraction {
     @Getter
     @Setter
     @JsonProperty("openingHours")
-    @Column(name = "opening_hours", nullable = false, length = 100)
+    @Column(name = "opening_hours", nullable = false, length = 255)
     private String openingHours;
 
     @Getter
@@ -89,12 +89,17 @@ public class Attraction {
         this.photoLink = photoLink;
     }
 
+    public Attraction(Double destinationLatitude, Double destinationLongitude) {
+        this.latitude = destinationLatitude;
+        this.longitude = destinationLongitude;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Attraction that = (Attraction) o;
-        return attraction_id != null && Objects.equals(attraction_id, that.attraction_id);
+        return attractionId != null && Objects.equals(attractionId, that.attractionId);
     }
 
     @Override

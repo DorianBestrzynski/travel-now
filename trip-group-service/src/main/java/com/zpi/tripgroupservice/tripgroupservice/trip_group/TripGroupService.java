@@ -1,13 +1,16 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 
+
 import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
+import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.tripgroupservice.mapper.MapStructMapper;
+import com.zpi.tripgroupservice.tripgroupservice.proxy.AccommodationProxy;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ public class TripGroupService {
     private final UserGroupService userGroupService;
     private final MapStructMapper mapstructMapper;
     private final Geolocation geolocation;
+
+    private final AccommodationProxy accommodationProxy;
 
     public List<TripGroup> getAllGroupsForUser(Long userId){
         if(userId == null){
@@ -85,5 +90,34 @@ public class TripGroupService {
     public AvailabilityConstraintsDto getAvailabilityConstraints(Long groupId) {
         var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
         return new AvailabilityConstraintsDto(tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants());
+        }
+
+    public AccommodationInfoDto getAccommodation(Long groupId) {
+        if(groupId == null){
+            throw new IllegalArgumentException(INVALID_GROUP_ID);
+        }
+
+        var tripGroup = tripGroupRepository.findById(groupId)
+                                           .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+
+        if(tripGroup.getSelectedAccommodationId() != null)
+            return accommodationProxy.getAccommodationInfo(tripGroup.getSelectedAccommodationId());
+
+        return new AccommodationInfoDto();
+    }
+
+    @Transactional
+    public TripGroup setSelectedAccommodation(Long groupId, Long accommodationId) {
+        if(groupId == null || accommodationId == null)
+            throw new IllegalArgumentException(INVALID_GROUP_ID + "or" + INVALID_ACCOMMODATION_ID);
+
+        var tripGroup = tripGroupRepository.findById(groupId)
+                                           .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+
+        if(accommodationProxy.getAccommodationInfo(accommodationId) == null)
+            throw new ApiRequestException(ACCOMMODATION_NOT_FOUND);
+
+        tripGroup.setSelectedAccommodationId(accommodationId);
+        return tripGroup;
     }
 }

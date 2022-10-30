@@ -77,7 +77,12 @@ public class TripGroup {
     @Column(name = "minimal_number_of_participants", nullable = false)
     private Integer minimalNumberOfParticipants;
 
-    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity, Integer minimalNumberOfDays, Integer minimalNumberOfParticipants) {
+    @Getter
+    @Setter
+    @Column(name = "selected_accommodation_id", nullable = true)
+    private Long selectedAccommodationId;
+
+    public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity) {
         this.name = name;
         this.currency = currency;
         this.description = Objects.requireNonNullElse(description,DEFAULT_DESCRIPTION + name);
