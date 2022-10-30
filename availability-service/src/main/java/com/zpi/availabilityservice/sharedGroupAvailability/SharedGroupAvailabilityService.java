@@ -6,9 +6,10 @@ import com.zpi.availabilityservice.proxies.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class SharedGroupAvailabilityService {
     private final TripGroupProxy tripGroupProxy;
     private final AvailabilityRepository availabilityRepository;
 
+    @Transactional
     public void generateSharedGroupAvailability(Long groupId) {
         var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(groupId);
         minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
@@ -27,25 +29,42 @@ public class SharedGroupAvailabilityService {
 
         var allAvailabilitiesInGroup = availabilityRepository.findAvailabilitiesByGroupId(groupId);
 
-        var firstDate = allAvailabilitiesInGroup.stream()
-                .map(Availability::getDateFrom)
-                .sorted()
-                .findFirst()
-                .orElseThrow();
-        var lastDate = allAvailabilitiesInGroup.stream()
-                .sorted(Comparator.comparing(Availability::getDateTo).reversed())
-                .map(Availability::getDateTo)
-                .findFirst()
-                .orElseThrow();
+        var firstDate = LocalDate.MAX;
+        var lastDate = LocalDate.MIN;
+        for (var availability: allAvailabilitiesInGroup) {
+            if (availability.getDateFrom().isBefore(firstDate))
+                firstDate = availability.getDateFrom();
+
+            if (availability.getDateTo().isAfter(lastDate))
+                lastDate = availability.getDateTo();
+        }
 
         var userToDatesMap = createUserToDateMap(firstDate, lastDate, allAvailabilitiesInGroup);
 
-        var availabilities = findLongestSubset(userToDatesMap, groupId);
+        var bestAvailabilities = findLongestSubset(userToDatesMap, groupId);
+
+        var filteredAvailabilities = filterAvailabilities(bestAvailabilities);
 
         sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
-        sharedGroupAvailabilityRepository.saveAll(availabilities);
+        sharedGroupAvailabilityRepository.saveAll(filteredAvailabilities);
+    }
 
+    public List<SharedGroupAvailability> filterAvailabilities(List<SharedGroupAvailability> availabilities) {
+        var initialGrouping = availabilities.stream()
+                .collect(Collectors.groupingBy(av -> av.getUsersList().size()))
+                .values().stream()
+                .map(f -> f.stream()
+                        .sorted(Comparator.comparingInt(SharedGroupAvailability::getNumberOfDays).reversed()).toList())
+                .map(v -> v.get(0))
+                .toList();
 
+        return initialGrouping.stream()
+                .collect(Collectors.groupingBy(SharedGroupAvailability::getNumberOfDays))
+                .values().stream()
+                .map(f -> f.stream()
+                        .sorted(Comparator.comparingInt(SharedGroupAvailability::getNumberOfUsers).reversed()).toList())
+                .map(v -> v.get(0))
+                .toList();
     }
 
     private List<SharedGroupAvailability> findLongestSubset(Map<LocalDate, List<Long>> userToDatesMap, Long groupId) {

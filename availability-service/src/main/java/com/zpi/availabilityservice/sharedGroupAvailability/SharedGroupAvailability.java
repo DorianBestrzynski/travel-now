@@ -44,6 +44,10 @@ public class SharedGroupAvailability {
         this.numberOfDays = numberOfDays;
     }
 
+    public int getNumberOfUsers(){
+        return usersList.size();
+    }
+
 
 
 }
