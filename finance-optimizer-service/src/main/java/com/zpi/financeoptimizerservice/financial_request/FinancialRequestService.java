@@ -69,4 +69,11 @@ public class FinancialRequestService {
     public Set<FinancialRequest> getAllActiveInGroup(Long groupId) {
         return financialRequestRepository.getAllActiveInGroup(groupId);
     }
+
+    public Set<FinancialRequest> getAllUnsettledFinanceRequests(Long groupId, Long userId) {
+        if (!userGroupProxy.isUserPartOfTheGroup(groupId, userId)) {
+            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
+        }
+        return getAllActiveFinancialRequestsIn(groupId);
+    }
 }
