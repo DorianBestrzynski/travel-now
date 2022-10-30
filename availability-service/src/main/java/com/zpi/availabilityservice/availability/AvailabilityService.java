@@ -108,11 +108,12 @@ public class AvailabilityService {
     }
 
     @Transactional
-    public void deleteAvailability(Long availabilityId) {
+    public void deleteAvailability(Long availabilityId, Long groupId) {
         if (availabilityId == null || availabilityId < 0)
             throw new IllegalArgumentException("Availability id is invalid. Id must be positive number");
 
         availabilityRepository.deleteById(availabilityId);
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(groupId);
     }
 
     @Transactional
@@ -144,7 +145,7 @@ public class AvailabilityService {
 
             availability.setDateTo(newDateTo);
         }
-
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(availability.getGroupId());
         return availability;
     }
 

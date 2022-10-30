@@ -25,7 +25,7 @@ public class Availability {
     @Getter
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
+    @Getter
     @Column(name = "group_id", nullable = false)
     private Long groupId;
     @Getter

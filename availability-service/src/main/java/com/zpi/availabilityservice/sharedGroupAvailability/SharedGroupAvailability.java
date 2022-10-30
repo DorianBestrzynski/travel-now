@@ -34,18 +34,16 @@ public class SharedGroupAvailability {
     @Column(name = "date_to", nullable = false)
     private LocalDate dateTo;
     @Column(name ="number_of_days" )
-    private Long numberOfDays;
+    private Integer numberOfDays;
 
-    public SharedGroupAvailability(Long groupId, List<Long> usersList, LocalDate dateFrom, LocalDate dateTo) {
+    public SharedGroupAvailability(Long groupId, List<Long> usersList, LocalDate dateFrom, LocalDate dateTo, Integer numberOfDays) {
         this.groupId = groupId;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.usersList = usersList;
+        this.numberOfDays = numberOfDays;
     }
 
-    public Long getNumberOfDays(){
-        return ChronoUnit.DAYS.between(dateFrom, dateTo);
-    }
 
 
 }

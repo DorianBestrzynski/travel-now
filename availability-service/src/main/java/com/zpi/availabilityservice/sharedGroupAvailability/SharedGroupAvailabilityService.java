@@ -24,8 +24,8 @@ public class SharedGroupAvailabilityService {
 
     public void generateSharedGroupAvailability(Long groupId) {
         var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(groupId);
-        this.minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
-        this.minimalNumberOfParticipants = getAvailabilityConstraints.numberOfParticipants();
+        minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
+        minimalNumberOfParticipants = getAvailabilityConstraints.numberOfParticipants();
 
         var allAvailabilitiesInGroup = availabilityRepository.findAvailabilitiesByGroupId(groupId);
 
@@ -42,35 +42,58 @@ public class SharedGroupAvailabilityService {
 
         var userToDatesMap = createUserToDateMap(firstDate, lastDate, allAvailabilitiesInGroup);
 
-        findLongestSubset(userToDatesMap);
+        var availabilities = findLongestSubset(userToDatesMap, groupId);
 
-
+        sharedGroupAvailabilityRepository.saveAll(availabilities);
 
     }
 
-    private void findLongestSubset(Map<LocalDate, List<Long>> userToDatesMap) {
-        List<Long> previousSubset = new ArrayList<>();
+    private List<SharedGroupAvailability> findLongestSubset(Map<LocalDate, List<Long>> userToDatesMap, Long groupId) {
+        List<Long> previousSubset;
         LocalDate previousDate;
         int consecutiveDaysCounter = 0;
-        boolean firstDate = true;
-        for(var entrySet: userToDatesMap.entrySet()){
-            var usersForDate = new ArrayList<>(entrySet.getValue());
-            var date = entrySet.getKey();
-            if(firstDate){
-                previousSubset = usersForDate;
-                previousDate = date;
-                firstDate = false;
-                consecutiveDaysCounter++;
-            }
-            else {
+        List<SharedGroupAvailability> resultList = new ArrayList<>();
+
+        for(var dates: userToDatesMap.keySet()) {
+            previousDate = dates;
+            previousSubset = userToDatesMap.get(dates);
+            consecutiveDaysCounter++;
+            for (var entrySet : userToDatesMap.entrySet()) {
+                var checkedDate = entrySet.getKey();
+                if (checkedDate.isBefore(previousDate.plusDays(1))) {
+                    continue;
+                }
+                var usersForDate = new ArrayList<>(entrySet.getValue());
                 usersForDate.retainAll(previousSubset);
+                if(!isEnoughUsers(usersForDate) || !areDatesConsecutive(previousDate, checkedDate)){
+                    break;
+                }
                 previousSubset = usersForDate;
+                previousDate = checkedDate;
+                consecutiveDaysCounter++;
+                if(isDurationLongEnough(consecutiveDaysCounter)) {
+                    resultList.add(new SharedGroupAvailability(groupId, usersForDate, dates, checkedDate, consecutiveDaysCounter));
+                }
             }
+            consecutiveDaysCounter = 0;
         }
+        return  resultList;
+    }
+
+    private boolean isEnoughUsers(List<Long> users) {
+        return users.size() >= minimalNumberOfParticipants;
+    }
+
+    private boolean isDurationLongEnough(int consecutiveDaysCounter) {
+        return consecutiveDaysCounter >= minimalNumberOfDays;
+    }
+
+    private boolean areDatesConsecutive( LocalDate previousDate, LocalDate currentDate) {
+        return previousDate.plusDays(1).equals(currentDate);
     }
 
     private Map<LocalDate, List<Long>> createUserToDateMap(LocalDate currentDate, LocalDate lastDate, List<Availability> allAvailabilitiesInGroup) {
-        Map<LocalDate, List<Long>> userToDatesMap = new HashMap<>();
+        Map<LocalDate, List<Long>> userToDatesMap = new TreeMap<>();
 
         while(currentDate.isBefore(lastDate.plusDays(1))) {
             for (var availability: allAvailabilitiesInGroup) {
@@ -94,5 +117,9 @@ public class SharedGroupAvailabilityService {
             currentDate = currentDate.plusDays(1);
         }
         return userToDatesMap;
+    }
+
+    public List<SharedGroupAvailability> getGroupSharedAvailabilities(Long groupId) {
+        return sharedGroupAvailabilityRepository.findAllByGroupId(groupId);
     }
 }
