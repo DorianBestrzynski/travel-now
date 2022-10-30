@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/v1/finance-request")
@@ -30,6 +31,12 @@ public class FinancialRequestController {
     public ResponseEntity<?> acceptRequest(@RequestParam Long requestId, @RequestParam Long userId, @RequestParam Long groupId) {
         financialRequestService.acceptFinancialRequest(requestId, userId, groupId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/unsettled")
+    public ResponseEntity<Set<FinancialRequest>> getAllUnsettledFinanceRequests(@RequestParam Long groupId, @RequestParam Long userId){
+        var result = financialRequestService.getAllUnsettledFinanceRequests(groupId, userId);
+        return ResponseEntity.ok(result);
     }
 
 }

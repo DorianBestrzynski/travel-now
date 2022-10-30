@@ -4,6 +4,8 @@ spring.application.name: finance-optimizer
 spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
+app.group-service: localhost
+
 
 spring:
   cloud:
@@ -35,3 +37,5 @@ spring.config.activate.on-profile: docker
 
 app.config-server: config-server
 app.database: postgres
+app.group-service: group
+
