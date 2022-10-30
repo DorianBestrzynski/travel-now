@@ -71,6 +71,11 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
+    @Getter
+    @Setter
+    @Column(name = "selected_accommodation_id", nullable = true)
+    private Long selectedAccommodationId;
+
     public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity) {
         this.name = name;
         this.currency = currency;

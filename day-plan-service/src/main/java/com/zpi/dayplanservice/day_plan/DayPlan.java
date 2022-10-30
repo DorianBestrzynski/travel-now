@@ -41,6 +41,7 @@ public class DayPlan {
     @Column(name = "icon_type", nullable = true, length = 10)
     private Integer iconType;
 
+    @Getter
     @ManyToMany
     @JoinTable(
             name = "Day_Plan_Atraction",
@@ -48,6 +49,11 @@ public class DayPlan {
             inverseJoinColumns = {@JoinColumn(name = "attraction_id")}
     )
     private Set<Attraction> dayAttractions;
+
+    @Getter
+    @Setter
+    @Column(name = "day_plan_starting_point_id", nullable = true, length = 10)
+    private Long dayPlanStartingPointId;
 
     public DayPlan(Long groupId, LocalDate date, String name) {
         this.groupId = groupId;
@@ -75,7 +81,7 @@ public class DayPlan {
 
     public Attraction deleteAttraction(Long attractionId) {
         var attractionToDelete = this.dayAttractions.stream()
-                .filter(attraction -> attraction.getAttraction_id().equals(attractionId))
+                .filter(attraction -> attraction.getAttractionId().equals(attractionId))
                 .findFirst()
                 .orElse(null);
         if (attractionToDelete != null) {

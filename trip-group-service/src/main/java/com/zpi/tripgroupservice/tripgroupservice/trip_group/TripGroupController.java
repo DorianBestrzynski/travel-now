@@ -2,6 +2,7 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
+import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroup;
@@ -14,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 
 @RequestMapping("api/v1/trip-group")
@@ -56,6 +55,17 @@ public class TripGroupController {
         return ResponseEntity.ok(tripData);
     }
 
+    @GetMapping("/accommodation")
+    public ResponseEntity<AccommodationInfoDto> getAccommodation(@RequestParam Long groupId){
+        var accommodation = tripGroupService.getAccommodation(groupId);
+        return ResponseEntity.ok(accommodation);
+    }
+
+    @PatchMapping("/accommodation")
+    public ResponseEntity<TripGroup> setSelectedAccommodation(@RequestParam Long groupId, @RequestParam Long accommodationId){
+        var result = tripGroupService.setSelectedAccommodation(groupId, accommodationId);
+        return ResponseEntity.ok(result);
+    }
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {
