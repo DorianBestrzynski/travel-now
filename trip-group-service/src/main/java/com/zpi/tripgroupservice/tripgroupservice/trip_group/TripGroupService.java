@@ -1,6 +1,8 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 
+
+import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
@@ -46,7 +48,7 @@ public class TripGroupService {
     }
     @Transactional
     public TripGroup createGroup(Long userId, TripGroupDto groupDto) {
-            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation(), groupDto.startCity());
+            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation(), groupDto.startCity(),1,2);
             var coordinates = geolocation.findCoordinates(groupDto.startLocation());
             tripGroup.setLatitude(coordinates[LATITUDE_INDEX]);
             tripGroup.setLongitude(coordinates[LONGITUDE_INDEX]);
@@ -84,6 +86,11 @@ public class TripGroupService {
         return tripGroupRepository.findTripData(groupId);
     }
 
+
+    public AvailabilityConstraintsDto getAvailabilityConstraints(Long groupId) {
+        var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+        return new AvailabilityConstraintsDto(tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants());
+        }
 
     public AccommodationInfoDto getAccommodation(Long groupId) {
         if(groupId == null){

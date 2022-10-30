@@ -2,8 +2,10 @@ package com.zpi.availabilityservice.availability;
 
 import com.zpi.availabilityservice.dto.AvailabilityDto;
 import com.zpi.availabilityservice.dto.UserDto;
+import com.zpi.availabilityservice.events.publisher.GenerationAvailabilityPublisher;
 import com.zpi.availabilityservice.exceptions.IllegalDatesException;
 import com.zpi.availabilityservice.proxies.AppUserProxy;
+import com.zpi.availabilityservice.sharedGroupAvailability.SharedGroupAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 public class AvailabilityService {
     private final AvailabilityRepository availabilityRepository;
     private final AppUserProxy appUserProxy;
+    private final SharedGroupAvailabilityService sharedGroupAvailabilityService;
+    private final GenerationAvailabilityPublisher generationAvailabilityPublisher;
 
     private boolean validateDates(LocalDate dateFrom, LocalDate dateTo) {
 
@@ -63,7 +67,7 @@ public class AvailabilityService {
                                                                  availabilityDto.dateTo());
 
         availabilityRepository.save(availability);
-
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(availabilityDto.groupId());
         return availability;
     }
 
@@ -104,11 +108,12 @@ public class AvailabilityService {
     }
 
     @Transactional
-    public void deleteAvailability(Long availabilityId) {
+    public void deleteAvailability(Long availabilityId, Long groupId) {
         if (availabilityId == null || availabilityId < 0)
             throw new IllegalArgumentException("Availability id is invalid. Id must be positive number");
 
         availabilityRepository.deleteById(availabilityId);
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(groupId);
     }
 
     @Transactional
@@ -140,8 +145,12 @@ public class AvailabilityService {
 
             availability.setDateTo(newDateTo);
         }
-
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(availability.getGroupId());
         return availability;
+    }
+
+    public void trigger(Long groupId) {
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(groupId);
     }
 }
 

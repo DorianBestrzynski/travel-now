@@ -14,4 +14,6 @@ public interface FinancialRequestRepository extends JpaRepository<FinancialReque
 
     @Query("from FinancialRequest f where (f.debtor = :debtorId  or f.debtee = :debtorId) and f.groupId = :groupId and f.status = 'PENDING'")
     Set<FinancialRequest> getAllByDebtorAndExpenditure(@Param("debtorId") Long debtorId, @Param("groupId") Long groupId);
+
+    void deleteAllByGroupId(Long groupId);
 }

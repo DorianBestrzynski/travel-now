@@ -71,6 +71,12 @@ public class TripGroup {
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Invitation> invitations;
 
+    @Column(name = "minimal_number_of_days", nullable = false)
+    private Integer minimalNumberOfDays;
+
+    @Column(name = "minimal_number_of_participants", nullable = false)
+    private Integer minimalNumberOfParticipants;
+
     @Getter
     @Setter
     @Column(name = "selected_accommodation_id", nullable = true)
@@ -88,6 +94,8 @@ public class TripGroup {
         this.endDate = LocalDate.of(2022, 11,1);
         this.latitude = 52.50;
         this.longitude = 13.36;
+        this.minimalNumberOfDays = 3;
+        this.minimalNumberOfParticipants = 3;
 
     }
 

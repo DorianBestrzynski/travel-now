@@ -122,7 +122,7 @@ public class ExpenditureService {
     }
 
     private void regenerateOptimizationProcess(Long groupId) {
-        financialRequestService.deleteAllFinancialRequests();
+        financialRequestService.deleteAllFinancialRequests(groupId);
         var allExpenditures = expenditureRepository.findAllByGroupId(groupId);
         for (var ex : allExpenditures){
             createFinancialRequestsFrom(new ExpenditureInputDto(ex.getCreatorId(), ex.getTitle(), ex.getPrice().doubleValue(), ex.getExpenseDebtors()), groupId);

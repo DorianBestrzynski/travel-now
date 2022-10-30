@@ -62,8 +62,8 @@ public class FinancialRequestService {
         financialRequestRepository.save(financialRequest);
     }
 
-    public void deleteAllFinancialRequests() {
-        financialRequestRepository.deleteAll();
+    public void deleteAllFinancialRequests(Long groupId) {
+        financialRequestRepository.deleteAllByGroupId(groupId);
     }
 
     public Set<FinancialRequest> getAllActiveInGroup(Long groupId) {
