@@ -20,8 +20,6 @@ public class SharedGroupAvailabilityService {
     private final TripGroupProxy tripGroupProxy;
     private final AvailabilityRepository availabilityRepository;
 
-
-
     public void generateSharedGroupAvailability(Long groupId) {
         var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(groupId);
         minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
@@ -44,6 +42,7 @@ public class SharedGroupAvailabilityService {
 
         var availabilities = findLongestSubset(userToDatesMap, groupId);
 
+
         sharedGroupAvailabilityRepository.saveAll(availabilities);
 
     }
@@ -54,7 +53,7 @@ public class SharedGroupAvailabilityService {
         int consecutiveDaysCounter = 0;
         List<SharedGroupAvailability> resultList = new ArrayList<>();
 
-        for(var dates: userToDatesMap.keySet()) {
+        for (var dates: userToDatesMap.keySet()) {
             previousDate = dates;
             previousSubset = userToDatesMap.get(dates);
             consecutiveDaysCounter++;
@@ -95,11 +94,11 @@ public class SharedGroupAvailabilityService {
     private Map<LocalDate, List<Long>> createUserToDateMap(LocalDate currentDate, LocalDate lastDate, List<Availability> allAvailabilitiesInGroup) {
         Map<LocalDate, List<Long>> userToDatesMap = new TreeMap<>();
 
-        while(currentDate.isBefore(lastDate.plusDays(1))) {
+        while (currentDate.isBefore(lastDate.plusDays(1))) {
             for (var availability: allAvailabilitiesInGroup) {
                 var fromDate = availability.getDateFrom();
                 var toDate = availability.getDateTo();
-                if (currentDate.isAfter(fromDate.minusDays(1)) && currentDate.isBefore(toDate.plusDays(1))){
+                if (currentDate.isAfter(fromDate.minusDays(1)) && currentDate.isBefore(toDate.plusDays(1))) {
                     if (userToDatesMap.containsKey(currentDate)) {
                         var userList = userToDatesMap.get(currentDate);
                         var newUserList = new ArrayList<>(userList);
@@ -111,7 +110,7 @@ public class SharedGroupAvailabilityService {
                     }
                 }
             }
-            if(userToDatesMap.containsKey(currentDate) && userToDatesMap.get(currentDate).size() < minimalNumberOfParticipants){
+            if(userToDatesMap.containsKey(currentDate) && userToDatesMap.get(currentDate).size() < minimalNumberOfParticipants) {
                 userToDatesMap.remove(currentDate);
             }
             currentDate = currentDate.plusDays(1);

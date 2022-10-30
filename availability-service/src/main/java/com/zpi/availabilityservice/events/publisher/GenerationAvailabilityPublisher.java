@@ -2,7 +2,6 @@ package com.zpi.availabilityservice.events.publisher;
 
 import com.zpi.availabilityservice.events.GenerationAvailabilityEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
