@@ -54,4 +54,8 @@ public class UserGroupService {
         }
         return isUserInGroup(userId, groupId);
     }
+
+    public void deleteUserFromGroup(Long groupId, Long userId) {
+        userGroupRepository.deleteById(new UserGroupKey(userId, groupId));
+    }
 }

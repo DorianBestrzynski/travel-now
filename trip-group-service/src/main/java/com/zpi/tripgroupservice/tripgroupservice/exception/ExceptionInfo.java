@@ -38,4 +38,6 @@ public final class ExceptionInfo {
     public final static String INVALID_ACCOMMODATION_ID = "There was exception while feign communication";
 
     public final static String ACCOMMODATION_NOT_FOUND = "Accommodation not found";
+
+    public final static String CANNOT_LEAVE_GROUP = "You cannot leave group if you have unsettled expenses";
 }

@@ -39,4 +39,10 @@ public class FinancialRequestController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<Boolean> isDebtorOrDebteeToAnyFinancialRequests(@RequestParam Long groupId, @RequestParam Long userId){
+        var result = financialRequestService.isDebtorOrDebteeToanyFinancialRequests(groupId, userId);
+        return ResponseEntity.ok(result);
+    }
+
 }
