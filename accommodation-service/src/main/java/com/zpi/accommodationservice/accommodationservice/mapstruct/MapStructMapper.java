@@ -3,6 +3,8 @@ package com.zpi.accommodationservice.accommodationservice.mapstruct;
 import com.zpi.accommodationservice.accommodationservice.accommodation.Accommodation;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
+import com.zpi.accommodationservice.accommodationservice.dto.AccommodationVoteDto;
+import com.zpi.accommodationservice.accommodationservice.votes.AccommodationVoteId;
 import org.mapstruct.*;
 
 @Mapper(
@@ -20,4 +22,6 @@ public interface MapStructMapper {
     AccommodationDto adaptAccommodationDto(AccommodationDto accommodationDto);
 
     void updateFromAccommodationDataDtoToAccommodation(@MappingTarget Accommodation accommodation, AccommodationDataDto accommodationDataDto);
+
+    AccommodationVoteId getAccommodationVoteIdFromDto(AccommodationVoteDto accommodationVoteDto);
 }

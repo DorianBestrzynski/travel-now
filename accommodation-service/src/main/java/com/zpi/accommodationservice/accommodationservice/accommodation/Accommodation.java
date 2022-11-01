@@ -99,4 +99,9 @@ public class Accommodation {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public void setGivenVotes(Integer givenVotes) {
+        if(this.givenVotes > -1)
+            this.givenVotes = givenVotes;
+    }
 }

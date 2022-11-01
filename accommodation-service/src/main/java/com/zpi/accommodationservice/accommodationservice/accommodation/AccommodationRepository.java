@@ -15,4 +15,6 @@ public interface AccommodationRepository extends JpaRepository<Accommodation,Lon
 
     @Query("SELECT new com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto(a.streetAddress, a.city, a.latitude, a.longitude, a.groupId) FROM Accommodation a WHERE a.accommodationId=?1")
     AccommodationInfoDto getAccommodationInfoDto(Long accommodationInfo);
+
+    boolean existsByAccommodationIdAndGroupId(Long accommodationId, Long groupId);
 }
