@@ -5,7 +5,7 @@ spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 app.user-service: localhost
-
+app.group-service: localhost
 spring:
   mvc:
     format:
@@ -40,3 +40,4 @@ spring.config.activate.on-profile: docker
 app.config-server: config-server
 app.database: postgres
 app.user-service: user
+app.group-service: group

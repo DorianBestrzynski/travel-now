@@ -1,6 +1,6 @@
-package com.zpi.transportservice.transportservice.transport;
+package com.zpi.transportservice.transport;
 
-import com.zpi.transportservice.transportservice.dto.UserTransportDto;
+import com.zpi.transportservice.dto.UserTransportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

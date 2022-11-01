@@ -2,6 +2,7 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 
 
+import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
@@ -11,6 +12,7 @@ import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.tripgroupservice.mapper.MapStructMapper;
 import com.zpi.tripgroupservice.tripgroupservice.proxy.AccommodationProxy;
+import com.zpi.tripgroupservice.tripgroupservice.proxy.FinanceProxy;
 import com.zpi.tripgroupservice.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class TripGroupService {
     private final UserGroupService userGroupService;
     private final MapStructMapper mapstructMapper;
     private final Geolocation geolocation;
-
+    private final FinanceProxy financeProxy;
     private final AccommodationProxy accommodationProxy;
 
     public List<TripGroup> getAllGroupsForUser(Long userId){
@@ -119,5 +121,27 @@ public class TripGroupService {
 
         tripGroup.setSelectedAccommodationId(accommodationId);
         return tripGroup;
+    }
+
+    @Transactional
+    public TripGroup setCurrencyInGroup(Long groupId, Long userId, Currency currency) {
+        if(!userGroupService.isUserCoordinator(userId, groupId)) {
+            throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
+        }
+        var tripGroup = tripGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+        tripGroup.setCurrency(currency);
+        return tripGroupRepository.save(tripGroup);
+    }
+
+    @Transactional
+    public void leaveGroup(Long groupId, Long userId) {
+        if(!userGroupService.checkIfUserIsInGroup(userId, groupId)){
+            throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
+        }
+        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(groupId, userId)){
+            throw new ApiRequestException(CANNOT_LEAVE_GROUP);
+        }
+        userGroupService.deleteUserFromGroup(groupId, userId);
     }
 }

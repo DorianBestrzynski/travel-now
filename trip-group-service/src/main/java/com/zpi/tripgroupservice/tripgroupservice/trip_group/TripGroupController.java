@@ -74,6 +74,18 @@ public class TripGroupController {
         return ResponseEntity.ok(result);
     }
 
+    @PatchMapping("/currency")
+    public ResponseEntity<TripGroup> setCurrency(@RequestParam Long groupId, @RequestParam Long userId, @RequestParam Currency currency){
+        var result = tripGroupService.setCurrencyInGroup(groupId, userId, currency);
+        return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping("/user")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void leaveGroup(@RequestParam Long groupId, @RequestParam Long userId){
+        tripGroupService.leaveGroup(groupId, userId);
+    }
+
     @GetMapping("/sampleData")
     public String creatingSampleData() {
         var tripGroup = new TripGroup("Test1", Currency.PLN, "Opis", 2, "Barcelona", "Barcelona",3,3);

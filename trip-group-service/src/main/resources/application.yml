@@ -6,6 +6,7 @@ app.salt-length: 162
 app.config-server: localhost
 app.database: localhost
 app.accommodation-service: localhost
+app.finance-service: localhost
 
 spring:
   cloud:
@@ -38,3 +39,4 @@ spring.config.activate.on-profile: docker
 app.config-server: config-server
 app.database: postgres
 app.accommodation-service: accommodation
+app.finance-service: finance
