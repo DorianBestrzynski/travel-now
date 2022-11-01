@@ -29,7 +29,7 @@ public class UserTransport extends Transport {
     private LocalDateTime meetingTime;
 
     public UserTransport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link, String meanOfTransport, String description, LocalDateTime meetingTime) {
-        super(duration, price, source, destination, startDate, endDate, link);
+        super(duration, price, source, destination, startDate, endDate, link, 3);
         this.meanOfTransport = meanOfTransport;
         this.description = description;
         this.meetingTime = meetingTime;

@@ -50,8 +50,11 @@ public class Transport {
     @Column(name = "link")
     private String link;
 
+    @Column(name = "transport_type_json")
+    private Integer transportTypeJson;
 
-    public Transport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate , String link) {
+
+    public Transport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate , String link, Integer transportType) {
         this.duration = duration;
         this.price = price;
         this.source = source;
@@ -59,5 +62,6 @@ public class Transport {
         this.startDate = startDate;
         this.endDate = endDate;
         this.link = link;
+        this.transportTypeJson = transportType;
     }
 }

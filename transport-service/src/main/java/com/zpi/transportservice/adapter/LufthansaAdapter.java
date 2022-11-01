@@ -45,23 +45,16 @@ import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_NO_AIR
 @Component
 public class LufthansaAdapter {
     private final RestTemplate restTemplate;
-
     private Instant tokenExpirationDate;
-
     private final FlightService flightService;
 
     private final GeoApiContext context;
-
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
-
-    private String bearerAccessToken = "Bearer g7d4snug8gvumkuuewftysn3";
-
+    private String bearerAccessToken = "Bearer vhddytj3vnfaf7gqna4s55c2";
     @Value("${client_id}")
     private String client_id;
-
     @Value("${client_secret}")
     private String client_secret;
-
     @Value("${grant_type}")
     private String grant_type;
 
@@ -187,20 +180,23 @@ public class LufthansaAdapter {
 
         var firstFlight = flightList.get(0);
         var lastFlight = flightList.get(flightList.size() - 1);
+
         firstFlight.setTravelToAirportDuration(findTravelDuration(firstFlight.getDepartureAirport(), tripInfo.startingLocation()));
         lastFlight.setTravelToAccommodationDuration(findTravelDuration(lastFlight.getArrivalAirport(), accommodationInfoDto.streetAddress()));
         totalDuration = totalDuration.plus(firstFlight.getTravelToAirportDuration());
         totalDuration = totalDuration.plus(lastFlight.getTravelToAccommodationDuration());
 
+
+
         return Map.entry(totalDuration.getSeconds(), flightList);
     }
 
     private Duration findTravelDuration(String airport, String location)  {
-        DirectionsResult route = null;
+        DirectionsResult route;
         try {
             route = DirectionsApi.getDirections(context, location, "airport" + airport).await();
         } catch (ApiException | InterruptedException | IOException e) {
-            throw new RuntimeException(e);
+            return Duration.ZERO;
         }
         return Duration.ofSeconds(route.routes[0].legs[0].duration.inSeconds);
     }

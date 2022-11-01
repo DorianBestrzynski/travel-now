@@ -53,7 +53,6 @@ public class TransportService {
         var userTransport = getUserTransport(accommodationTransportIdList);
         var airTransport = generateAirTransportForAccommodation(accommodationTransportIdList, accommodationInfo,
                                                                 tripInfo, accommodationId);
-        //TODO here car transport logic and return type List<Transport> with best AirTransport and CarTransport
         var carTransport = generateCarTransportForAccommodation(accommodationTransportIdList, accommodationInfo,
                                                                 tripInfo, accommodationId);
         if (airTransport != null) {
@@ -130,7 +129,7 @@ public class TransportService {
 
     private AirTransport selectBestFlight(TreeMap<Long, List<Flight>> flightProposals, Long accommodationId,
                                           AccommodationInfoDto accommodationInfoDto, TripDataDto tripData) {
-        if (flightProposals != null) {
+        if (flightProposals != null && !flightProposals.isEmpty()) {
             var bestOption = flightProposals.firstEntry();
             var totalDuration = Duration.ofSeconds(bestOption.getKey());
             var flights = bestOption.getValue();
