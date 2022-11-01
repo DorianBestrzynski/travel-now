@@ -45,16 +45,23 @@ import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_NO_AIR
 @Component
 public class LufthansaAdapter {
     private final RestTemplate restTemplate;
+
     private Instant tokenExpirationDate;
+
     private final FlightService flightService;
 
     private final GeoApiContext context;
+
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
     private String bearerAccessToken = "Bearer g7d4snug8gvumkuuewftysn3";
+
     @Value("${client_id}")
     private String client_id;
+
     @Value("${client_secret}")
     private String client_secret;
+
     @Value("${grant_type}")
     private String grant_type;
 

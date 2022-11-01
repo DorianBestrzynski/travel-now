@@ -17,7 +17,8 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
         try {
             String complexMessage = IOUtils.toString(response.body().asInputStream());
             JSONObject resultObject = new JSONObject(complexMessage);
-            message  = resultObject.getString("message");
+            if(resultObject.has("message"))
+                message = resultObject.getString("message");
 
         } catch (IOException ignored) {
         }
