@@ -1,8 +1,7 @@
-package com.zpi.userservice.user;
+package com.zpi.authorizationserver.user;
 
 import com.zpi.userservice.dto.UserDto;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +20,6 @@ public class AppUserController {
     public ResponseEntity<List<UserDto>> getUsersByIds(@RequestBody List<Long> usersIds) {
         var result = appUserService.getUsers(usersIds);
         return ResponseEntity.ok(result);
-    }
-
-    @GetMapping()
-    public String getUsersByIds() {
-       return "Hello there";
     }
 
     @GetMapping()

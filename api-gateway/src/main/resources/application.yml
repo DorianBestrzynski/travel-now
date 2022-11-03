@@ -25,6 +25,20 @@ spring:
       maxInterval: 10000
       maxAttempts: 20
     uri: http://${app.config-server}:8888
+    security:
+      oauth2:
+        client:
+          registration:
+            gateway:
+              provider: my-provider
+              client-id: gateway-client-id
+              client-secret: my-secret
+              authorization-grant-type: authorization_code
+              redirect-uri: "http://backend-gateway-client:8083/login/oauth2/code/{registrationId}"
+              scope: openid, message.read
+          provider:
+            my-provider:
+              issuer-uri: http://backend-auth:8081
 
 ---
 spring.config.activate.on-profile: docker

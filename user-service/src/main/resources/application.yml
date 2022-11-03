@@ -29,6 +29,11 @@ spring:
       maxInterval: 10000
       maxAttempts: 20
     uri: http://${app.config-server}:8888
+    security:
+      oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: http://backend-auth:8090
 
 ---
 spring.config.activate.on-profile: docker

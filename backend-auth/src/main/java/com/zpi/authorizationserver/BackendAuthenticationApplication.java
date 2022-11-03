@@ -1,13 +1,13 @@
-package com.zpi.auth.authorizationserver;
+package com.zpi.authorizationserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AuthorizationServerApplication {
+public class BackendAuthenticationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AuthorizationServerApplication.class, args);
+		SpringApplication.run(BackendAuthenticationApplication.class, args);
 	}
 
 }
