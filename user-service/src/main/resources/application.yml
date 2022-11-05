@@ -4,6 +4,8 @@ spring.application.name: user
 spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
+app.auth-server: localhost
+
 
 spring:
   cloud:
@@ -29,14 +31,15 @@ spring:
       maxInterval: 10000
       maxAttempts: 20
     uri: http://${app.config-server}:8888
-    security:
-      oauth2:
-        resourceserver:
-          jwt:
-            issuer-uri: http://backend-auth:8090
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${app.auth-server}:8090
 
 ---
 spring.config.activate.on-profile: docker
 
 app.config-server: config-server
 app.database: postgres
+app.auth-server: backend-auth

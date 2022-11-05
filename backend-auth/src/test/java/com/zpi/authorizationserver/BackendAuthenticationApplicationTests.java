@@ -1,10 +1,10 @@
-package com.zpi.auth.authorizationserver;
+package com.zpi.authorizationserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AuthorizationServerApplicationTests {
+class BackendAuthenticationApplicationTests {
 
 	@Test
 	void contextLoads() {

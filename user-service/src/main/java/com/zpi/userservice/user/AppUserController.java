@@ -23,7 +23,7 @@ public class AppUserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping()
+    @GetMapping("/users")
     public String getUsersByIds() {
        return "Hello there";
     }

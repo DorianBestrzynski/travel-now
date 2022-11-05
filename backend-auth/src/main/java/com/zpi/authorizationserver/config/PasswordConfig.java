@@ -8,11 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class PasswordConfig {
 
-    /**
-     * The passwords used in the application will be stored in memory and in the database using the BCrypt encoder.
-     */
+    private final static int STRENGTH = 12;
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(STRENGTH);
     }
 }

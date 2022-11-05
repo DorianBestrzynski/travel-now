@@ -72,8 +72,8 @@ public class SecurityConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 // permitted redirect URI after the authentication is successful
-                .redirectUri("http://backend-gateway-client:8083/login/oauth2/code/gateway")
-                .redirectUri("http://backend-gateway-client:8083/authorized")
+                .redirectUri("http://localhost:8083/login/oauth2/code/gateway")
+                .redirectUri("http://localhost:8083/authorized")
                 // acceptable scopes for the authorization
                 .scope(OidcScopes.OPENID)
                 .scope("message.read")
@@ -89,7 +89,7 @@ public class SecurityConfig {
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder()
-                .issuer("http://backend-auth:8081")
+                .issuer("http://localhost:8090")
                 .build();
     }
 }
