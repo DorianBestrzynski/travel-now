@@ -1,4 +1,4 @@
-package com.zpi.apigateway.security;
+package com.zpi.authorizationserver.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.zpi.apigateway.user;
+package com.zpi.authorizationserver.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -5,6 +5,12 @@ spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+    reactor.netty.http.client: DEBUG
+
 jwt:
   signing-secret: secret
 
@@ -17,11 +23,10 @@ management:
       exposure:
         include: "*"
 
-
+security.enable-csrf: false
 spring:
-  main:
-    allow-bean-definition-overriding: true
-    web-application-type: reactive
+  gateway:
+    excludedURLsNew: /api/v1/users/authenticate,/login
   cloud:
     config:
       import-check:
@@ -47,6 +52,8 @@ spring:
       maxInterval: 10000
       maxAttempts: 20
     uri: http://${app.config-server}:8888
+  security:
+    enable-csrf: false
 
 ---
 spring.config.activate.on-profile: docker

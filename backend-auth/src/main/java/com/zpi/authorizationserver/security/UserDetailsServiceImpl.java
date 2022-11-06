@@ -1,6 +1,7 @@
-package com.zpi.userservice.security;
+package com.zpi.authorizationserver.security;
 
-import com.zpi.userservice.user.AppUserService;
+
+import com.zpi.authorizationserver.user.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +15,11 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService
 {
-    private final AppUserService appUserService;
+    private final AppUserRepository appUserRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var appUser = appUserService.getAppUserByEmail(username);
+        var appUser = appUserRepository.findAppUserByEmail(username).orElseThrow();
 
         return new User(appUser.getEmail(), appUser.getPassword().getHashedPassword(), Collections.emptyList());
     }

@@ -1,4 +1,4 @@
-package com.zpi.apigateway.dto;
+package com.zpi.authorizationserver.dto;
 
 import java.time.LocalDate;
 

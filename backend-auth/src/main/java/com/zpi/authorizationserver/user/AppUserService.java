@@ -1,7 +1,7 @@
-package com.zpi.apigateway.user;
+package com.zpi.authorizationserver.user;
 
-import com.zpi.apigateway.dto.RegisterRequestDto;
-import com.zpi.apigateway.dto.UserDto;
+import com.zpi.authorizationserver.dto.RegisterRequestDto;
+import com.zpi.authorizationserver.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

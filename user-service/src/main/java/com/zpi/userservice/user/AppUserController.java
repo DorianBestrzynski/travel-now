@@ -19,4 +19,9 @@ public class AppUserController {
         var result = appUserService.getUsers(usersIds);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping()
+    public String getUsersByIds() {
+        return "Hello there";
+    }
 }

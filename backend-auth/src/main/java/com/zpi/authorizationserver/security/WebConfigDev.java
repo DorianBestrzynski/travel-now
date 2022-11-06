@@ -1,4 +1,4 @@
-package com.zpi.apigateway.security;
+package com.zpi.authorizationserver.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

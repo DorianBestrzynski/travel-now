@@ -1,17 +1,15 @@
-package com.zpi.apigateway;
+package com.zpi.authorizationserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableEurekaClient
-@EnableFeignClients
-public class ApiGatewayApplication {
+public class BackendAuthenticationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiGatewayApplication.class, args);
+		SpringApplication.run(BackendAuthenticationApplication.class, args);
 	}
 
 }

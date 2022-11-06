@@ -1,4 +1,4 @@
-package com.zpi.apigateway.user;
+package com.zpi.authorizationserver.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;

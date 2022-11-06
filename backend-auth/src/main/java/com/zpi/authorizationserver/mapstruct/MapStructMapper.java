@@ -1,8 +1,12 @@
-package com.zpi.apigateway.mapstruct;
+package com.zpi.authorizationserver.mapstruct;
 
-import com.zpi.apigateway.dto.UserDto;
-import com.zpi.apigateway.user.AppUser;
-import org.mapstruct.*;
+
+import com.zpi.authorizationserver.dto.UserDto;
+import com.zpi.authorizationserver.user.AppUser;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(
         componentModel = "spring",
