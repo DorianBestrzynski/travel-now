@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/validateToken")
@@ -28,7 +29,7 @@ public class ConnectionValidatorResource {
     public ResponseEntity<ConnValidationResponse> validateGet(HttpServletRequest request) {
         String username = (String) request.getAttribute("username");
         String token = (String) request.getAttribute("jwt");
-        List<GrantedAuthority> grantedAuthorities = (List<GrantedAuthority>) request.getAttribute("authorities");
+        List<GrantedAuthority> grantedAuthorities = ((Set<GrantedAuthority>) request.getAttribute("authorities")).stream().toList();
         return ResponseEntity.ok(ConnValidationResponse.builder().status("OK").methodType(HttpMethod.GET.name())
                         .username(username).token(token).authorities(grantedAuthorities)
                 .isAuthenticated(true).build());

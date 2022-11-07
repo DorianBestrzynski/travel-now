@@ -1,4 +1,4 @@
-package com.zpi.apigateway.security;
+package com.zpi.authorizationserver.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -60,7 +60,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             var userDetails = userDetailsService.loadUserByUsername(username);
             var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            request.setAttribute("username", userDetails.getUsername());
+            request.setAttribute("jwt", jwt.getToken());
+            request.setAttribute("authorities", userDetails.getAuthorities());
         }
     }
 }

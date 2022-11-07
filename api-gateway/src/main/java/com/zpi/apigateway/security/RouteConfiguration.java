@@ -11,18 +11,17 @@ public class RouteConfiguration {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder, AuthenticationPrefilter authFilter) {
         return builder.routes()
-                      .route("auth-service-route", r -> r.path("/authentication-service/**")
+                      .route("auth-service-route", r -> r.path("/api/auth/login")
                                                          .filters(f ->
-                                                                          f.rewritePath("/authentication-service(?<segment>/?.*)", "$\\{segment}")
-                                                                           .filter(authFilter.apply(
-                                                                                   new AuthenticationPrefilter.Config())))
+                                                                          f.rewritePath("/api/auth/login/(?<segment>/?.*)", "$\\{segment}")
+                                                                           .filter(authFilter.apply(new AuthenticationPrefilter.Config())))
                                                          .uri("lb://authentication-service"))
                       .route("user-service-route", r -> r.path("/api/v1/user/**")
                                                          .filters(f ->
-                                                                          f.rewritePath("/api/v1/user(?<segment>/?.*)", "$\\{segment}")
+                                                                          f.rewritePath("/api/v1/user/(?<segment>/?.*)", "$\\{segment}")
                                                                            .filter(authFilter.apply(
                                                                                    new AuthenticationPrefilter.Config())))
-                                                         .uri("lb://user"))
+                                                         .uri("lb://user/"))
                       .build();
     }
 
