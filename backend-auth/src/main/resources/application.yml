@@ -1,0 +1,51 @@
+server:
+  port: 8090
+
+app.config-server: localhost
+spring.config.import: "configserver:"
+app.database: localhost
+app.auth-server: localhost
+
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
+jwt:
+  signing-secret: secret
+
+spring:
+  cloud.config:
+    failFast: true
+    retry:
+      initialInterval: 3000
+      multiplier: 1.3
+      maxInterval: 10000
+      maxAttempts: 20
+    uri: http://${app.config-server}:8888
+  application.name: authentication-service
+  datasource:
+    url: jdbc:postgresql://${app.database}:5432/test_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    deserialization:
+      FAIL_ON_IGNORED_PROPERTIES: false
+    serialization:
+      INDENT_OUTPUT: false
+      WRITE_DATES_AS_TIMESTAMPS: false
+      WRITE_BIGDECIMAL_AS_PLAIN: true
+
+---
+spring.config.activate.on-profile: docker
+
+app.config-server: config-server
+app.database: postgres
+app.auth-server: backend-auth

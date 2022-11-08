@@ -23,6 +23,16 @@ public class AppUserController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Get no body";
+    }
+
+    @PostMapping("/test")
+    public String test(@RequestBody TestDto test) {
+        return "Pots with body" + test.st();
+    }
+
     @GetMapping()
     public List<AppUser> createSampleUsers(){
         var user1 = new AppUser("firstUser", "user@user.com", "Adam", "Boruc", LocalDate.now(), null);

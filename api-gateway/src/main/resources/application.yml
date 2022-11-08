@@ -4,6 +4,9 @@ spring.application.name: gateway
 spring.config.import: "configserver:"
 app.config-server: localhost
 
+jwt:
+  signing-secret: secret
+
 management:
   endpoint:
     gateway:
@@ -15,6 +18,8 @@ management:
 
 
 spring:
+  gateway:
+    excludedURLsNew: /api/v1/users/authenticate,/login
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   cloud.config:
