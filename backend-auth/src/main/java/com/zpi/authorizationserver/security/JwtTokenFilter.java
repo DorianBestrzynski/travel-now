@@ -66,6 +66,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             request.setAttribute("username", userDetails.getUsername());
             request.setAttribute("jwt", jwt.getToken());
             request.setAttribute("authorities", userDetails.getAuthorities());
+            request.setAttribute("userId", jwt.getClaim("userId").asLong());
         }
     }
 }

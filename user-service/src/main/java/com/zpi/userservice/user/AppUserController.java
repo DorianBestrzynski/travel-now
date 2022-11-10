@@ -28,10 +28,10 @@ public class AppUserController {
         return "Get no body";
     }
 
-    @PostMapping("/test")
-    public String test(@RequestBody TestDto test) {
-        return "Pots with body" + test.st();
-    }
+//    @PostMapping("/test")
+//    public String test(@RequestBody TestDto test) {
+//        return "Pots with body" + test.st();
+//    }
 
     @GetMapping()
     public List<AppUser> createSampleUsers(){

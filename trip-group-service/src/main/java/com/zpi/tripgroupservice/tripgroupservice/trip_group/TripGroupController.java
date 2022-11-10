@@ -41,7 +41,7 @@ public class TripGroupController {
     }
     @DeleteMapping("/group")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteGroup(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId") Long userId) {
+    public void deleteGroup(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId", required = false) Long userId) {
         tripGroupService.deleteGroup(groupId, userId);
     }
     @PatchMapping("/group")

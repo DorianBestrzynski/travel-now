@@ -62,6 +62,7 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
                             exchange.getRequest().mutate().header("authorities", response.getAuthorities().stream().map(
                                     Authorities::getAuthority).reduce("", (a, b) -> a + "," + b));
                             exchange.getRequest().mutate().header("auth-token", response.getToken());
+                            exchange.getRequest().mutate().header("userId", response.getUserId().toString());
 
                             return exchange;
                         }).flatMap(chain::filter).onErrorResume(error -> {

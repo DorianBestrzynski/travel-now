@@ -46,6 +46,7 @@ public class AuthController {
             var user = appUserService.getAppUserByEmail(email);
             var jwt = JWT.create()
                          .withClaim(JwtTokenFilter.USERNAME_CLAIM, user.getEmail())
+                         .withClaim("userId", user.getUserId())
                          .sign(Algorithm.HMAC256(jwtSigningSecret));
 
             var userDto = mapStructMapper.getUserDtoFromAppUser(user);

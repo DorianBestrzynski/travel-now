@@ -1,5 +1,3 @@
 package com.zpi.authorizationserver.dto;
 
-public record LoginRequestBodyDto(String email, String password) {
-
-}
+public record LoginRequestBodyDto(String email, String password) {}
