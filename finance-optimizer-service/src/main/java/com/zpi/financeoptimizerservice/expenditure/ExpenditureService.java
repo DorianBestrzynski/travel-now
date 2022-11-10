@@ -130,11 +130,12 @@ public class ExpenditureService {
         financialRequestOptimizer.optimizeFinancialRequestsIn(groupId);
     }
 
-    public Map<Long, Double> getGroupBalance(Long groupId, Long userId) {
+    public Map<Long, BigDecimal> getGroupBalance(Long groupId, Long userId) {
         if (!userGroupProxy.isUserPartOfTheGroup(groupId, userId)) {
             throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
         }
         var financialRequests = financialRequestService.getAllActiveInGroup(groupId);
-        return financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
+        var balanceDouble = financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
+        return financialRequestOptimizer.convertPricesToBigDecimal(balanceDouble);
     }
 }
