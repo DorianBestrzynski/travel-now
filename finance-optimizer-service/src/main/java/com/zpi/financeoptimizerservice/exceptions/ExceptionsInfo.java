@@ -11,5 +11,7 @@ public class ExceptionsInfo {
 
     public final static String PERMISSION_VIOLATION = "To perform this action you need to be either coordinator or author of expenditure";
 
+    public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
+
 
 }

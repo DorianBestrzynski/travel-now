@@ -4,7 +4,6 @@ import com.zpi.dayplanservice.configuration.CustomFeignConfiguration;
 import com.zpi.dayplanservice.dto.AccommodationInfoDto;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
