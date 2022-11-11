@@ -19,8 +19,8 @@ public class JWTVerifierFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = httpServletRequest.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String token = httpServletRequest.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;
         }
