@@ -63,7 +63,7 @@ public class AuthorizationAspect {
         var expenditure = expenditureRepository.findById(getExpenditureId(joinPoint)).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         if (!(userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, getGroupId(joinPoint), authentication.getUserId()) || Objects.equals(expenditure.getCreatorId(), authentication.getUserId()))) {
-            throw new ApiPermissionException(PERMISSION_VIOLATION);
+            throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
         }
 
         return joinPoint.proceed();
@@ -76,7 +76,7 @@ public class AuthorizationAspect {
         var financialRequest = financialRequestRepository.findById(getFinancialRequestId(joinPoint)).orElseThrow();
 
         if (!(financialRequest.getDebtee().equals(authentication.getUserId()) || userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, getGroupId(joinPoint), authentication.getUserId()))) {
-            throw new ApiPermissionException(PERMISSION_VIOLATION);
+            throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
         }
 
         return joinPoint.proceed();

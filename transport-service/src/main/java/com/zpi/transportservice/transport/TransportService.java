@@ -4,6 +4,7 @@ import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
 import com.zpi.transportservice.adapter.LufthansaAdapter;
+import com.zpi.transportservice.aspects.AuthorizeCreatorOrCoordinator;
 import com.zpi.transportservice.dto.AccommodationInfoDto;
 import com.zpi.transportservice.dto.TripDataDto;
 import com.zpi.transportservice.dto.UserTransportDto;
@@ -40,6 +41,8 @@ public class TransportService {
     private final FlightService flightService;
     private final MapStructMapper mapper;
     private final GeoApiContext context;
+    private static final String INNER_COMMUNICATION = "microserviceCommunication";
+
 
     @Transactional
     public List<Transport> getTransportForAccommodation(Long accommodationId) {
@@ -48,8 +51,8 @@ public class TransportService {
                                                                         .stream()
                                                                         .map(accommodationTransport -> accommodationTransport.getId().getTransportId())
                                                                         .toList();
-        var accommodationInfo = accommodationProxy.getAccommodationInfo(accommodationId);
-        var tripInfo = tripGroupProxy.getTripData(accommodationInfo.groupId());
+        var accommodationInfo = accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION, accommodationId);
+        var tripInfo = tripGroupProxy.getTripData(INNER_COMMUNICATION, accommodationInfo.groupId());
         var userTransport = getUserTransport(accommodationTransportIdList);
         var airTransport = generateAirTransportForAccommodation(accommodationTransportIdList, accommodationInfo,
                                                                 tripInfo, accommodationId);
@@ -161,6 +164,7 @@ public class TransportService {
     }
 
     @Transactional
+    @AuthorizeCreatorOrCoordinator
     public UserTransport createUserTransport(Long accommodationId, @Valid UserTransportDto userTransportDto) {
         UserTransport userTransport = new UserTransport(userTransportDto.duration(), userTransportDto.price(),
                                                         userTransportDto.source(),
@@ -172,5 +176,11 @@ public class TransportService {
         accommodationTransportService.createAccommodationTransport(accommodationId,
                                                                    userTransportSaved.getTransportId());
         return userTransportSaved;
+    }
+
+    @Transactional
+    @AuthorizeCreatorOrCoordinator
+    public void deleteUserTransport(Long accommodationId, Long transportId) {
+        transportRepository.deleteById(transportId);
     }
 }
