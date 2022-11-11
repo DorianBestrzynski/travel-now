@@ -21,7 +21,7 @@ public class UserGroupController {
     }
 
     @GetMapping("/group")
-    public ResponseEntity<Boolean> checkIfUserIsPartOfTheGroup(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId") Long userId) {
+    public ResponseEntity<Boolean> isUserPartOfTheGroup(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId") Long userId) {
         var result = userGroupService.checkIfUserIsInGroup(userId, groupId);
         return ResponseEntity.ok(result);
     }

@@ -136,7 +136,7 @@ public class AttractionService {
         var attractions = new ArrayList<>(dayPlan.getDayAttractions());
 
         if(dayPlan.getDayPlanStartingPointId() == null) {
-            var accommodation = tripGroupProxy.getGroupAccommodation(dayPlan.getGroupId());
+            var accommodation = tripGroupProxy.getGroupAccommodation("internalCommunication",dayPlan.getGroupId());
             if(accommodation == null || accommodation.destinationLatitude() == null || accommodation.destinationLongitude() == null)
                 return findBestAttractionsOrder(attractions).attractions();
 

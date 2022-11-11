@@ -8,6 +8,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
+import org.hibernate.validator.constraints.ru.INN;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,12 +24,13 @@ public class AuthorizationAspect {
     @Autowired
     private TripGroupProxy tripGroupProxy;
 
-    private CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    private static final String INNER_COMMUNICATION = "microserviceCommunication";
+
 
     @Around("@annotation(AuthorizeCoordinator)")
     public Object authorizeCoordinator(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        if(!tripGroupProxy.isUserCoordinator(getGroupId(joinPoint), authentication.getUserId()))
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if(!tripGroupProxy.isUserCoordinator(INNER_COMMUNICATION ,getGroupId(joinPoint), authentication.getUserId()))
             throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
 
 
@@ -37,8 +39,8 @@ public class AuthorizationAspect {
 
     @Around("@annotation(AuthorizePartOfTheGroup)")
     public Object authorizePartOfTheGroup(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        if(!tripGroupProxy.isUserPartOfTheGroup(getGroupId(joinPoint), authentication.getUserId()))
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if(!tripGroupProxy.isUserPartOfTheGroup(INNER_COMMUNICATION ,getGroupId(joinPoint), authentication.getUserId()))
             throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
 
 
