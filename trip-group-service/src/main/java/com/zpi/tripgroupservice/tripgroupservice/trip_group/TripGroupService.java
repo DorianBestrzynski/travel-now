@@ -34,6 +34,8 @@ public class TripGroupService {
     private final Geolocation geolocation;
     private final FinanceProxy financeProxy;
     private final AccommodationProxy accommodationProxy;
+    private static final String INNER_COMMUNICATION = "microserviceCommunication";
+
 
     public List<TripGroup> getAllGroupsForUser(Long userId){
         if(userId == null){
@@ -103,7 +105,7 @@ public class TripGroupService {
                                            .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
         if(tripGroup.getSelectedAccommodationId() != null)
-            return accommodationProxy.getAccommodationInfo(tripGroup.getSelectedAccommodationId());
+            return accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION, tripGroup.getSelectedAccommodationId());
 
         return new AccommodationInfoDto();
     }
@@ -116,7 +118,7 @@ public class TripGroupService {
         var tripGroup = tripGroupRepository.findById(groupId)
                                            .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
-        if(accommodationProxy.getAccommodationInfo(accommodationId) == null)
+        if(accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION,  accommodationId) == null)
             throw new ApiRequestException(ACCOMMODATION_NOT_FOUND);
 
         tripGroup.setSelectedAccommodationId(accommodationId);
@@ -139,7 +141,7 @@ public class TripGroupService {
         if(!userGroupService.checkIfUserIsInGroup(userId, groupId)){
             throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
         }
-        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(groupId, userId)){
+        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION,groupId, userId)){
             throw new ApiRequestException(CANNOT_LEAVE_GROUP);
         }
         userGroupService.deleteUserFromGroup(groupId, userId);
