@@ -35,4 +35,9 @@ public class ApiExceptionsHandler {
     public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = {ApiPermissionException.class})
+    public ResponseEntity<Object> handleApiPermissionException(ApiPermissionException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }

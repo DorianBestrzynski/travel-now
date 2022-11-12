@@ -43,7 +43,7 @@ public class AttractionController {
     @PatchMapping()
     public ResponseEntity<Attraction> editAttraction(@RequestParam(name = "userId") Long userId,
                                                     @RequestBody Attraction attraction) {
-        var result = attractionService.editAttraction(userId, attraction);
+        var result = attractionService.editAttraction(attraction);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

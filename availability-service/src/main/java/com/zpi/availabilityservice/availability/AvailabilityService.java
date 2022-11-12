@@ -1,12 +1,16 @@
 package com.zpi.availabilityservice.availability;
 
+import com.zpi.availabilityservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.availabilityservice.dto.AvailabilityDto;
 import com.zpi.availabilityservice.dto.UserDto;
 import com.zpi.availabilityservice.events.publisher.GenerationAvailabilityPublisher;
+import com.zpi.availabilityservice.exceptions.ApiPermissionException;
 import com.zpi.availabilityservice.exceptions.IllegalDatesException;
 import com.zpi.availabilityservice.proxies.AppUserProxy;
+import com.zpi.availabilityservice.security.CustomUsernamePasswordAuthenticationToken;
 import com.zpi.availabilityservice.sharedGroupAvailability.SharedGroupAvailabilityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -55,6 +59,7 @@ public class AvailabilityService {
     }
 
     @Transactional
+    @AuthorizePartOfTheGroup
     public Availability addNewAvailability(AvailabilityDto availabilityDto) {
         var areDatesValid = validateDates(availabilityDto.dateFrom(), availabilityDto.dateTo());
 
@@ -71,6 +76,7 @@ public class AvailabilityService {
         return availability;
     }
 
+    @AuthorizePartOfTheGroup
     public List<Availability> getUserAvailabilitiesInTripGroup(Long userId, Long groupId) {
         if (userId == null || groupId == null || userId < 0 || groupId < 0)
             throw new IllegalArgumentException("User id or group id is invalid. Id must be positive number");
@@ -84,6 +90,7 @@ public class AvailabilityService {
                                      .collect(Collectors.groupingBy(Availability::getUserId));
     }
 
+    @AuthorizePartOfTheGroup
     public Map<UserDto, List<Availability>> getAvailabilitiesInTripGroupWithUserData(Long groupId) {
         if (groupId == null || groupId < 0)
             throw new IllegalArgumentException("Group id is invalid. Id must be positive number");
@@ -108,9 +115,13 @@ public class AvailabilityService {
     }
 
     @Transactional
+    @AuthorizePartOfTheGroup
     public void deleteAvailability(Long availabilityId, Long groupId) {
         if (availabilityId == null || availabilityId < 0)
             throw new IllegalArgumentException("Availability id is invalid. Id must be positive number");
+
+        if(!isUserAnAuthor(availabilityId))
+            throw new ApiPermissionException("Availability does not belong to user");
 
         availabilityRepository.deleteById(availabilityId);
         generationAvailabilityPublisher.publishAvailabilityGenerationEvent(groupId);
@@ -121,6 +132,9 @@ public class AvailabilityService {
         var availability = availabilityRepository.findById(availabilityId)
                                                  .orElseThrow(() -> new IllegalArgumentException(
                                                          "Availability with id " + availabilityId + " does not exist"));
+
+        if(!isUserAnAuthor(availability))
+            throw new ApiPermissionException("Availability does not belong to user");
 
         if (newDateFrom != null && newDateTo != null) {
             var areDatesValid = validateDates(newDateFrom, newDateTo);
@@ -151,6 +165,18 @@ public class AvailabilityService {
 
     public void trigger(Long groupId) {
         generationAvailabilityPublisher.publishAvailabilityGenerationEvent(groupId);
+    }
+
+    private boolean isUserAnAuthor(Long availabilityId) {
+        return availabilityRepository.findById(availabilityId)
+                                     .orElseThrow()
+                                     .getUserId()
+                                     .equals(((CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUserId());
+    }
+
+    private boolean isUserAnAuthor(Availability availability) {
+        return availability.getUserId()
+                           .equals(((CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUserId());
     }
 }
 

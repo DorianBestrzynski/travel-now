@@ -82,7 +82,7 @@ public class DayPlanService {
         for (Long dayPlanId : dayPlanIds) {
             var dayPlan = dayPlanRepository.findById(dayPlanId)
                                            .orElseThrow(() -> new ApiRequestException(DAY_PLAN_NOT_FOUND));
-            if (!tripGroupProxy.isUserPartOfTheGroup("innerCommunication",dayPlan.getGroupId(), userId)) {
+            if (!tripGroupProxy.isUserPartOfTheGroup("innerCommunication", dayPlan.getGroupId(), userId)) {
                 throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
             }
         }
@@ -94,7 +94,6 @@ public class DayPlanService {
         if (dayPlanId == null) {
             throw new IllegalArgumentException(INVALID_DAY_PLAN_ID + "or" + INVALID_USER_ID);
         }
-
 
         return dayPlanRepository.findById(dayPlanId)
                                 .orElseThrow(() -> new ApiRequestException(DAY_PLAN_NOT_FOUND));
