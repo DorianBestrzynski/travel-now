@@ -40,7 +40,6 @@ public class ExpenditureService {
         createFinancialRequestsFrom(expenditureInput, groupId);
         financialRequestOptimizer.optimizeFinancialRequestsIn(groupId);
         return addedExpenditure;
-
     }
 
     private Expenditure mapInputToExpenditure(ExpenditureInputDto expenditureInputDto, Long groupId) {

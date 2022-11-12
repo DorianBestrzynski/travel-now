@@ -2,22 +2,26 @@ package com.zpi.financeoptimizerservice.financial_request;
 
 import com.zpi.financeoptimizerservice.commons.Status;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class FinancialRequestOptimizerTest {
 
-    @Autowired
+    @MockBean
+    private FinancialRequestRepository financialRequestRepository;
+
+    @MockBean
+    private FinancialRequestService financialRequestService;
+
+    @InjectMocks
     private FinancialRequestOptimizer financialRequestOptimizer;
 
     @Test
