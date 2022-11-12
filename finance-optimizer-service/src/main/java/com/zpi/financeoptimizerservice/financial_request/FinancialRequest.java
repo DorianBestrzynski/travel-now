@@ -1,6 +1,7 @@
 package com.zpi.financeoptimizerservice.financial_request;
 
 import com.zpi.financeoptimizerservice.commons.Status;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -56,5 +58,18 @@ public class FinancialRequest {
                                           Long debtee,
                                           Long debtor, Long groupId) {
         return new FinancialRequest(price, debtor, debtee, groupId, Status.PENDING);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FinancialRequest that = (FinancialRequest) o;
+        return status == that.status && amount.equals(that.amount) && debtor.equals(that.debtor) && debtee.equals(that.debtee) && groupId.equals(that.groupId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, amount, debtor, debtee, groupId);
     }
 }

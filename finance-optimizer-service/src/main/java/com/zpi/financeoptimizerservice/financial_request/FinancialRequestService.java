@@ -37,10 +37,7 @@ public class FinancialRequestService {
         return financialRequestRepository.getAllActiveInGroup(groupId);
     }
 
-    public boolean hasFinancialRequests(Long userId, Long groupId){
-        return !getUserFinancialRequests(userId, groupId).isEmpty();
-    }
-
+    @AuthorizePartOfTheGroup
     public Set<FinancialRequest> getUserFinancialRequests(Long userId, Long groupId) {
         return financialRequestRepository.getAllByDebtorAndExpenditure(userId, groupId);
     }
@@ -56,10 +53,6 @@ public class FinancialRequestService {
 
     public void deleteAllFinancialRequests(Long groupId) {
         financialRequestRepository.deleteAllByGroupId(groupId);
-    }
-
-    public Set<FinancialRequest> getAllActiveInGroup(Long groupId) {
-        return financialRequestRepository.getAllActiveInGroup(groupId);
     }
 
     @AuthorizePartOfTheGroup

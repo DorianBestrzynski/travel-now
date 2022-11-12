@@ -3,13 +3,12 @@ package com.zpi.financeoptimizerservice.validation;
 import com.zpi.financeoptimizerservice.dto.ExpenditureInputDto;
 import com.zpi.financeoptimizerservice.exceptions.ExpenditureValidationException;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-
+@ActiveProfiles("test")
 class ExpenditureValidatorTest {
 
     private final ExpenditureValidator expenditureValidator = new ExpenditureValidator();
