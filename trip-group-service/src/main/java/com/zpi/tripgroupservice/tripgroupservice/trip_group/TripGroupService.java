@@ -2,6 +2,8 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 
 
+import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizeCoordinator;
+import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
@@ -43,6 +45,7 @@ public class TripGroupService {
         }
         return tripGroupRepository.findAllGroupsForUser(userId).orElseThrow(() -> new ApiRequestException(NO_GROUPS_FOR_USER));
     }
+    @AuthorizePartOfTheGroup
     public TripGroup getTripGroupById(Long groupId) {
         if (groupId == null || groupId < 0) {
             throw new IllegalArgumentException(INVALID_GROUP_ID);
@@ -63,27 +66,22 @@ public class TripGroupService {
 
 
     @Transactional
+    @AuthorizeCoordinator
     public void deleteGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null){
             throw new IllegalArgumentException(INVALID_GROUP_ID + "or" + INVALID_USER_ID);
         }
-        if(userGroupService.isUserCoordinator(userId, groupId)){
-            tripGroupRepository.deleteById(groupId);
-            userGroupService.deletionGroupCleanUp(groupId);
-        }
-        else throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
+        tripGroupRepository.deleteById(groupId);
+        userGroupService.deletionGroupCleanUp(groupId);
     }
 
    @Transactional
+   @AuthorizeCoordinator
     public TripGroup updateGroup(Long groupId, Long userId, TripGroupDto tripGroupDto) {
-        if(userGroupService.isUserCoordinator(userId, groupId)) {
-            var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
-            mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
-            tripGroupRepository.save(tripGroup);
-            return tripGroup;
-        }
-
-        else throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
+        var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+        mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
+        tripGroupRepository.save(tripGroup);
+        return tripGroup;
     }
 
     public TripDataDto getTripData(Long groupId) {
@@ -126,10 +124,8 @@ public class TripGroupService {
     }
 
     @Transactional
+    @AuthorizeCoordinator
     public TripGroup setCurrencyInGroup(Long groupId, Long userId, Currency currency) {
-        if(!userGroupService.isUserCoordinator(userId, groupId)) {
-            throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
-        }
         var tripGroup = tripGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
         tripGroup.setCurrency(currency);
