@@ -44,7 +44,7 @@ public class ExpenditureService {
     }
 
     private Expenditure mapInputToExpenditure(ExpenditureInputDto expenditureInputDto, Long groupId) {
-        expenditureValidator.validateExpenditureInput(expenditureInputDto, groupId);
+        expenditureValidator.validateExpenditureInput(expenditureInputDto);
 
         return new Expenditure(expenditureInputDto.title(),
                 Optional.ofNullable(expenditureInputDto.price()).map(BigDecimal::valueOf).orElse(null),
