@@ -1,7 +1,6 @@
 server.port: 8086
 spring.application.name: finance-optimizer
 
-spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 app.group-service: localhost
@@ -35,7 +34,20 @@ spring:
 ---
 spring.config.activate.on-profile: docker
 
+spring.config.import: "configserver:"
 app.config-server: config-server
 app.database: postgres
 app.group-service: group
+
+---
+spring.config.activate.on-profile: test
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  datasource:
+    url: jdbc:h2:file:~/test
+    username: sa
+    password:
 
