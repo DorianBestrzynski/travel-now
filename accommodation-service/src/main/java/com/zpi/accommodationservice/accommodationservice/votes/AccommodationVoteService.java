@@ -1,6 +1,7 @@
 package com.zpi.accommodationservice.accommodationservice.votes;
 
 import com.zpi.accommodationservice.accommodationservice.accommodation.AccommodationRepository;
+import com.zpi.accommodationservice.accommodationservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationVoteDto;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.accommodationservice.proxies.UserGroupProxy;
@@ -23,13 +24,12 @@ public class AccommodationVoteService {
     private final AccommodationRepository accommodationRepository;
 
     @Transactional
+    @AuthorizePartOfTheGroup
     public AccommodationVote vote(AccommodationVoteDto accommodationVoteDto) {
         var accommodationVoteId = mapper.getAccommodationVoteIdFromDto(accommodationVoteDto);
 
         if(accommodationVoteRepository.existsById(accommodationVoteId))
             throw new IllegalArgumentException("User already voted for this accommodation");
-        if(!userGroupProxy.isUserPartOfTheGroup(accommodationVoteDto.groupId(), accommodationVoteDto.userId()))
-            throw new IllegalArgumentException("User is not part of the group");
         if(!accommodationRepository.existsByAccommodationIdAndGroupId(accommodationVoteDto.accommodationId(), accommodationVoteDto.groupId()))
             throw new IllegalArgumentException("Accommodation does not exist in the group");
 

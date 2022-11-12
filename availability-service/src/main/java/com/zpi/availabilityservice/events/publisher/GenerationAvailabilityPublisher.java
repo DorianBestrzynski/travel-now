@@ -16,6 +16,4 @@ public class GenerationAvailabilityPublisher {
         GenerationAvailabilityEvent customSpringEvent = new GenerationAvailabilityEvent(this, groupId);
         applicationEventPublisher.publishEvent(customSpringEvent);
     }
-
-
 }

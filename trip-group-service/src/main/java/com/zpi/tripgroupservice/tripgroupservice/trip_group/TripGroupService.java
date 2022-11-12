@@ -2,6 +2,8 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 
 
+import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizeCoordinator;
+import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
@@ -34,6 +36,8 @@ public class TripGroupService {
     private final Geolocation geolocation;
     private final FinanceProxy financeProxy;
     private final AccommodationProxy accommodationProxy;
+    private static final String INNER_COMMUNICATION = "microserviceCommunication";
+
 
     public List<TripGroup> getAllGroupsForUser(Long userId){
         if(userId == null){
@@ -41,6 +45,7 @@ public class TripGroupService {
         }
         return tripGroupRepository.findAllGroupsForUser(userId).orElseThrow(() -> new ApiRequestException(NO_GROUPS_FOR_USER));
     }
+    @AuthorizePartOfTheGroup
     public TripGroup getTripGroupById(Long groupId) {
         if (groupId == null || groupId < 0) {
             throw new IllegalArgumentException(INVALID_GROUP_ID);
@@ -61,27 +66,22 @@ public class TripGroupService {
 
 
     @Transactional
+    @AuthorizeCoordinator
     public void deleteGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null){
             throw new IllegalArgumentException(INVALID_GROUP_ID + "or" + INVALID_USER_ID);
         }
-        if(userGroupService.isUserCoordinator(userId, groupId)){
-            tripGroupRepository.deleteById(groupId);
-            userGroupService.deletionGroupCleanUp(groupId);
-        }
-        else throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
+        tripGroupRepository.deleteById(groupId);
+        userGroupService.deletionGroupCleanUp(groupId);
     }
 
    @Transactional
+   @AuthorizeCoordinator
     public TripGroup updateGroup(Long groupId, Long userId, TripGroupDto tripGroupDto) {
-        if(userGroupService.isUserCoordinator(userId, groupId)) {
-            var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
-            mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
-            tripGroupRepository.save(tripGroup);
-            return tripGroup;
-        }
-
-        else throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
+        var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+        mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
+        tripGroupRepository.save(tripGroup);
+        return tripGroup;
     }
 
     public TripDataDto getTripData(Long groupId) {
@@ -103,7 +103,7 @@ public class TripGroupService {
                                            .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
         if(tripGroup.getSelectedAccommodationId() != null)
-            return accommodationProxy.getAccommodationInfo(tripGroup.getSelectedAccommodationId());
+            return accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION, tripGroup.getSelectedAccommodationId());
 
         return new AccommodationInfoDto();
     }
@@ -116,7 +116,7 @@ public class TripGroupService {
         var tripGroup = tripGroupRepository.findById(groupId)
                                            .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
-        if(accommodationProxy.getAccommodationInfo(accommodationId) == null)
+        if(accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION,  accommodationId) == null)
             throw new ApiRequestException(ACCOMMODATION_NOT_FOUND);
 
         tripGroup.setSelectedAccommodationId(accommodationId);
@@ -124,10 +124,8 @@ public class TripGroupService {
     }
 
     @Transactional
+    @AuthorizeCoordinator
     public TripGroup setCurrencyInGroup(Long groupId, Long userId, Currency currency) {
-        if(!userGroupService.isUserCoordinator(userId, groupId)) {
-            throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
-        }
         var tripGroup = tripGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
         tripGroup.setCurrency(currency);
@@ -139,7 +137,7 @@ public class TripGroupService {
         if(!userGroupService.checkIfUserIsInGroup(userId, groupId)){
             throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
         }
-        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(groupId, userId)){
+        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION,groupId, userId)){
             throw new ApiRequestException(CANNOT_LEAVE_GROUP);
         }
         userGroupService.deleteUserFromGroup(groupId, userId);

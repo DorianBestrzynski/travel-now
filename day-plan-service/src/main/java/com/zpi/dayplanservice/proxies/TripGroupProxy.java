@@ -2,8 +2,10 @@ package com.zpi.dayplanservice.proxies;
 
 import com.zpi.dayplanservice.configuration.CustomFeignConfiguration;
 import com.zpi.dayplanservice.dto.AccommodationInfoDto;
+import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -11,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface TripGroupProxy {
 
     @GetMapping("/user-group/role")
-    boolean isUserCoordinator(@RequestParam(name = "groupId")Long groupId, @RequestParam(name = "userId")Long userId);
+    boolean isUserCoordinator(@RequestHeader("innerCommunication") String header, @RequestParam(name = "groupId")Long groupId, @RequestParam(name = "userId")Long userId);
 
     @GetMapping( "/user-group/group")
-    Boolean isUserPartOfTheGroup(@RequestParam("groupId") Long groupId, @RequestParam("userId") Long userId);
+    Boolean isUserPartOfTheGroup(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("userId") Long userId);
 
     @GetMapping( "/trip-group/accommodation")
-    AccommodationInfoDto getGroupAccommodation(@RequestParam("groupId") Long groupId);
+    AccommodationInfoDto getGroupAccommodation(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId);
 }
 
 

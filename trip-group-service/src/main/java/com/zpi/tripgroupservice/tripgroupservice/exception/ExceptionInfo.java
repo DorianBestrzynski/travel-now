@@ -40,4 +40,6 @@ public final class ExceptionInfo {
     public final static String ACCOMMODATION_NOT_FOUND = "Accommodation not found";
 
     public final static String CANNOT_LEAVE_GROUP = "You cannot leave group if you have unsettled expenses";
+
+    public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
 }

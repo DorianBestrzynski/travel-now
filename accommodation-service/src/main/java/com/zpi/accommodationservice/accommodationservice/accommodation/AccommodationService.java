@@ -1,6 +1,8 @@
 package com.zpi.accommodationservice.accommodationservice.accommodation;
 
 import com.zpi.accommodationservice.accommodationservice.accomodation_strategy.AccommodationDataExtractionStrategy;
+import com.zpi.accommodationservice.accommodationservice.aspects.AuthorizeAuthorOrCoordinator;
+import com.zpi.accommodationservice.accommodationservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto;
@@ -37,11 +39,8 @@ public class AccommodationService {
     private final Pattern pattern;
 
     @Transactional
+    @AuthorizePartOfTheGroup
     public Accommodation addAccommodation(AccommodationDto accommodationDto) {
-        var isUserPartOfGroup = userGroupProxy.isUserPartOfTheGroup(accommodationDto.groupId(), accommodationDto.creatorId());
-        if (!isUserPartOfGroup)
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-
         var extractedData = extractDataFromUrl(accommodationDto.accommodationLink());
         var accommodation = new Accommodation(accommodationDto.groupId(), accommodationDto.creatorId(),
                                               extractedData.name(), extractedData.streetAddress(),
@@ -71,58 +70,39 @@ public class AccommodationService {
                                    .extractDataFromUrl(bookingUrl);
     }
 
+    @AuthorizePartOfTheGroup
     public List<Accommodation> getAllAccommodationsForGroup(Long groupId, Long userId) {
         if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
-            
-        var isUserPartOfGroup = userGroupProxy.isUserPartOfTheGroup(groupId, userId);
-
-        if (!isUserPartOfGroup)
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-
         return accommodationRepository.findAllByGroupId(groupId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
     }
 
     @Transactional
+    @AuthorizeAuthorOrCoordinator
     public void deleteAccommodation(Long accommodationId, Long userId) {
         if(accommodationId == null || userId == null){
             throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + OR_WORD + INVALID_USER_ID);
         }
-
-        var accommodation = accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
-        if(hasEditingAccommodationPermissions(userId, accommodation)){
-            accommodationRepository.deleteById(accommodationId);
-        }
-        else
-            throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
-
+        accommodationRepository.deleteById(accommodationId);
     }
 
     @Transactional
+    @AuthorizeAuthorOrCoordinator
     public Accommodation editAccommodation(Long accommodationId, Long userId, AccommodationDto accommodationDto) {
-        if(accommodationDto == null || userId == null ){
+        if (accommodationDto == null || userId == null) {
             throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + OR_WORD + INVALID_USER_ID);
         }
 
-        var accommodation =  accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-        if(hasEditingAccommodationPermissions(userId, accommodation)) {
-            accommodationDto = mapstructMapper.adaptAccommodationDto(accommodationDto);
-            mapstructMapper.updateFromAccommodationDtoToAccommodation(accommodation, accommodationDto);
-            if(accommodationDto.accommodationLink() != null){
-                var updatedAccommodation = extractDataFromUrl(accommodationDto.accommodationLink());
-                mapstructMapper.updateFromAccommodationDataDtoToAccommodation(accommodation, updatedAccommodation);
-            }
-            accommodationRepository.save(accommodation);
-            return accommodation;
+        var accommodation = accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+        accommodationDto = mapstructMapper.adaptAccommodationDto(accommodationDto);
+        mapstructMapper.updateFromAccommodationDtoToAccommodation(accommodation, accommodationDto);
+        if (accommodationDto.accommodationLink() != null) {
+            var updatedAccommodation = extractDataFromUrl(accommodationDto.accommodationLink());
+            mapstructMapper.updateFromAccommodationDataDtoToAccommodation(accommodation, updatedAccommodation);
         }
-        throw new ApiPermissionException(EDITING_PERMISSION_VIOLATION);
+        accommodationRepository.save(accommodation);
+        return accommodation;
 
-    }
-
-    private boolean hasEditingAccommodationPermissions(Long userId, Accommodation accommodation) {
-        return userGroupProxy.isUserPartOfTheGroup(accommodation.getGroupId(), userId) &&
-                (userGroupProxy.isUserCoordinator(accommodation.getGroupId(), userId) || userId.equals(accommodation.getCreator_id()));
     }
 
     public AccommodationInfoDto getAccommodationInfo(Long accommodationId) {

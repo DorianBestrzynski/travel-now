@@ -25,4 +25,10 @@ public class TransportController {
         var transport = transportService.createUserTransport(accommodationId, userTransportDto);
         return ResponseEntity.ok(transport);
     }
+
+    @DeleteMapping("/user-transport")
+    public void createUserTransport(@RequestParam Long accommodationId, @RequestParam Long transportId) {
+        transportService.deleteUserTransport(accommodationId, transportId);
+    }
+
 }

@@ -8,4 +8,7 @@ public class ExceptionsInfo {
     public final static String LUFTHANSA_API_EXCEPTION = "There was error while trying to access Lufthansa API";
 
     public final static String LUFTHANSA_NO_AIRPORT_MATCHING = "There are no airports matching your localization";
+
+    public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
+
 }

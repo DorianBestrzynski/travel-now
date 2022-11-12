@@ -34,8 +34,10 @@ public class UserGroupService {
     }
 
     public boolean isUserCoordinator(Long userId, Long groupId) {
-        UserGroup userGroup = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElseThrow(() -> new ApiRequestException(USER_GROUP_ENTITY_NOT_FOUND));
-        return userGroup.getRole().equals(Role.COORDINATOR);
+        UserGroup userGroup = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElse(null);
+        if(userGroup != null)
+            return userGroup.getRole().equals(Role.COORDINATOR);
+        else return false;
     }
 
     public void deletionGroupCleanUp(Long groupId) {

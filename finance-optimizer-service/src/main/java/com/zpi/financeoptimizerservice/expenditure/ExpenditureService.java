@@ -1,10 +1,10 @@
 package com.zpi.financeoptimizerservice.expenditure;
 
+import com.zpi.financeoptimizerservice.aspects.AuthorizeAuthorOrCoordinatorExpenditure;
+import com.zpi.financeoptimizerservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.financeoptimizerservice.dto.ExpenditureInputDto;
-import com.zpi.financeoptimizerservice.exceptions.ApiPermissionException;
 import com.zpi.financeoptimizerservice.financial_request.FinancialRequestOptimizer;
 import com.zpi.financeoptimizerservice.financial_request.FinancialRequestService;
-import com.zpi.financeoptimizerservice.proxies.UserGroupProxy;
 import com.zpi.financeoptimizerservice.validation.ExpenditureValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,24 +22,19 @@ import static com.zpi.financeoptimizerservice.exceptions.ExceptionsInfo.*;
 public class ExpenditureService {
 
     private final ExpenditureRepository expenditureRepository;
-    private final UserGroupProxy userGroupProxy;
     private final ExpenditureValidator expenditureValidator;
     private final FinancialRequestService financialRequestService;
     private final FinancialRequestOptimizer financialRequestOptimizer;
 
 
+    @AuthorizePartOfTheGroup
     public Set<Expenditure> getExpendituresMetadata(Long groupId, Long userId) {
-        if(!userGroupProxy.isUserPartOfTheGroup(groupId, userId)){
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-        }
         return expenditureRepository.findAllByGroupId(groupId);
     }
 
     @Transactional
+    @AuthorizePartOfTheGroup
     public Expenditure addExpenditure(Long groupId, ExpenditureInputDto expenditureInput) {
-        if(!userGroupProxy.isUserPartOfTheGroup(groupId, expenditureInput.creatorId())){
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-        }
         var expenditure = mapInputToExpenditure(expenditureInput, groupId);
         var addedExpenditure = expenditureRepository.save(expenditure);
         createFinancialRequestsFrom(expenditureInput, groupId);
@@ -72,14 +67,10 @@ public class ExpenditureService {
     }
 
     @Transactional
+    @AuthorizePartOfTheGroup
+    @AuthorizeAuthorOrCoordinatorExpenditure
     public Expenditure editExpenditure(Long groupId, Long expenditureId, Long userId, ExpenditureInputDto expenditureInput) {
-        if(!userGroupProxy.isUserPartOfTheGroup(groupId, userId)){
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-        }
         var expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-        if (!(userGroupProxy.isUserCoordinator(groupId, userId) || Objects.equals(expenditure.getCreatorId(), userId))) {
-            throw new ApiPermissionException(PERMISSION_VIOLATION);
-        }
         var shouldTriggerRequests = updateExpenditure(expenditure, expenditureInput);
         var updatedExpenditure = expenditureRepository.save(expenditure);
         if(shouldTriggerRequests) {
@@ -109,14 +100,10 @@ public class ExpenditureService {
     }
 
     @Transactional
+    @AuthorizePartOfTheGroup
+    @AuthorizeAuthorOrCoordinatorExpenditure
     public void deleteExpenditure(Long expenditureId, Long userId, Long groupId) {
         var expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-        if (!userGroupProxy.isUserPartOfTheGroup(groupId, userId)) {
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-        }
-        if (!(userGroupProxy.isUserCoordinator(groupId, userId) || Objects.equals(expenditure.getCreatorId(), userId))) {
-            throw new ApiPermissionException(PERMISSION_VIOLATION);
-        }
         expenditureRepository.delete(expenditure);
         regenerateOptimizationProcess(groupId);
     }
@@ -130,10 +117,8 @@ public class ExpenditureService {
         financialRequestOptimizer.optimizeFinancialRequestsIn(groupId);
     }
 
+    @AuthorizePartOfTheGroup
     public Map<Long, BigDecimal> getGroupBalance(Long groupId, Long userId) {
-        if (!userGroupProxy.isUserPartOfTheGroup(groupId, userId)) {
-            throw new ApiPermissionException(NOT_A_GROUP_MEMBER);
-        }
         var financialRequests = financialRequestService.getAllActiveInGroup(groupId);
         var balanceDouble = financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
         return financialRequestOptimizer.convertPricesToBigDecimal(balanceDouble);

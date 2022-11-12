@@ -19,28 +19,27 @@ public class DayPlanController {
     private final DayPlanRepository dayPlanRepository;
 
     @GetMapping()
-    public ResponseEntity<List<DayPlan>> getAllDayPlansForGroup(@RequestParam Long groupId, @RequestParam Long userId){
-        var result = dayPlanService.getAllDayPlansForGroup(groupId, userId);
+    public ResponseEntity<List<DayPlan>> getAllDayPlansForGroup(@RequestParam Long groupId){
+        var result = dayPlanService.getAllDayPlansForGroup(groupId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<DayPlan> createDayPlan(@PathVariable Long userId, @Valid @RequestBody DayPlanDto dayPlanDto){
-        var result = dayPlanService.createDayPlan(userId, dayPlanDto);
+    @PostMapping()
+    public ResponseEntity<DayPlan> createDayPlan(@Valid @RequestBody DayPlanDto dayPlanDto){
+        var result = dayPlanService.createDayPlan(dayPlanDto);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @DeleteMapping()
     @ResponseStatus(HttpStatus.OK)
-    public void deleteDayPlan(@RequestParam(name = "dayPlanId")Long dayPlanId, @RequestParam(name = "userId")Long userId) {
-        dayPlanService.deleteDayPlan(dayPlanId, userId);
+    public void deleteDayPlan(@RequestParam(name = "dayPlanId")Long dayPlanId) {
+        dayPlanService.deleteDayPlan(dayPlanId);
     }
 
     @PatchMapping()
     public ResponseEntity<DayPlan> editDayPlan(@RequestParam(name = "dayPlanId")Long dayPlanId,
-                                               @RequestParam(name = "userId")Long userId,
                                                @RequestBody DayPlanDto dayPlanDto){
-        var result = dayPlanService.editDayPlan(dayPlanId, userId, dayPlanDto);
+        var result = dayPlanService.editDayPlan(dayPlanId, dayPlanDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
 
     }

@@ -23,6 +23,8 @@ public class ExceptionsInfo {
 
     public final static String EDITING_PERMISSION_VIOLATION = "Only user with status COORDINATOR or creator of accommodation can edit accommodation!";
 
+    public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
+
 
 
 

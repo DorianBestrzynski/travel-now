@@ -7,6 +7,8 @@ import com.google.maps.PlacesApi;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResult;
+import com.zpi.dayplanservice.aspects.AuthorizeCoordinator;
+import com.zpi.dayplanservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.dayplanservice.day_plan.DayPlanService;
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
 import com.zpi.dayplanservice.dto.RouteDto;
@@ -35,8 +37,9 @@ public class AttractionService {
 
     private final TripGroupProxy tripGroupProxy;
 
+    @AuthorizePartOfTheGroup
     public List<Attraction> getAllAttractionsForDay(Long groupId, Long dayPlanId) {
-        return null;
+        return dayPlanService.getDayPlanById(dayPlanId).getDayAttractions().stream().toList();
     }
 
     public List<AttractionCandidateDto> findCandidates(String name) {
@@ -51,6 +54,7 @@ public class AttractionService {
     }
 
     @Transactional
+    @AuthorizeCoordinator
     public Attraction deleteAttraction(Long attractionId, Long dayPlanId) {
         if(attractionId == null || dayPlanId == null)
             throw new IllegalArgumentException("Attraction id or day plan id is null");
@@ -67,6 +71,7 @@ public class AttractionService {
     }
 
     @Transactional
+    @AuthorizeCoordinator
     public Attraction addAttraction(List<Long> dayPlanIds, Long userId, AttractionCandidateDto attractionCandidateDto) {
         if(dayPlanIds.isEmpty())
             throw new IllegalArgumentException("Day plan ids cannot be empty");
@@ -121,8 +126,9 @@ public class AttractionService {
         return candidates;
     }
 
-    public Attraction editAttraction(Long userId, Attraction attraction) {
-        if(userId == null || attraction == null)
+    @AuthorizeCoordinator
+    public Attraction editAttraction(Attraction attraction) {
+        if(attraction == null)
             throw new IllegalArgumentException("User id or attraction candidate dto is null");
 
         if(!attractionRepository.existsById(attraction.getAttractionId()))
@@ -136,7 +142,7 @@ public class AttractionService {
         var attractions = new ArrayList<>(dayPlan.getDayAttractions());
 
         if(dayPlan.getDayPlanStartingPointId() == null) {
-            var accommodation = tripGroupProxy.getGroupAccommodation(dayPlan.getGroupId());
+            var accommodation = tripGroupProxy.getGroupAccommodation("internalCommunication",dayPlan.getGroupId());
             if(accommodation == null || accommodation.destinationLatitude() == null || accommodation.destinationLongitude() == null)
                 return findBestAttractionsOrder(attractions).attractions();
 
