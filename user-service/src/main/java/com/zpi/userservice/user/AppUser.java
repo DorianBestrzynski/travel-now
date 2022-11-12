@@ -58,6 +58,16 @@ public class AppUser {
         this.password = password;
     }
 
+    public AppUser(Long userId, String username, String email, String firstName, String surname, LocalDate birthday, Password password){
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.birthday = birthday;
+        this.password = password;
+    }
+
 
     @Override
     public boolean equals(Object o) {
