@@ -118,8 +118,9 @@ public class ExpenditureService {
     }
 
     @AuthorizePartOfTheGroup
-    public Map<Long, Double> getGroupBalance(Long groupId, Long userId) {
+    public Map<Long, BigDecimal> getGroupBalance(Long groupId, Long userId) {
         var financialRequests = financialRequestService.getAllActiveInGroup(groupId);
-        return financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
+        var balanceDouble = financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
+        return financialRequestOptimizer.convertPricesToBigDecimal(balanceDouble);
     }
 }

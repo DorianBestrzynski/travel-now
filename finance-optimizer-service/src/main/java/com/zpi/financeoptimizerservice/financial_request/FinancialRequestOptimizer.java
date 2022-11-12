@@ -38,7 +38,7 @@ public class FinancialRequestOptimizer {
         return result;
     }
 
-    private Map<Long, BigDecimal> convertPricesToBigDecimal(Map<Long, Double> netCashFlow) {
+    public Map<Long, BigDecimal> convertPricesToBigDecimal(Map<Long, Double> netCashFlow) {
         Map<Long, BigDecimal> result = new HashMap<>();
         for (var entry : netCashFlow.entrySet()) {
             var price = BigDecimal.valueOf(entry.getValue()).setScale(2, RoundingMode.CEILING);

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public class ExpenditureController {
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<Map<Long, Double>> getGroupBalance(@RequestParam Long groupId, @RequestParam Long userId){
+    public ResponseEntity<Map<Long, BigDecimal>> getGroupBalance(@RequestParam Long groupId, @RequestParam Long userId){
         var result = expenditureService.getGroupBalance(groupId, userId);
         return ResponseEntity.ok(result);
     }
