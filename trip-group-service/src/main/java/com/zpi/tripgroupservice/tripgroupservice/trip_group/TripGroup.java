@@ -3,6 +3,7 @@ package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.invitation.Invitation;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import static com.zpi.tripgroupservice.tripgroupservice.commons.Utils.DEFAULT_VO
 @Getter
 @NoArgsConstructor
 @Setter
+@EqualsAndHashCode
 public class TripGroup {
 
     @Id

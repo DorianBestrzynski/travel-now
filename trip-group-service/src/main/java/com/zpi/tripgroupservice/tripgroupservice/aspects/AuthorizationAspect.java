@@ -34,7 +34,7 @@ public class AuthorizationAspect {
     @Around("@annotation(AuthorizePartOfTheGroup)")
     public Object authorizePartOfTheGroup(ProceedingJoinPoint joinPoint) throws Throwable {
         CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if(!userGroupService.isUserInGroup(authentication.getUserId(), getGroupId(joinPoint)))
+        if(!userGroupService.checkIfUserIsInGroup(authentication.getUserId(), getGroupId(joinPoint)))
             throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
 
         return joinPoint.proceed();

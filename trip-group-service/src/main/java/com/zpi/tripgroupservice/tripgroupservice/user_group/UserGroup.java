@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class UserGroup {
 
     @EmbeddedId
+    @Getter
     private UserGroupKey id;
 
     @Getter
@@ -19,6 +20,7 @@ public class UserGroup {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Getter
     @Column(name = "votes_remaining", nullable = false)
     private Integer votesRemaining;
 
