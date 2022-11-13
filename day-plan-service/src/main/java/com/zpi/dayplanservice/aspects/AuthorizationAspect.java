@@ -1,5 +1,8 @@
 package com.zpi.dayplanservice.aspects;
 
+import com.zpi.dayplanservice.attraction.Attraction;
+import com.zpi.dayplanservice.attraction.AttractionRepository;
+import com.zpi.dayplanservice.day_plan.DayPlanRepository;
 import com.zpi.dayplanservice.dto.DayPlanDto;
 import com.zpi.dayplanservice.exception.ApiPermissionException;
 import com.zpi.dayplanservice.proxies.TripGroupProxy;
@@ -8,7 +11,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
-import org.hibernate.validator.constraints.ru.INN;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,6 +25,12 @@ public class AuthorizationAspect {
 
     @Autowired
     private TripGroupProxy tripGroupProxy;
+
+    @Autowired
+    private DayPlanRepository dayPlanRepository;
+
+    @Autowired
+    private AttractionRepository attractionRepository;
 
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
@@ -49,11 +57,24 @@ public class AuthorizationAspect {
 
     private Long getGroupId(ProceedingJoinPoint joinPoint) {
         CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
-
         if(Arrays.asList(codeSignature.getParameterNames()).contains("groupId")) {
             return (Long) joinPoint.getArgs()[Arrays.asList(codeSignature.getParameterNames()).indexOf("groupId")];
-        } else {
+        } else if(Arrays.asList(codeSignature.getParameterNames()).contains("dayPlanDto")){
             return ((DayPlanDto) joinPoint.getArgs()[Arrays.asList(codeSignature.getParameterNames()).indexOf("dayPlanDto")]).groupId();
+        } else if (Arrays.asList(codeSignature.getParameterNames()).contains("dayPlanId")) {
+            return dayPlanRepository.findById((Long) joinPoint.getArgs()[Arrays.asList(codeSignature.getParameterNames()).indexOf("dayPlanId")])
+                                    .orElseThrow()
+                                    .getGroupId();
+        } else if(Arrays.asList(codeSignature.getParameterNames()).contains("attraction")){
+            return attractionRepository.findById(((Attraction) joinPoint.getArgs()[Arrays.asList(codeSignature.getParameterNames()).indexOf("attraction")]).getAttractionId())
+                                       .orElseThrow()
+                                       .getDays()
+                                       .stream()
+                                       .findAny()
+                                       .orElseThrow()
+                                       .getGroupId();
         }
+
+        return -1L;
     }
 }

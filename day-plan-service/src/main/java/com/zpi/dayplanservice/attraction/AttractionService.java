@@ -56,7 +56,7 @@ public class AttractionService {
     @Transactional
     @AuthorizeCoordinator
     public Attraction deleteAttraction(Long attractionId, Long dayPlanId) {
-        if(attractionId == null || dayPlanId == null)
+        if(attractionId == null || dayPlanId == null || attractionId < 0 || dayPlanId < 0)
             throw new IllegalArgumentException("Attraction id or day plan id is null");
 
         var dayPlan = dayPlanService.getDayPlanById(dayPlanId);
@@ -71,7 +71,6 @@ public class AttractionService {
     }
 
     @Transactional
-    @AuthorizeCoordinator
     public Attraction addAttraction(List<Long> dayPlanIds, Long userId, AttractionCandidateDto attractionCandidateDto) {
         if(dayPlanIds.isEmpty())
             throw new IllegalArgumentException("Day plan ids cannot be empty");
@@ -126,7 +125,6 @@ public class AttractionService {
         return candidates;
     }
 
-    @AuthorizeCoordinator
     public Attraction editAttraction(Attraction attraction) {
         if(attraction == null)
             throw new IllegalArgumentException("User id or attraction candidate dto is null");
