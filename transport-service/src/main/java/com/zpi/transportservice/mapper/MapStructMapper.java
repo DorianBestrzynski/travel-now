@@ -7,7 +7,8 @@ import org.mapstruct.*;
 @Mapper(
         componentModel = "spring",
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface MapStructMapper {
 

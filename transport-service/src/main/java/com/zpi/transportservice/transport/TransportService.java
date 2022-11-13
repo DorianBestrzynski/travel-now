@@ -3,6 +3,7 @@ package com.zpi.transportservice.transport;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
+import com.zpi.transportservice.adapter.GeoLocationAdapter;
 import com.zpi.transportservice.adapter.LufthansaAdapter;
 import com.zpi.transportservice.aspects.AuthorizeCreatorOrCoordinator;
 import com.zpi.transportservice.dto.AccommodationInfoDto;
@@ -40,7 +41,7 @@ public class TransportService {
     private final LufthansaAdapter lufthansaAdapter;
     private final FlightService flightService;
     private final MapStructMapper mapper;
-    private final GeoApiContext context;
+    private final GeoLocationAdapter geoLocationAdapter;
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
 
@@ -76,9 +77,9 @@ public class TransportService {
                                                       accommodationId);
         if (carTransport == null) {
             try {
-                var route = DirectionsApi.getDirections(context, tripData.startingLocation(), accommodationInfo.streetAddress()).await();
-                var distance = route.routes[0].legs[0].distance.inMeters;
-                var duration = Duration.ofSeconds(route.routes[0].legs[0].duration.inSeconds);
+                var route = geoLocationAdapter.getRoute(tripData.startingLocation(), accommodationInfo.streetAddress());
+                var distance = geoLocationAdapter.getDistance(route);
+                var duration = geoLocationAdapter.getDuration(route);
                 var endDate = tripData.startDate().plus(duration.toDays(), ChronoUnit.DAYS);
 
                 var newCarTransport = new CarTransport(duration, distance, null, tripData.startingLocation(),
@@ -88,8 +89,8 @@ public class TransportService {
                 accommodationTransportService.createAccommodationTransport(accommodationId, carTransportSaved.getTransportId());
 
                 return carTransportSaved;
-            } catch (ApiException | InterruptedException | IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
         }
         return carTransport;
@@ -118,7 +119,7 @@ public class TransportService {
         return transportRepository.findUserTransport(transportList);
     }
 
-    public AirTransport generateAirTransportForAccommodation(List<Long> accommodationTransportIds,
+    private AirTransport generateAirTransportForAccommodation(List<Long> accommodationTransportIds,
                                                              AccommodationInfoDto accommodationInfo,
                                                              TripDataDto tripData, Long accommodationId) {
 

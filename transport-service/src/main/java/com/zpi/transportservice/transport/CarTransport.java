@@ -25,4 +25,9 @@ public class CarTransport extends Transport {
         super(duration, price, source, destination, startDate, endDate, link, 2);
         this.distanceInKm = distanceInKm;
     }
+
+    public CarTransport(Long transportId, Duration duration, Long distanceInKm, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link) {
+        super(transportId, duration, price, source, destination, startDate, endDate, link, 2);
+        this.distanceInKm = distanceInKm;
+    }
 }

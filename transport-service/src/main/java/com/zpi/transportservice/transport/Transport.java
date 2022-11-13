@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @DiscriminatorColumn(name = "transport_type",
                     discriminatorType = DiscriminatorType.INTEGER)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -55,6 +54,18 @@ public class Transport {
 
 
     public Transport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate , String link, Integer transportType) {
+        this.duration = duration;
+        this.price = price;
+        this.source = source;
+        this.destination = destination;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.link = link;
+        this.transportTypeJson = transportType;
+    }
+
+    public Transport(Long transportId, Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate , String link, Integer transportType) {
+        this.transportId = transportId;
         this.duration = duration;
         this.price = price;
         this.source = source;

@@ -39,7 +39,7 @@ public class AuthorizationAspect {
 
         var accommodation = accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION, getAccommodationId(joinPoint));
 
-        if (!(Objects.equals(accommodation.creatorId(), authentication.getUserId()) || tripGroupProxy.isUserCoordinator(INNER_COMMUNICATION, accommodation.groupId(), authentication.getUserId()))){
+        if (!(tripGroupProxy.isUserCoordinator(INNER_COMMUNICATION, accommodation.groupId(), authentication.getUserId()) ||Objects.equals(accommodation.creatorId(), authentication.getUserId()))){
             throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
         }
         return joinPoint.proceed();

@@ -65,4 +65,14 @@ public class Flight {
         this.arrivalTime = arrivalTime;
         this.flightDuration = duration;
     }
+
+    public Flight(Long flightId, String flightNumber, String departureAirport, String arrivalAirport, LocalDateTime departureTime, LocalDateTime arrivalTime, Duration duration) {
+        this.flightId = flightId;
+        this.flightNumber = flightNumber;
+        this.departureAirport = departureAirport;
+        this.arrivalAirport = arrivalAirport;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.flightDuration = duration;
+    }
 }
