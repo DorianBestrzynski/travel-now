@@ -43,7 +43,7 @@ public class TripGroupService {
         if(userId == null){
             throw new IllegalArgumentException(INVALID_USER_ID);
         }
-        return tripGroupRepository.findAllGroupsForUser(userId).orElseThrow(() -> new ApiRequestException(NO_GROUPS_FOR_USER));
+        return tripGroupRepository.findAllGroupsForUser(userId);
     }
     @AuthorizePartOfTheGroup
     public TripGroup getTripGroupById(Long groupId) {
@@ -133,10 +133,8 @@ public class TripGroupService {
     }
 
     @Transactional
+    @AuthorizePartOfTheGroup
     public void leaveGroup(Long groupId, Long userId) {
-        if(!userGroupService.checkIfUserIsInGroup(userId, groupId)){
-            throw new ApiPermissionException(DELETING_PERMISSION_VIOLATION);
-        }
         if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION,groupId, userId)){
             throw new ApiRequestException(CANNOT_LEAVE_GROUP);
         }

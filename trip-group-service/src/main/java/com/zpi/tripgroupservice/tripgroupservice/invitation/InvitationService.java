@@ -1,5 +1,7 @@
 package com.zpi.tripgroupservice.tripgroupservice.invitation;
 
+import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizeCoordinator;
+import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
 import com.zpi.tripgroupservice.tripgroupservice.trip_group.TripGroup;
 import com.zpi.tripgroupservice.tripgroupservice.trip_group.TripGroupService;
@@ -28,20 +30,13 @@ public class InvitationService {
     private int saltLength;
 
     @Transactional
+    @AuthorizeCoordinator
     public String createInvitation(Long userId, Long groupId) {
         if (userId < 0 || groupId < 0) {
             throw new IllegalArgumentException(INVALID_USER_ID_GROUP_ID);
         }
 
         TripGroup tripGroup = tripGroupService.getTripGroupById(groupId);
-
-        var key = new UserGroupKey(userId, groupId);
-        var userGroup = userGroupService.getUserGroupById(key);
-
-
-        if (userGroup.getRole() != Role.COORDINATOR)
-            throw new IllegalArgumentException(USER_NOT_A_COORDINATOR);
-
 
         var invitationToken = generateInvitationToken(tripGroup);
 
@@ -77,7 +72,6 @@ public class InvitationService {
 
     @Transactional
     public UserGroup acceptInvitation(Long userId, String token) {
-
         var groupID = invitationRepository.findById(token)
                                           .orElseThrow(() -> new IllegalArgumentException(INVALID_INVITATION_TOKEN))
                                           .getTripGroup()

@@ -46,15 +46,11 @@ public class UserGroupService {
         userGroupRepository.deleteAll(userGroups);
     }
 
-    public Boolean isUserInGroup(Long userId, Long groupId) {
-        return userGroupRepository.existsById(new UserGroupKey(userId, groupId));
-    }
-
     public Boolean checkIfUserIsInGroup(Long userId, Long groupId){
         if(userId == null || groupId == null || userId < 0 || groupId < 0){
             throw new IllegalArgumentException(INVALID_USER_ID_GROUP_ID);
         }
-        return isUserInGroup(userId, groupId);
+        return userGroupRepository.existsById(new UserGroupKey(userId, groupId));
     }
 
     public void deleteUserFromGroup(Long groupId, Long userId) {

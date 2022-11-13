@@ -35,7 +35,7 @@ public final class ExceptionInfo {
 
     public final static String EXCEPTION_FEIGN = "There was exception while feign communication";
 
-    public final static String INVALID_ACCOMMODATION_ID = "There was exception while feign communication";
+    public final static String INVALID_ACCOMMODATION_ID = "Invalid accommodation id";
 
     public final static String ACCOMMODATION_NOT_FOUND = "Accommodation not found";
 
