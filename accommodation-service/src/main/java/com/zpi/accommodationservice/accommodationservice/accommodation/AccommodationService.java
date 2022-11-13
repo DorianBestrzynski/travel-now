@@ -6,7 +6,6 @@ import com.zpi.accommodationservice.accommodationservice.aspects.AuthorizePartOf
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationDto;
 import com.zpi.accommodationservice.accommodationservice.dto.AccommodationInfoDto;
-import com.zpi.accommodationservice.accommodationservice.exceptions.ApiPermissionException;
 import com.zpi.accommodationservice.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.accommodationservice.proxies.UserGroupProxy;
@@ -49,7 +48,7 @@ public class AccommodationService {
                                               extractedData.region(),
                                               accommodationDto.description(),
                                               extractedData.imageLink(),
-                                              extractedData.url(), accommodationDto.price(),
+                                              extractedData.sourceLink(), accommodationDto.price(),
                                               extractedData.latitude(),
                                               extractedData.longitude());
 
@@ -57,8 +56,8 @@ public class AccommodationService {
     }
 
 
-    private AccommodationDataDto extractDataFromUrl(String bookingUrl) {
-        var matcher = pattern.matcher(bookingUrl);
+    private AccommodationDataDto extractDataFromUrl(String url) {
+        var matcher = pattern.matcher(url);
 
         String serviceName;
         if (matcher.find())
@@ -67,20 +66,20 @@ public class AccommodationService {
             throw new DataExtractionNotSupported(DATA_EXTRACTION_EXCEPTION);
 
         return extractionStrategies.get(serviceName)
-                                   .extractDataFromUrl(bookingUrl);
+                                   .extractDataFromUrl(url);
     }
 
     @AuthorizePartOfTheGroup
-    public List<Accommodation> getAllAccommodationsForGroup(Long groupId, Long userId) {
-        if(groupId == null || userId == null)
+    public List<Accommodation> getAllAccommodationsForGroup(Long groupId) {
+        if(groupId == null)
             throw new IllegalArgumentException(INVALID_GROUP_ID + " or " + INVALID_USER_ID);
         return accommodationRepository.findAllByGroupId(groupId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
     }
 
     @Transactional
     @AuthorizeAuthorOrCoordinator
-    public void deleteAccommodation(Long accommodationId, Long userId) {
-        if(accommodationId == null || userId == null){
+    public void deleteAccommodation(Long accommodationId) {
+        if(accommodationId == null){
             throw new IllegalArgumentException(INVALID_ACCOMMODATION_ID + OR_WORD + INVALID_USER_ID);
         }
         accommodationRepository.deleteById(accommodationId);

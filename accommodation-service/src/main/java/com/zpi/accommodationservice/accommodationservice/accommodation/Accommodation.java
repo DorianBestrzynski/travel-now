@@ -56,7 +56,7 @@ public class Accommodation {
     private String sourceLink;
 
     @Column(name = "given_votes", nullable = false)
-    private Integer givenVotes;
+    private Integer givenVotes = 0;
 
     @Column(name = "price")
     private BigDecimal price;

@@ -194,7 +194,7 @@ public class AccommodationServiceTests {
                     assertThat(actual.getDescription()).isEqualTo("test");
                     assertThat(actual.getImageLink()).isEqualTo("https://a0.muscache.com/pictures/miso/Hosting-654017285821150998/original/7ce75e7f-0110-4b3d-967e-334b88ffca90.jpeg");
                     assertThat(actual.getSourceLink()).isEqualTo("https://www.airbnb.pl/rooms/654017285821150998?check_in=2022-12-30&check_out=2023-01-02&guests=1&adults=15&s=67&unique_share_id=72e7b39a-9552-4fac-b21e-918a47000775");
-                    assertThat(actual.getGivenVotes()).isEqualTo(null);
+                    assertThat(actual.getGivenVotes()).isEqualTo(0);
                     assertThat(actual.getPrice()).isEqualTo(new BigDecimal(0));
                     assertThat(actual.getLatitude()).isEqualTo(49.87);
                     assertThat(actual.getLongitude()).isEqualTo(18.38);
@@ -228,7 +228,7 @@ public class AccommodationServiceTests {
                     assertThat(actual.getDescription()).isEqualTo("test");
                     assertThat(actual.getImageLink()).isEqualTo(null);
                     assertThat(actual.getSourceLink()).isEqualTo(null);
-                    assertThat(actual.getGivenVotes()).isEqualTo(null);
+                    assertThat(actual.getGivenVotes()).isEqualTo(0);
                     assertThat(actual.getPrice()).isEqualTo(new BigDecimal(1));
                     assertThat(actual.getLatitude()).isEqualTo(null);
                     assertThat(actual.getLongitude()).isEqualTo(null);
