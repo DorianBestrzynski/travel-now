@@ -9,7 +9,6 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -76,19 +75,6 @@ public class Attraction {
     @Setter
     @Column(name = "longitude")
     private Double longitude;
-
-    public Attraction(String name, String description, String openingHours, LocalTime closingHour,
-                      String address, String attractionLink, Set<DayPlan> days, Double latitude, Double longitude, String photoLink) {
-        this.name = name;
-        this.description = description;
-        this.openingHours = openingHours;
-        this.address = address;
-        this.attractionLink = attractionLink;
-        this.days = days;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.photoLink = photoLink;
-    }
 
     public Attraction(Double destinationLatitude, Double destinationLongitude) {
         this.latitude = destinationLatitude;
