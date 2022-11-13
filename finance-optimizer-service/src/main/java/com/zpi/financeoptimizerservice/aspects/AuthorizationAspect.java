@@ -35,16 +35,6 @@ public class AuthorizationAspect {
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
 
-    @Around("@annotation(AuthorizeCoordinator)")
-    public Object authorizeCoordinator(ProceedingJoinPoint joinPoint) throws Throwable {
-        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (!userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, getGroupId(joinPoint), authentication.getUserId()))
-            throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
-
-
-        return joinPoint.proceed();
-    }
-
     @Around("@annotation(AuthorizePartOfTheGroup)")
     public Object authorizePartOfTheGroup(ProceedingJoinPoint joinPoint) throws Throwable {
         CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -54,7 +44,6 @@ public class AuthorizationAspect {
 
         return joinPoint.proceed();
     }
-
 
     @Around("@annotation(AuthorizeAuthorOrCoordinatorExpenditure)")
     public Object authorizeAuthorOrCoordinatorExpenditure(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -75,7 +64,7 @@ public class AuthorizationAspect {
 
         var financialRequest = financialRequestRepository.findById(getFinancialRequestId(joinPoint)).orElseThrow();
 
-        if (!(financialRequest.getDebtee().equals(authentication.getUserId()) || userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, getGroupId(joinPoint), authentication.getUserId()))) {
+        if (!(userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, getGroupId(joinPoint), authentication.getUserId()) || financialRequest.getDebtee().equals(authentication.getUserId()))) {
             throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
         }
 

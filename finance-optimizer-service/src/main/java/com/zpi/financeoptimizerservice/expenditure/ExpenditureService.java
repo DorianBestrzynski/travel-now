@@ -40,11 +40,10 @@ public class ExpenditureService {
         createFinancialRequestsFrom(expenditureInput, groupId);
         financialRequestOptimizer.optimizeFinancialRequestsIn(groupId);
         return addedExpenditure;
-
     }
 
     private Expenditure mapInputToExpenditure(ExpenditureInputDto expenditureInputDto, Long groupId) {
-        expenditureValidator.validateExpenditureInput(expenditureInputDto, groupId);
+        expenditureValidator.validateExpenditureInput(expenditureInputDto);
 
         return new Expenditure(expenditureInputDto.title(),
                 Optional.ofNullable(expenditureInputDto.price()).map(BigDecimal::valueOf).orElse(null),
@@ -119,7 +118,7 @@ public class ExpenditureService {
 
     @AuthorizePartOfTheGroup
     public Map<Long, BigDecimal> getGroupBalance(Long groupId, Long userId) {
-        var financialRequests = financialRequestService.getAllActiveInGroup(groupId);
+        var financialRequests = financialRequestService.getAllActiveFinancialRequestsIn(groupId);
         var balanceDouble = financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
         return financialRequestOptimizer.convertPricesToBigDecimal(balanceDouble);
     }

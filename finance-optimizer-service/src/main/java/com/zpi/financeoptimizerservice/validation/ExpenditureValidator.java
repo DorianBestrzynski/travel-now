@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class ExpenditureValidator {
 
-    public void validateExpenditureInput(ExpenditureInputDto expenditureInput, Long groupId) {
+    public void validateExpenditureInput(ExpenditureInputDto expenditureInput) {
         checkIfFieldsArePresent(expenditureInput);
         validateTitleOf(expenditureInput);
         validatePriceOf(expenditureInput);
