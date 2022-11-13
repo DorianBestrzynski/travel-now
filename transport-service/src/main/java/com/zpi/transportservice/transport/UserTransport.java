@@ -28,8 +28,15 @@ public class UserTransport extends Transport {
     @Column
     private LocalDateTime meetingTime;
 
-    public UserTransport(Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link, String meanOfTransport, String description, LocalDateTime meetingTime) {
+
+    public UserTransport( Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link, String meanOfTransport, String description, LocalDateTime meetingTime) {
         super(duration, price, source, destination, startDate, endDate, link, 3);
+        this.meanOfTransport = meanOfTransport;
+        this.description = description;
+        this.meetingTime = meetingTime;
+    }
+    public UserTransport(Long transportId, Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link, String meanOfTransport, String description, LocalDateTime meetingTime) {
+        super(transportId, duration, price, source, destination, startDate, endDate, link, 3);
         this.meanOfTransport = meanOfTransport;
         this.description = description;
         this.meetingTime = meetingTime;

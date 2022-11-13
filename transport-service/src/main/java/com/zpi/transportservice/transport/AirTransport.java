@@ -27,4 +27,9 @@ public class AirTransport extends Transport {
         super(duration, price, source, destination, startDate, endDate, link, 1);
         this.flight = flight;
     }
+
+    public AirTransport(Long transportId, Duration duration, BigDecimal price, String source, String destination, LocalDate startDate, LocalDate endDate, String link, List<Flight> flight) {
+        super(transportId, duration, price, source, destination, startDate, endDate, link, 1);
+        this.flight = flight;
+    }
 }
