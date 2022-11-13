@@ -51,7 +51,7 @@ public class DayPlanService {
     @Transactional
     @AuthorizeCoordinator
     public void deleteDayPlan(Long dayPlanId) {
-        if (dayPlanId == null) {
+        if (dayPlanId == null || dayPlanId < 0) {
             throw new IllegalArgumentException(INVALID_DAY_PLAN_ID);
         }
 
@@ -61,7 +61,7 @@ public class DayPlanService {
     @Transactional
     @AuthorizeCoordinator
     public DayPlan editDayPlan(Long dayPlanId, DayPlanDto dayPlanDto) {
-        if (dayPlanId == null) {
+        if (dayPlanId == null || dayPlanId < 0) {
             throw new IllegalArgumentException(INVALID_DAY_PLAN_ID);
         }
         var dayPlan = dayPlanRepository.findById(dayPlanId)

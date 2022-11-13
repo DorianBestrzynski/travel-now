@@ -27,6 +27,7 @@ public class Attraction {
             name = "attraction_sequence",
             sequenceName = "attraction_sequence", allocationSize = 10)
     @Getter
+    @Setter
     private Long attractionId;
 
     @Getter
@@ -90,6 +91,13 @@ public class Attraction {
     }
 
     public Attraction(Double destinationLatitude, Double destinationLongitude) {
+        this.latitude = destinationLatitude;
+        this.longitude = destinationLongitude;
+    }
+
+    public Attraction(Long attractionId, Double destinationLatitude, Double destinationLongitude, String description) {
+        this.attractionId = attractionId;
+        this.description = description;
         this.latitude = destinationLatitude;
         this.longitude = destinationLongitude;
     }
