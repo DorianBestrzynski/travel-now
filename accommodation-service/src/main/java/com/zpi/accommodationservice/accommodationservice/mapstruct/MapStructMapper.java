@@ -21,6 +21,7 @@ public interface MapStructMapper {
     @Mapping(target = "creatorId", ignore = true)
     AccommodationDto adaptAccommodationDto(AccommodationDto accommodationDto);
 
+    @Mapping(target = "sourceLink", source = "sourceLink")
     void updateFromAccommodationDataDtoToAccommodation(@MappingTarget Accommodation accommodation, AccommodationDataDto accommodationDataDto);
 
     AccommodationVoteId getAccommodationVoteIdFromDto(AccommodationVoteDto accommodationVoteDto);

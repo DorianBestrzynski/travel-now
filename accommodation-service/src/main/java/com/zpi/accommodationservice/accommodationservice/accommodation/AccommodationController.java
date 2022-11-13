@@ -15,8 +15,8 @@ import java.util.List;
 public class AccommodationController {
     private final AccommodationService accommodationService;
     @GetMapping()
-    public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId, @RequestParam Long userId){
-        var result = accommodationService.getAllAccommodationsForGroup(groupId, userId);
+    public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId){
+        var result = accommodationService.getAllAccommodationsForGroup(groupId);
         return ResponseEntity.ok(result);
     }
     @PostMapping()
@@ -26,8 +26,8 @@ public class AccommodationController {
     }
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteAccommodation(@RequestParam Long accommodationId, @RequestParam Long userId){
-        accommodationService.deleteAccommodation(accommodationId, userId);
+    public void deleteAccommodation(@RequestParam Long accommodationId){
+        accommodationService.deleteAccommodation(accommodationId);
     }
 
     @PatchMapping()
