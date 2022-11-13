@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/user")
@@ -27,11 +26,6 @@ public class AppUserController {
     public String test() {
         return "Get no body";
     }
-
-//    @PostMapping("/test")
-//    public String test(@RequestBody TestDto test) {
-//        return "Pots with body" + test.st();
-//    }
 
     @GetMapping()
     public List<AppUser> createSampleUsers(){
