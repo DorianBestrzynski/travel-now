@@ -4,6 +4,7 @@ import com.zpi.accommodationservice.accommodationservice.dto.AccommodationVoteDt
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +22,12 @@ public class AccommodationVoteController {
     }
 
     @PostMapping("/vote")
-    public ResponseEntity<AccommodationVote> vote(@RequestBody AccommodationVoteDto accommodationVoteDto) {
+    public ResponseEntity<AccommodationVote> vote(@RequestBody @Validated AccommodationVoteDto accommodationVoteDto) {
         return new ResponseEntity<>(accommodationVoteService.vote(accommodationVoteDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/vote")
-    public ResponseEntity<AccommodationVote> deleteVote(@RequestBody AccommodationVoteId accommodationVoteId) {
+    public ResponseEntity<AccommodationVote> deleteVote(@RequestBody @Validated AccommodationVoteId accommodationVoteId) {
         return ResponseEntity.ok(accommodationVoteService.deleteVote(accommodationVoteId));
     }
 }

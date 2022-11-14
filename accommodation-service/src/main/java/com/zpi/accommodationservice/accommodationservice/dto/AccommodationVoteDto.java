@@ -1,5 +1,9 @@
 package com.zpi.accommodationservice.accommodationservice.dto;
 
-public record AccommodationVoteDto(Long userId, Long accommodationId, Long groupId) {
+import javax.validation.constraints.NotNull;
+
+public record AccommodationVoteDto(@NotNull Long userId,
+                                   @NotNull Long accommodationId,
+                                   @NotNull Long groupId) {
 
 }
