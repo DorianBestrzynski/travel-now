@@ -82,7 +82,7 @@ class SharedGroupAvailabilityServiceTest {
     void shouldGenerateAllTheBestSharedGroupAvailability() {
         //given
         ArgumentCaptor<List<SharedGroupAvailability>> argument = ArgumentCaptor.forClass(List.class);
-        var availabilities = getDisjointAvailabilities4Users();
+        var availabilities = getDisjointAvailabilities4Users2();
 
         //when
         doReturn(new AvailabilityConstraintsDto(3, 2)).when(tripGroupProxy).getAvailabilityConstraints(any());
@@ -142,6 +142,17 @@ class SharedGroupAvailabilityServiceTest {
 
 
 
+    private List<Availability> getDisjointAvailabilities4Users2() {
+        return List.of(
+                new Availability(1L, 1L, LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 5)),
+                new Availability(2L, 1L, LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 5)),
+                new Availability(3L, 1L, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 2, 5)),
+                new Availability(4L, 1L, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 2, 5))
+        );
+    }
+
+
+
     @Test
     void shouldCorrectlyFilterAvailabilities() {
         //given
@@ -157,4 +168,5 @@ class SharedGroupAvailabilityServiceTest {
         //then
         assertEquals(expectedResult, result);
     }
+
 }
