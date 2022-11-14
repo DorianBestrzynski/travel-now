@@ -44,12 +44,10 @@ public class AvailabilityService {
         var overlappingAvailabilities = availabilityRepository.findOverlapping(userId, groupId, dateFrom, dateTo);
 
         for (var availability : overlappingAvailabilities) {
-            if (availability.getDateFrom()
-                            .isBefore(dateFrom))
+            if (availability.getDateFrom().isBefore(dateFrom))
                 dateFrom = availability.getDateFrom();
 
-            if (availability.getDateTo()
-                            .isAfter(dateTo))
+            if (availability.getDateTo().isAfter(dateTo))
                 dateTo = availability.getDateTo();
         }
 
@@ -84,6 +82,7 @@ public class AvailabilityService {
         return availabilityRepository.findAvailabilitiesByUserIdAndGroupId(userId, groupId);
     }
 
+    @AuthorizePartOfTheGroup
     public Map<Long, List<Availability>> getAvailabilitiesInTripGroup(Long groupId) {
         return availabilityRepository.findAvailabilitiesByGroupId(groupId)
                                      .stream()
@@ -95,15 +94,16 @@ public class AvailabilityService {
         if (groupId == null || groupId < 0)
             throw new IllegalArgumentException("Group id is invalid. Id must be positive number");
 
-        var availabilities = availabilityRepository.findAvailabilitiesByGroupId(groupId);
-        var availabilitiesMap = availabilities.stream()
-                                              .collect(Collectors.groupingBy(Availability::getUserId));
+        var availabilitiesMap = availabilityRepository.findAvailabilitiesByGroupId(groupId)
+                                                                               .stream()
+                                                                               .collect(Collectors.groupingBy(Availability::getUserId));;
 
-        var users = appUserProxy.getUsersDtos(availabilitiesMap.keySet()
+        var usersMap = appUserProxy.getUsersDtos(availabilitiesMap.keySet()
                                                                .stream()
-                                                               .toList());
-        var usersMap = users.stream()
-                            .collect(Collectors.toMap(UserDto::userId, Function.identity()));
+                                                               .toList())
+                                                    .stream()
+                                                    .collect(Collectors.toMap(UserDto::userId, Function.identity()));
+
 
         var result = new HashMap<UserDto, List<Availability>>();
         for (var entry : availabilitiesMap.entrySet()) {
