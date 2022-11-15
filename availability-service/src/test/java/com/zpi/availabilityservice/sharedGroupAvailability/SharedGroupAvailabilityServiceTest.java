@@ -7,6 +7,7 @@ import com.zpi.availabilityservice.proxies.TripGroupProxy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,10 +41,12 @@ class SharedGroupAvailabilityServiceTest {
     @MockBean
     SharedGroupAvailabilityRepository sharedGroupAvailabilityRepository;
 
+    @Captor
+    ArgumentCaptor<List<SharedGroupAvailability>> argumentCaptor;
+
     @Test
     void shouldGenerateSharedGroupAvailabilityForDisjointAvailabilities() {
         //given
-        ArgumentCaptor<List<SharedGroupAvailability>> argument = ArgumentCaptor.forClass(List.class);
         var availabilities = getDisJointAvailabilities();
 
         //when
@@ -53,16 +56,15 @@ class SharedGroupAvailabilityServiceTest {
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
 
         //then
-        verify(sharedGroupAvailabilityRepository).saveAll(argument.capture());
-        assertEquals(1, argument.getValue().size());
-        assertEquals(availabilities.get(1).getDateFrom(), argument.getValue().get(0).getDateFrom());
-        assertEquals(availabilities.get(1).getDateTo(), argument.getValue().get(0).getDateTo());
+        verify(sharedGroupAvailabilityRepository).saveAll(argumentCaptor.capture());
+        assertEquals(1, argumentCaptor.getValue().size());
+        assertEquals(availabilities.get(1).getDateFrom(), argumentCaptor.getValue().get(0).getDateFrom());
+        assertEquals(availabilities.get(1).getDateTo(), argumentCaptor.getValue().get(0).getDateTo());
     }
 
     @Test
     void shouldGenerateSharedGroupAvailabilityAllSatisfyMinDays() {
         //given
-        ArgumentCaptor<List<SharedGroupAvailability>> argument = ArgumentCaptor.forClass(List.class);
         var availabilities = getAvailabilitiesWithGivenLength(3);
 
         //when
@@ -72,17 +74,16 @@ class SharedGroupAvailabilityServiceTest {
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
 
         //then
-        verify(sharedGroupAvailabilityRepository).saveAll(argument.capture());
-        assertEquals(1, argument.getValue().size());
-        assertEquals(availabilities.get(0).getDateFrom(), argument.getValue().get(0).getDateFrom());
-        assertEquals(availabilities.get(0).getDateTo(), argument.getValue().get(0).getDateTo());
+        verify(sharedGroupAvailabilityRepository).saveAll(argumentCaptor.capture());
+        assertEquals(1, argumentCaptor.getValue().size());
+        assertEquals(availabilities.get(0).getDateFrom(), argumentCaptor.getValue().get(0).getDateFrom());
+        assertEquals(availabilities.get(0).getDateTo(), argumentCaptor.getValue().get(0).getDateTo());
     }
 
     @Test
     void shouldGenerateAllTheBestSharedGroupAvailability() {
         //given
-        ArgumentCaptor<List<SharedGroupAvailability>> argument = ArgumentCaptor.forClass(List.class);
-        var availabilities = getDisjointAvailabilities4Users2();
+        var availabilities = getDisjointAvailabilities4Users();
 
         //when
         doReturn(new AvailabilityConstraintsDto(3, 2)).when(tripGroupProxy).getAvailabilityConstraints(any());
@@ -91,12 +92,10 @@ class SharedGroupAvailabilityServiceTest {
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
 
         //then
-        verify(sharedGroupAvailabilityRepository).saveAll(argument.capture());
-        assertEquals(2, argument.getValue().size());
-        assertThat(argument.getValue()).satisfies(
-                actual -> {
-                    assertThat(actual.get(0).getNumberOfDays()).isEqualTo(actual.get(1).getNumberOfDays());
-                }
+        verify(sharedGroupAvailabilityRepository).saveAll(argumentCaptor.capture());
+        assertEquals(2, argumentCaptor.getValue().size());
+        assertThat(argumentCaptor.getValue()).satisfies(
+                actual -> assertThat(actual.get(0).getNumberOfDays()).isEqualTo(actual.get(1).getNumberOfDays())
         );
     }
 
@@ -139,19 +138,6 @@ class SharedGroupAvailabilityServiceTest {
                 new Availability(4L, 1L, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 2, 15))
         );
     }
-
-
-
-    private List<Availability> getDisjointAvailabilities4Users2() {
-        return List.of(
-                new Availability(1L, 1L, LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 5)),
-                new Availability(2L, 1L, LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 5)),
-                new Availability(3L, 1L, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 2, 5)),
-                new Availability(4L, 1L, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 2, 5))
-        );
-    }
-
-
 
     @Test
     void shouldCorrectlyFilterAvailabilities() {

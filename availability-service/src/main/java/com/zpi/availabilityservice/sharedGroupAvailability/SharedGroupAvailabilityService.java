@@ -55,16 +55,43 @@ public class SharedGroupAvailabilityService {
                 .values().stream()
                 .map(f -> f.stream()
                         .sorted(Comparator.comparingInt(SharedGroupAvailability::getNumberOfDays).reversed()).toList())
-                .map(v -> v.get(0))
+                .flatMap(s -> handleSameNumberOfDays(s).stream())
                 .toList();
+
 
         return initialGrouping.stream()
                 .collect(Collectors.groupingBy(SharedGroupAvailability::getNumberOfDays))
                 .values().stream()
                 .map(f -> f.stream()
                         .sorted(Comparator.comparingInt(SharedGroupAvailability::getNumberOfUsers).reversed()).toList())
-                .map(v -> v.get(0))
+                .flatMap(s -> handleSameNumberOfUsers(s).stream())
                 .toList();
+    }
+
+    private List<SharedGroupAvailability> handleSameNumberOfDays(List<SharedGroupAvailability> initialList) {
+        var returnList = new ArrayList<SharedGroupAvailability>();
+        if (!initialList.isEmpty()) {
+            var biggestDayNumber = initialList.get(0).getNumberOfDays();
+            for (var sga : initialList) {
+                if (sga.getNumberOfDays().equals(biggestDayNumber)) {
+                    returnList.add(sga);
+                }
+            }
+        }
+        return returnList;
+        }
+
+    private List<SharedGroupAvailability> handleSameNumberOfUsers(List<SharedGroupAvailability> initialList) {
+        var returnList = new ArrayList<SharedGroupAvailability>();
+        if (!initialList.isEmpty()) {
+            var biggestNumberOfUsers = initialList.get(0).getUsersList().size();
+            for (var sga : initialList) {
+                if (sga.getUsersList().size() == biggestNumberOfUsers) {
+                    returnList.add(sga);
+                }
+            }
+        }
+        return returnList;
     }
 
     private List<SharedGroupAvailability> findLongestSubset(Map<LocalDate, List<Long>> userToDatesMap, Long groupId) {
