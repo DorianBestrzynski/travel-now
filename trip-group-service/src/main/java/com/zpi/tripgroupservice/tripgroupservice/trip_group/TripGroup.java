@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class TripGroup {
     )
     @SequenceGenerator(
             name = "group_sequence",
-            sequenceName = "group_sequence", allocationSize = 10)
+            sequenceName = "group_sequence", allocationSize = 1)
     @Column(unique = true, nullable = false)
     @Getter
     private Long groupId;
@@ -71,7 +72,7 @@ public class TripGroup {
     private GroupStage groupStage;
 
     @OneToMany(mappedBy = "tripGroup", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<Invitation> invitations;
+    private Set<Invitation> invitations = new HashSet<>();
 
     @Column(name = "minimal_number_of_days", nullable = false)
     private Integer minimalNumberOfDays;
@@ -92,13 +93,12 @@ public class TripGroup {
         this.startLocation = startLocation;
         this.startCity = startingCity;
         this.groupStage = GroupStage.PLANNING_STAGE;
-        this.startDate = LocalDate.of(2022,10,22);
-        this.endDate = LocalDate.of(2022, 11,1);
-        this.latitude = 52.50;
-        this.longitude = 13.36;
-        this.minimalNumberOfDays = 3;
-        this.minimalNumberOfParticipants = 3;
+        this.minimalNumberOfDays = Objects.requireNonNullElse(minimalNumberOfDays, 2);
+        this.minimalNumberOfParticipants = Objects.requireNonNullElse(minimalNumberOfParticipants, 2);
+    }
 
+    public void addInvitation(Invitation invitation) {
+        invitations.add(invitation);
     }
 
 

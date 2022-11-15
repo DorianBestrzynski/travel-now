@@ -1,4 +1,5 @@
 package com.zpi.tripgroupservice.tripgroupservice.dto;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
 import org.hibernate.validator.constraints.Length;
@@ -26,6 +27,13 @@ public record TripGroupDto(
         @NotEmpty
         @Length(max = 100)
         @JsonProperty("startCity")
-        String startCity)
+        String startCity,
+
+        @JsonProperty("minimalNumberOfDays")
+        Integer minimalNumberOfDays,
+
+        @JsonProperty("minimalNumberOfDays")
+        Integer minimalNumberOfParticipants
+)
 {
 }

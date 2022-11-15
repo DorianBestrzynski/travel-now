@@ -1,15 +1,13 @@
 package com.zpi.tripgroupservice.tripgroupservice.trip_group;
 
 
-
 import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizeCoordinator;
 import com.zpi.tripgroupservice.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
-import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.AccommodationInfoDto;
+import com.zpi.tripgroupservice.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripDataDto;
 import com.zpi.tripgroupservice.tripgroupservice.dto.TripGroupDto;
-import com.zpi.tripgroupservice.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.tripgroupservice.mapper.MapStructMapper;
@@ -20,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
 import java.util.List;
 
 import static com.zpi.tripgroupservice.tripgroupservice.commons.Utils.LATITUDE_INDEX;
@@ -55,7 +52,9 @@ public class TripGroupService {
     }
     @Transactional
     public TripGroup createGroup(Long userId, TripGroupDto groupDto) {
-            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(), groupDto.startLocation(), groupDto.startCity(),1,2);
+            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(),
+                                          groupDto.startLocation(), groupDto.startCity(),
+                                          groupDto.minimalNumberOfDays(), groupDto.minimalNumberOfParticipants());
             var coordinates = geolocation.findCoordinates(groupDto.startLocation());
             tripGroup.setLatitude(coordinates[LATITUDE_INDEX]);
             tripGroup.setLongitude(coordinates[LONGITUDE_INDEX]);
