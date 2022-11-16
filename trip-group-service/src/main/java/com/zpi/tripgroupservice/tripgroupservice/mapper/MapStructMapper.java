@@ -11,6 +11,7 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface MapStructMapper {
-
+    @Mapping(target = "minimalNumberOfDays", ignore = true)
+    @Mapping(target = "minimalNumberOfParticipants", ignore = true)
     void updateFromTripGroupDtoToTripGroup(@MappingTarget TripGroup tripGroup, TripGroupDto tripGroupDto);
 }
