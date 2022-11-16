@@ -103,7 +103,7 @@ public class AvailabilityTripGroupIntegrationTest {
     @Test
     void shouldReturnFalseWhenUserIsNotPartOfGroup() {
         Long groupId = 1L;
-        Long userId = 3L;
+        Long userId = 12L;
         String suffix = "group";
 
         ResponseEntity<Boolean> response = callUserGroupGetEndpoints(groupId, userId, suffix);
