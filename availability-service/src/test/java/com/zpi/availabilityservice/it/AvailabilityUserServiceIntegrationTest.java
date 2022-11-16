@@ -9,10 +9,8 @@ import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +24,7 @@ public class AvailabilityUserServiceIntegrationTest {
 
     @Test
     void shouldReturnCorrectListOfUsersInfo() {
-        List<Long> userIdsList = List.of(1L, 2L);
+        List<Long> userIdsList = List.of(1L, 8L);
         String suffix = "users";
 
         var result = callUserGroupGetEndpoints(userIdsList, suffix);
