@@ -24,7 +24,7 @@ public class DayPlan {
     )
     @SequenceGenerator(
             name = "day_sequence",
-            sequenceName = "day_sequence", allocationSize = 10)
+            sequenceName = "day_sequence", allocationSize = 1)
     @Column(name = "day_plan_id", unique = true, nullable = false)
     private Long dayPlanId;
 
@@ -59,6 +59,14 @@ public class DayPlan {
         this.groupId = groupId;
         this.date = date;
         this.name = name;
+        this.dayAttractions = new HashSet<>();
+    }
+
+    public DayPlan(Long groupId, LocalDate date, String name, Integer iconType) {
+        this.groupId = groupId;
+        this.date = date;
+        this.name = name;
+        this.iconType = iconType;
         this.dayAttractions = new HashSet<>();
     }
 

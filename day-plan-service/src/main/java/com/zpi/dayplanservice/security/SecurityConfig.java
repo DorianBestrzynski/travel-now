@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .addFilterBefore(new JWTVerifierFilter(), UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
-            .antMatchers("/api/v1/users").permitAll()
+            .antMatchers("/console/**").permitAll()
             .anyRequest()
             .authenticated()
             .and().httpBasic();
