@@ -1,6 +1,7 @@
 package com.zpi.tripgroupservice.tripgroupservice.testconfig;
 
 import com.zpi.tripgroupservice.tripgroupservice.commons.Currency;
+import com.zpi.tripgroupservice.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.tripgroupservice.commons.Role;
 import com.zpi.tripgroupservice.tripgroupservice.invitation.Invitation;
 import com.zpi.tripgroupservice.tripgroupservice.invitation.InvitationRepository;
@@ -39,6 +40,9 @@ public class InitializeData {
                 new TripGroup("Test5", Currency.PLN, "Opis5", 6, "Pisa", "Pisa", 4, 6),
                 new TripGroup("Finance Optimizer", Currency.PLN, "Grupa testujaca optymalizacje", 6, "Pisa", "Pisa", 2, 5)
         );
+        tripGroups.get(4).setSelectedAccommodationId(4L);
+        tripGroups.get(4).setGroupStage(GroupStage.TRIP_STAGE);
+
         tripGroupRepository.saveAll(tripGroups);
 
         userGroupRepository.saveAll(List.of(

@@ -94,7 +94,7 @@ public class TripGroupService {
         }
 
     public AccommodationInfoDto getAccommodation(Long groupId) {
-        if(groupId == null){
+        if(groupId == null || groupId < 0){
             throw new IllegalArgumentException(INVALID_GROUP_ID);
         }
 
