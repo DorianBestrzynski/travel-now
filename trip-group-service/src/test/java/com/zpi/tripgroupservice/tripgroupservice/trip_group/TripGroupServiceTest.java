@@ -142,7 +142,7 @@ class TripGroupServiceTest {
     void shouldSuccessfullyCreateGroup() {
         //given
         var tripGroupDto = new TripGroupDto("Name", Currency.PLN, "Desc", 1,
-                "Raclawicka", "Wroclaw", 2, 2);
+                "Raclawicka", "Wroclaw", 1, 2);
         Double[] coordinates = { 11.22, 22.33 };
 
         //when
@@ -194,9 +194,9 @@ class TripGroupServiceTest {
         //given
         mockAuthorizeCoordinatorAspect();
         var tripGroupDto = new TripGroupDto("Name", Currency.EURO, "Updated Desc", 1,
-                "Raclawicka", "China", 2, 2);
+                "Raclawicka", "China", 1, 2);
         var tripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
-                "Wroclaw" , 1, 2 );
+                "Wroclaw" , 1, 2);
 
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
