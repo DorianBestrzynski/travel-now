@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class InitializeData {
-    @Value("${spring.profiles.active}")
+    @Value("${spring.profiles.active:default}")
     private String profile;
 
     private final TripGroupRepository tripGroupRepository;
@@ -47,11 +47,12 @@ public class InitializeData {
                 new UserGroup(new UserGroupKey(1L, tripGroups.get(2).getGroupId()), Role.COORDINATOR, 1),
                 new UserGroup(new UserGroupKey(1L, tripGroups.get(3).getGroupId()), Role.COORDINATOR, 1),
                 new UserGroup(new UserGroupKey(2L, tripGroups.get(4).getGroupId()), Role.COORDINATOR, 1),
-                new UserGroup(new UserGroupKey(2L, tripGroups.get(1).getGroupId()), Role.PARTICIPANT, 1),
+                new UserGroup(new UserGroupKey(2L, tripGroups.get(0).getGroupId()), Role.PARTICIPANT, 1),
                 new UserGroup(new UserGroupKey(1L, tripGroups.get(5).getGroupId()), Role.COORDINATOR, 1),
-                new UserGroup(new UserGroupKey(2L, tripGroups.get(5).getGroupId()), Role.PARTICIPANT, 1),
+                new UserGroup(new UserGroupKey(3L, tripGroups.get(0).getGroupId()), Role.PARTICIPANT, 1),
                 new UserGroup(new UserGroupKey(3L, tripGroups.get(5).getGroupId()), Role.PARTICIPANT, 1),
-                new UserGroup(new UserGroupKey(4L, tripGroups.get(5).getGroupId()), Role.PARTICIPANT, 1)
+                new UserGroup(new UserGroupKey(4L, tripGroups.get(5).getGroupId()), Role.PARTICIPANT, 1),
+                new UserGroup(new UserGroupKey(4L, tripGroups.get(4).getGroupId()), Role.PARTICIPANT, 1)
         ));
 
         var invitations = List.of(new Invitation("tripGroup1", tripGroups.get(0)),

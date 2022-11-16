@@ -21,7 +21,7 @@ public class Accommodation {
     )
     @SequenceGenerator(
             name = "accommodation_sequence",
-            sequenceName = "accommodation_sequence", allocationSize = 10)
+            sequenceName = "accommodation_sequence", allocationSize = 1)
     @Column(name = "accommodation_id",unique = true, nullable = false)
     private Long accommodationId;
 
