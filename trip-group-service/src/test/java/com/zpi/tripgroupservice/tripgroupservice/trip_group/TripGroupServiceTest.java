@@ -232,11 +232,23 @@ class TripGroupServiceTest {
         var tripData = new TripDataDto("Wroclaw", LocalDate.now(), LocalDate.now(), 12.22, 22.22);
 
         //when
-        when(tripGroupRepository.findTripData(anyLong())).thenReturn(tripData);
+        when(tripGroupRepository.findTripData(anyLong())).thenReturn(Optional.of(tripData));
         var actualResult = tripGroupService.getTripData(1L);
 
         //then
         assertThat(actualResult).isEqualTo(tripData);
+        verify(tripGroupRepository, times(1)).findTripData(anyLong());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenGroupNotFound() {
+        //when
+        when(tripGroupRepository.findTripData(anyLong())).thenReturn(Optional.empty());
+        var exception = assertThrows(ApiRequestException.class,
+                () -> tripGroupService.getTripData(1L));
+
+        //then
+        assertThat(exception.getMessage()).isEqualTo("There is no group with given group_id ");
         verify(tripGroupRepository, times(1)).findTripData(anyLong());
     }
 

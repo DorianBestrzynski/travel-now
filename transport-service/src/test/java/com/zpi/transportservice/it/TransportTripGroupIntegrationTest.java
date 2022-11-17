@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -82,7 +84,7 @@ public class TransportTripGroupIntegrationTest {
 
     @Test
     void shouldReturnTripGroupInfoForGroupId() {
-        Long groupId = 1L;
+        Long groupId = 5L;
         String suffix = "data";
 
         ResponseEntity<TripDataDto> response = callTripGroupGetEndpoints(groupId, suffix);
@@ -96,11 +98,22 @@ public class TransportTripGroupIntegrationTest {
                     assertThat(tripDataDto.endDate()).isEqualTo(LocalDate.of(2022,10,22));
                     assertThat(tripDataDto.latitude()).isEqualTo(21.22);
                     assertThat(tripDataDto.longitude()).isEqualTo(12.22);
-                    assertThat(tripDataDto.startingLocation()).isEqualTo("Wroclaw");
+                    assertThat(tripDataDto.startingLocation()).isEqualTo("Pisa");
                 }
         );
+    }
 
+    @Test
+    void shouldThrowExceptionWhenGroupIdNotFound() {
+        Long groupId = 8L;
+        String suffix = "data";
 
+        var ex = assertThrows(HttpClientErrorException.NotFound.class,
+                () -> callTripGroupGetEndpoints(groupId, suffix));
+
+        assertThat(ex.getStatusCode().is4xxClientError()).isTrue();
+        assertThat(ex.getStatusCode().value()).isEqualTo(404);
+        assertThat(ex.getStatusCode().name()).isEqualTo("NOT_FOUND");
     }
 
     private ResponseEntity<Boolean> callUserGroupGetEndpoints(Long groupId, Long userId, String suffix) {

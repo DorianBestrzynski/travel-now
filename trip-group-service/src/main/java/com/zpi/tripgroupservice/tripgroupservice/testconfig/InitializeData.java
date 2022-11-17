@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -42,6 +43,10 @@ public class InitializeData {
         );
         tripGroups.get(4).setSelectedAccommodationId(4L);
         tripGroups.get(4).setGroupStage(GroupStage.TRIP_STAGE);
+        tripGroups.get(4).setStartDate(LocalDate.of(2022,10,10));
+        tripGroups.get(4).setEndDate(LocalDate.of(2022,10,22));
+        tripGroups.get(4).setLatitude(21.22);
+        tripGroups.get(4).setLongitude(12.22);
 
         tripGroupRepository.saveAll(tripGroups);
 

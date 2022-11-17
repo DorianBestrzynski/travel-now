@@ -84,7 +84,7 @@ public class TripGroupService {
     }
 
     public TripDataDto getTripData(Long groupId) {
-        return tripGroupRepository.findTripData(groupId);
+        return tripGroupRepository.findTripData(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
     }
 
 
