@@ -108,6 +108,8 @@ public class AccommodationService {
     }
 
     public AccommodationInfoDto getAccommodationInfo(Long accommodationId) {
-        return accommodationRepository.getAccommodationInfoDto(accommodationId);
+       return accommodationRepository.getAccommodationInfoDto(accommodationId)
+                                     .orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+
     }
 }

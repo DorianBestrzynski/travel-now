@@ -14,7 +14,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation,Lon
     Optional<List<Accommodation>> findAllByGroupId(Long groupId);
 
     @Query("SELECT new com.zpi.accommodationservice.dto.AccommodationInfoDto(a.streetAddress, a.city, a.latitude, a.longitude, a.groupId, a.creator_id) FROM Accommodation a WHERE a.accommodationId=?1")
-    AccommodationInfoDto getAccommodationInfoDto(Long accommodationInfo);
+    Optional<AccommodationInfoDto> getAccommodationInfoDto(Long accommodationInfo);
 
     boolean existsByAccommodationIdAndGroupId(Long accommodationId, Long groupId);
 }
