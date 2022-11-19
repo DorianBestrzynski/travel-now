@@ -9,4 +9,6 @@ import java.util.List;
 public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupKey> {
 
     List<UserGroup> findAllById_GroupId(Long groupId);
+
+    Integer countAllById_GroupId(Long groupId);
 }

@@ -1,0 +1,14 @@
+package com.zpi.tripgroupservice.dto;
+
+import com.zpi.tripgroupservice.commons.Currency;
+import com.zpi.tripgroupservice.commons.GroupStage;
+import lombok.Builder;
+
+import java.time.LocalDate;
+
+@Builder
+public record TripExtendedDataDto(String name, Currency currency, String description, Integer votesLimit,
+                                  String startLocation, String startCity, LocalDate startDate, LocalDate endDate,
+                                  Double latitude, Double longitude, GroupStage groupStage, Integer minimalNumberOfDays,
+                                  Integer minimalNumberOfParticipants, Long selectedAccommodationId, Integer participantsNum) {
+}

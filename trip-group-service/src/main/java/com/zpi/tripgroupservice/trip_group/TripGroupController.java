@@ -2,10 +2,7 @@ package com.zpi.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.commons.Role;
-import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
-import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
-import com.zpi.tripgroupservice.dto.TripDataDto;
-import com.zpi.tripgroupservice.dto.TripGroupDto;
+import com.zpi.tripgroupservice.dto.*;
 import com.zpi.tripgroupservice.user_group.UserGroup;
 import com.zpi.tripgroupservice.user_group.UserGroupKey;
 import com.zpi.tripgroupservice.user_group.UserGroupRepository;
@@ -51,7 +48,7 @@ public class TripGroupController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @GetMapping("/data")
-    public ResponseEntity<TripDataDto> getTripData(@RequestParam Long groupId){
+    public ResponseEntity<TripExtendedDataDto> getTripData(@RequestParam Long groupId){
         var tripData = tripGroupService.getTripData(groupId);
         return ResponseEntity.ok(tripData);
     }

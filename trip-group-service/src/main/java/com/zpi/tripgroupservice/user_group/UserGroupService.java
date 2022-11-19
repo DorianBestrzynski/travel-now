@@ -55,4 +55,8 @@ public class UserGroupService {
     public void deleteUserFromGroup(Long groupId, Long userId) {
         userGroupRepository.deleteById(new UserGroupKey(userId, groupId));
     }
+
+    public Integer getNumberOfParticipants(Long groupId) {
+        return userGroupRepository.countAllById_GroupId(groupId);
+    }
 }
