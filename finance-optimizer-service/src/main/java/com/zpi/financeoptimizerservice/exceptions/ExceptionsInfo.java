@@ -13,5 +13,7 @@ public class ExceptionsInfo {
 
     public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
 
+    public final static String INVALID_PARAMS = "Group id or user id is invalid";
+
 
 }
