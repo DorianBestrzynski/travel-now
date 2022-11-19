@@ -6,6 +6,7 @@ app.config-server: localhost
 app.database: localhost
 app.accommodation-service: localhost
 app.finance-service: localhost
+app.user-service: localhost
 
 spring:
   cloud:
@@ -41,6 +42,7 @@ app.config-server: config-server
 app.database: postgres
 app.accommodation-service: accommodation
 app.finance-service: finance
+app.user-service: user
 
 ---
 spring.config.activate.on-profile: test
