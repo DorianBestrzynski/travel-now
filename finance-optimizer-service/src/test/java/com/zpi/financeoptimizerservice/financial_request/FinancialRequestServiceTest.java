@@ -130,7 +130,7 @@ class FinancialRequestServiceTest {
         mockAuthorizeAuthorOrCoordinatorRequestAspect();
 
         //when
-        financialRequestService.acceptFinancialRequest(1L, 1L, 1L);
+        financialRequestService.acceptFinancialRequest(1L);
 
         //then
         verify(financialRequestRepository, times(2)).findById(anyLong());
@@ -154,7 +154,7 @@ class FinancialRequestServiceTest {
         var financialRequests = Set.of(new FinancialRequest(BigDecimal.valueOf(-4000).setScale(1, RoundingMode.CEILING), 1L, 2L, 1L, Status.PENDING));
         //when
         when(financialRequestRepository.getAllActiveInGroup(anyLong())).thenReturn(financialRequests);
-        var actualResult = financialRequestService.getAllUnsettledFinanceRequests(1L, 1L);
+        var actualResult = financialRequestService.getAllUnsettledFinanceRequests(1L);
 
         //then
         verify(financialRequestRepository, times(1)).getAllActiveInGroup(anyLong());
@@ -169,7 +169,7 @@ class FinancialRequestServiceTest {
 
         //when
         when(financialRequestRepository.getAllByDebtorAndExpenditure(anyLong(), anyLong())).thenReturn(financialRequests);
-        var actualResult = financialRequestService.isDebtorOrDebteeToanyFinancialRequests(1L, 1L);
+        var actualResult = financialRequestService.isDebtorOrDebteeToAnyFinancialRequests(1L, 1L);
 
         //then
         verify(financialRequestRepository, times(1)).getAllByDebtorAndExpenditure(1L, 1L);
@@ -184,7 +184,7 @@ class FinancialRequestServiceTest {
 
         //when
         when(financialRequestRepository.getAllByDebtorAndExpenditure(anyLong(), anyLong())).thenReturn(financialRequests);
-        var actualResult = financialRequestService.isDebtorOrDebteeToanyFinancialRequests(1L, 1L);
+        var actualResult = financialRequestService.isDebtorOrDebteeToAnyFinancialRequests(1L, 1L);
 
         //then
         verify(financialRequestRepository, times(1)).getAllByDebtorAndExpenditure(1L, 1L);

@@ -28,20 +28,20 @@ public class FinancialRequestController {
     }
 
     @PatchMapping("/accept")
-    public ResponseEntity<?> acceptRequest(@RequestParam Long requestId, @RequestParam Long userId, @RequestParam Long groupId) {
-        financialRequestService.acceptFinancialRequest(requestId, userId, groupId);
+    public ResponseEntity<?> acceptRequest(@RequestParam Long requestId) {
+        financialRequestService.acceptFinancialRequest(requestId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/unsettled")
-    public ResponseEntity<Set<FinancialRequest>> getAllUnsettledFinanceRequests(@RequestParam Long groupId, @RequestParam Long userId){
-        var result = financialRequestService.getAllUnsettledFinanceRequests(groupId, userId);
+    public ResponseEntity<Set<FinancialRequest>> getAllUnsettledFinanceRequests(@RequestParam Long groupId){
+        var result = financialRequestService.getAllUnsettledFinanceRequests(groupId);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/user")
     public ResponseEntity<Boolean> isDebtorOrDebteeToAnyFinancialRequests(@RequestParam Long groupId, @RequestParam Long userId){
-        var result = financialRequestService.isDebtorOrDebteeToanyFinancialRequests(groupId, userId);
+        var result = financialRequestService.isDebtorOrDebteeToAnyFinancialRequests(groupId, userId);
         return ResponseEntity.ok(result);
     }
 

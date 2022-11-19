@@ -67,9 +67,9 @@ public class TripGroupService {
 
     @Transactional
     @AuthorizeCoordinator
-    public void deleteGroup(Long groupId, Long userId) {
-        if(groupId == null || userId == null){
-            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID + "or" + ExceptionInfo.INVALID_USER_ID);
+    public void deleteGroup(Long groupId) {
+        if(groupId == null){
+            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID);
         }
         tripGroupRepository.deleteById(groupId);
         userGroupService.deletionGroupCleanUp(groupId);
@@ -77,7 +77,7 @@ public class TripGroupService {
 
    @Transactional
    @AuthorizeCoordinator
-    public TripGroup updateGroup(Long groupId, Long userId, TripGroupDto tripGroupDto) {
+    public TripGroup updateGroup(Long groupId, TripGroupDto tripGroupDto) {
         var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
                 ExceptionInfo.GROUP_NOT_FOUND));
         mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
@@ -147,7 +147,7 @@ public class TripGroupService {
 
     @Transactional
     @AuthorizeCoordinator
-    public TripGroup setCurrencyInGroup(Long groupId, Long userId, Currency currency) {
+    public TripGroup setCurrencyInGroup(Long groupId, Currency currency) {
         var tripGroup = tripGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
         tripGroup.setCurrency(currency);
@@ -157,7 +157,7 @@ public class TripGroupService {
     @Transactional
     @AuthorizePartOfTheGroup
     public void leaveGroup(Long groupId, Long userId) {
-        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION,groupId, userId)){
+        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, userId)){
             throw new ApiRequestException(ExceptionInfo.CANNOT_LEAVE_GROUP);
         }
         userGroupService.deleteUserFromGroup(groupId, userId);

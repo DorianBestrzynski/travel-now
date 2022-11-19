@@ -18,8 +18,8 @@ public class ExpenditureController {
     private final ExpenditureService expenditureService;
 
     @GetMapping()
-    public ResponseEntity<Set<Expenditure>> getExpendituresMetadata(@RequestParam Long groupId, @RequestParam Long userId) {
-        var expenditures = expenditureService.getExpendituresMetadata(groupId, userId);
+    public ResponseEntity<Set<Expenditure>> getExpendituresMetadata(@RequestParam Long groupId) {
+        var expenditures = expenditureService.getExpendituresMetadata(groupId);
         return ResponseEntity.ok(expenditures);
     }
 
@@ -30,20 +30,20 @@ public class ExpenditureController {
     }
 
     @PatchMapping()
-    public ResponseEntity<Expenditure> editExpenditure(@RequestParam Long groupId, @RequestParam Long expenditureId, @RequestParam Long userId, @RequestBody ExpenditureInputDto expenditureInput){
-        var result = expenditureService.editExpenditure(groupId, expenditureId, userId, expenditureInput);
+    public ResponseEntity<Expenditure> editExpenditure(@RequestParam Long groupId, @RequestParam Long expenditureId, @RequestBody ExpenditureInputDto expenditureInput){
+        var result = expenditureService.editExpenditure(groupId, expenditureId, expenditureInput);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteExpenditure(@RequestParam Long expenditureId, @RequestParam Long userId, @RequestParam Long groupId){
-        expenditureService.deleteExpenditure(expenditureId, userId, groupId);
+    public void deleteExpenditure(@RequestParam Long expenditureId, @RequestParam Long groupId){
+        expenditureService.deleteExpenditure(expenditureId, groupId);
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<Map<Long, BigDecimal>> getGroupBalance(@RequestParam Long groupId, @RequestParam Long userId){
-        var result = expenditureService.getGroupBalance(groupId, userId);
+    public ResponseEntity<Map<Long, BigDecimal>> getGroupBalance(@RequestParam Long groupId){
+        var result = expenditureService.getGroupBalance(groupId);
         return ResponseEntity.ok(result);
     }
 

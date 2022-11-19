@@ -38,13 +38,12 @@ public class TripGroupController {
     }
     @DeleteMapping("/group")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteGroup(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId", required = false) Long userId) {
-        tripGroupService.deleteGroup(groupId, userId);
+    public void deleteGroup(@RequestParam(name = "groupId") Long groupId) {
+        tripGroupService.deleteGroup(groupId);
     }
     @PatchMapping("/group")
-    public ResponseEntity<TripGroup> changeGroup(@RequestParam Long groupId, @RequestParam Long userId,
-                                                 @RequestBody TripGroupDto tripGroupDto) {
-        var result = tripGroupService.updateGroup(groupId, userId, tripGroupDto);
+    public ResponseEntity<TripGroup> changeGroup(@RequestParam Long groupId, @RequestBody TripGroupDto tripGroupDto) {
+        var result = tripGroupService.updateGroup(groupId, tripGroupDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @GetMapping("/data")
@@ -72,8 +71,8 @@ public class TripGroupController {
     }
 
     @PatchMapping("/currency")
-    public ResponseEntity<TripGroup> setCurrency(@RequestParam Long groupId, @RequestParam Long userId, @RequestParam Currency currency){
-        var result = tripGroupService.setCurrencyInGroup(groupId, userId, currency);
+    public ResponseEntity<TripGroup> setCurrency(@RequestParam Long groupId, @RequestParam Currency currency){
+        var result = tripGroupService.setCurrencyInGroup(groupId, currency);
         return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
     }
 
