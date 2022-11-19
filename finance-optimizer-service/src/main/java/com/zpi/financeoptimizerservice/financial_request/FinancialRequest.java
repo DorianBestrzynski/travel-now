@@ -1,7 +1,6 @@
 package com.zpi.financeoptimizerservice.financial_request;
 
 import com.zpi.financeoptimizerservice.commons.Status;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +21,7 @@ public class FinancialRequest {
     )
     @SequenceGenerator(
             name = "request_sequence",
-            sequenceName = "request_sequence", allocationSize = 10)
+            sequenceName = "request_sequence", allocationSize = 1)
     @Column(name = "financial_request_id",unique = true, nullable = false)
     private Long financialRequestId;
 

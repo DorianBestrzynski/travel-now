@@ -19,7 +19,7 @@ public class Availability {
             generator = "availability_sequence")
     @SequenceGenerator(
             name = "availability_sequence",
-            sequenceName = "availability_sequence", allocationSize = 10)
+            sequenceName = "availability_sequence", allocationSize = 1)
     @Column(name = "availability_id", nullable = false, unique = true)
     private Long availabilityId;
     @Getter

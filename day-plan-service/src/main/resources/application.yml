@@ -39,3 +39,19 @@ spring.config.activate.on-profile: docker
 app.trip-group-service: trip-group
 app.config-server: config-server
 app.database: postgres
+
+---
+spring.config.activate.on-profile: test
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true

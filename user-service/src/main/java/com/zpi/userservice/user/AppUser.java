@@ -22,7 +22,7 @@ public class AppUser {
            )
     @SequenceGenerator(
             name = "user_sequence",
-            sequenceName = "user_sequence", allocationSize = 10)
+            sequenceName = "user_sequence", allocationSize = 1)
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
     @Getter

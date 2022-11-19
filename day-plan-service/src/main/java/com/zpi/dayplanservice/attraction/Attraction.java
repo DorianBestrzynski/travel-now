@@ -24,7 +24,7 @@ public class Attraction {
             generator = "attraction_sequence")
     @SequenceGenerator(
             name = "attraction_sequence",
-            sequenceName = "attraction_sequence", allocationSize = 10)
+            sequenceName = "attraction_sequence", allocationSize = 1)
     @Getter
     @Setter
     private Long attractionId;
@@ -42,7 +42,7 @@ public class Attraction {
     @Getter
     @Setter
     @JsonProperty("openingHours")
-    @Column(name = "opening_hours", nullable = false, length = 255)
+    @Column(name = "opening_hours", nullable = true, length = 255)
     private String openingHours;
 
     @Getter
@@ -57,7 +57,7 @@ public class Attraction {
 
     @Getter
     @Setter
-    @Column(name = "photo_link", nullable = false, length = 255)
+    @Column(name = "photo_link", nullable = true, length = 255)
     private String photoLink;
 
     @Getter
@@ -86,6 +86,18 @@ public class Attraction {
         this.description = description;
         this.latitude = destinationLatitude;
         this.longitude = destinationLongitude;
+    }
+
+    public Attraction(String name, String description, String openingHours, String address, String attractionLink,
+                      String photoLink, Double latitude, Double longitude) {
+        this.name = name;
+        this.description = description;
+        this.openingHours = openingHours;
+        this.address = address;
+        this.attractionLink = attractionLink;
+        this.photoLink = photoLink;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     @Override

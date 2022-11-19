@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
+import static com.zpi.financeoptimizerservice.exceptions.ExceptionsInfo.INVALID_PARAMS;
+
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +64,8 @@ public class FinancialRequestService {
 
     @AuthorizePartOfTheGroup
     public Boolean isDebtorOrDebteeToanyFinancialRequests(Long groupId, Long userId) {
+        if(groupId == null || userId == null)
+            throw new IllegalArgumentException(INVALID_PARAMS);
         var financialRequestSet =  financialRequestRepository.getAllByDebtorAndExpenditure(userId, groupId);
         return !financialRequestSet.isEmpty();
     }

@@ -1,7 +1,7 @@
 server.port: 8088
 spring.application.name: accommodation
 
-spring.config.import: "configserver:"
+#spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 app.group-service: localhost
@@ -37,3 +37,19 @@ spring.config.activate.on-profile: docker
 app.config-server: config-server
 app.database: postgres
 app.group-service: group
+
+---
+spring.config.activate.on-profile: test
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true

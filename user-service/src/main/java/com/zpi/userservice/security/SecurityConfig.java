@@ -18,16 +18,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http)
             throws Exception {
         http.csrf().disable()
-            .headers().frameOptions().disable()
-            .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .addFilterBefore(new JWTVerifierFilter(), UsernamePasswordAuthenticationFilter.class)
-            .authorizeRequests()
-            .antMatchers("/api/v1/users").permitAll()
-            .anyRequest()
-            .authenticated()
-            .and().httpBasic();
-
+                .headers().frameOptions().disable()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(new JWTVerifierFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeRequests()
+                .antMatchers("/console/**").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and().httpBasic();
     }
 }

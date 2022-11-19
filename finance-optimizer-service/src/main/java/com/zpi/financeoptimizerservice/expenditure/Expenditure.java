@@ -21,7 +21,7 @@ public class Expenditure {
     )
     @SequenceGenerator(
             name = "finance_sequence",
-            sequenceName = "finance_sequence", allocationSize = 10)
+            sequenceName = "finance_sequence", allocationSize = 1)
     @Column(name = "expenditure_id",unique = true, nullable = false)
     private Long expenditureId;
 
