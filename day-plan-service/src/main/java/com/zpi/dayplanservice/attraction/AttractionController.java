@@ -1,6 +1,7 @@
 package com.zpi.dayplanservice.attraction;
 
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
+import com.zpi.dayplanservice.dto.AttractionPlanDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class AttractionController {
     }
 
     @GetMapping("/optimize/{dayPlanId}")
-    public ResponseEntity<List<Attraction>> getOptimizedDay(@PathVariable Long dayPlanId) {
+    public ResponseEntity<List<AttractionPlanDto>> getOptimizedDay(@PathVariable Long dayPlanId) {
         var result = attractionService.findOptimalDayPlan(dayPlanId);
         return ResponseEntity.ok(result);
     }

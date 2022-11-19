@@ -154,7 +154,7 @@ public class AttractionServiceTests {
 
         //then
         assertArrayEquals(result.stream()
-                           .mapToLong(Attraction::getAttractionId)
+                           .mapToLong(dto -> dto.getAttraction().getAttractionId())
                            .toArray(), new long[]{5L, 4L, 3L, 1L, 6L, 2L});
     }
 
@@ -173,7 +173,7 @@ public class AttractionServiceTests {
 
         //then
         assertArrayEquals(result.stream()
-                                .mapToLong(Attraction::getAttractionId)
+                                .mapToLong(dto -> dto.getAttraction().getAttractionId())
                                 .toArray(), new long[]{4L, 3L, 1L, 5L, 6L, 2L});
     }
 
@@ -191,7 +191,7 @@ public class AttractionServiceTests {
 
         //then
         assertArrayEquals(result.stream()
-                                .mapToLong(Attraction::getAttractionId)
+                                .mapToLong(dto -> dto.getAttraction().getAttractionId())
                                 .toArray(), new long[]{2L, 3L, 4L, 5L, 1L, 6L});
     }
 
