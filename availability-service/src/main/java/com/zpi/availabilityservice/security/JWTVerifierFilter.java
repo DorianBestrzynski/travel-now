@@ -32,7 +32,7 @@ public class JWTVerifierFilter extends OncePerRequestFilter {
         Long userId = Long.parseLong(httpServletRequest.getHeader("userId"));
         Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>();
 
-        if(!authoritiesStr.isBlank())
+        if(authoritiesStr != null &&!authoritiesStr.isBlank())
             simpleGrantedAuthorities = Arrays.stream(authoritiesStr.split(","))
                                              .distinct()
                                              .map(SimpleGrantedAuthority::new)

@@ -37,6 +37,12 @@ public class AccommodationController {
         return ResponseEntity.ok(accommodation);
     }
 
+
+    @PatchMapping("/accept")
+    public void acceptAccommodation(@RequestParam Long accommodationId) {
+        accommodationService.acceptAccommodation(accommodationId);
+    }
+
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteAccommodation(@RequestParam Long accommodationId){

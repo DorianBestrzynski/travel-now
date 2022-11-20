@@ -64,10 +64,16 @@ public class TripGroupController {
         return ResponseEntity.ok(accommodation);
     }
 
-    @PatchMapping("/accommodation")
-    public ResponseEntity<TripGroup> setSelectedAccommodation(@RequestParam Long groupId, @RequestParam Long accommodationId){
-        var result = tripGroupService.setSelectedAccommodation(groupId, accommodationId);
-        return ResponseEntity.ok(result);
+    @PutMapping("/accommodation")
+    @ResponseStatus(HttpStatus.OK)
+    public void setSelectedAccommodation(@RequestParam Long groupId, @RequestParam Long accommodationId){
+        tripGroupService.setSelectedAccommodation(groupId, accommodationId);
+    }
+
+    @PutMapping("/availability")
+    @ResponseStatus(HttpStatus.OK)
+    public void setSelectedAvailability(@RequestParam Long groupId, @RequestParam Long availabilityId){
+        tripGroupService.setSelectedAvailability(groupId, availabilityId);
     }
 
     @PatchMapping("/currency")
@@ -81,6 +87,7 @@ public class TripGroupController {
     public void leaveGroup(@RequestParam Long groupId, @RequestParam Long userId){
         tripGroupService.leaveGroup(groupId, userId);
     }
+
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {

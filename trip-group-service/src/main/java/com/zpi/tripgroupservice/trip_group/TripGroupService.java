@@ -138,11 +138,8 @@ public class TripGroupService {
         var tripGroup = tripGroupRepository.findById(groupId)
                                            .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
-        if(accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION,  accommodationId) == null)
-            throw new ApiRequestException(ExceptionInfo.ACCOMMODATION_NOT_FOUND);
-
         tripGroup.setSelectedAccommodationId(accommodationId);
-        return tripGroup;
+        return tripGroupRepository.save(tripGroup);
     }
 
     @Transactional
@@ -162,4 +159,13 @@ public class TripGroupService {
         }
         userGroupService.deleteUserFromGroup(groupId, userId);
     }
+    @Transactional
+    public void setSelectedAvailability(Long groupId, Long availabilityId) {
+        var tripGroup = tripGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+
+        tripGroup.setSelectedSharedAvailability(availabilityId);
+        tripGroupRepository.save(tripGroup);
+    }
+
 }
