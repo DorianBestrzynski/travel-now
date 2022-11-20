@@ -68,9 +68,16 @@ public class TripGroupController {
         return ResponseEntity.ok(accommodation);
     }
 
-    @PatchMapping("/accommodation")
+    @PutMapping("/accommodation")
+    @ResponseStatus(HttpStatus.OK)
     public void setSelectedAccommodation(@RequestParam Long groupId, @RequestParam Long accommodationId){
-        var result = tripGroupService.setSelectedAccommodation(groupId, accommodationId);
+        tripGroupService.setSelectedAccommodation(groupId, accommodationId);
+    }
+
+    @PutMapping("/availability")
+    @ResponseStatus(HttpStatus.OK)
+    public void setSelectedAvailability(@RequestParam Long groupId, @RequestParam Long availabilityId){
+        tripGroupService.setSelectedAvailability(groupId, availabilityId);
     }
 
     @PatchMapping("/currency")

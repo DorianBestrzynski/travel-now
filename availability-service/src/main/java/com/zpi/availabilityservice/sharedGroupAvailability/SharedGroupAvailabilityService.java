@@ -1,15 +1,21 @@
 package com.zpi.availabilityservice.sharedGroupAvailability;
 
+import com.zpi.availabilityservice.aspects.AuthorizeCoordinator;
+import com.zpi.availabilityservice.aspects.AuthorizeCoordinatorShared;
 import com.zpi.availabilityservice.availability.Availability;
 import com.zpi.availabilityservice.availability.AvailabilityRepository;
 import com.zpi.availabilityservice.proxies.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.zpi.availabilityservice.exceptions.ExceptionInfo.SHARED_AVAILABILITY_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +26,7 @@ public class SharedGroupAvailabilityService {
     private Integer minimalNumberOfParticipants;
     private final TripGroupProxy tripGroupProxy;
     private final AvailabilityRepository availabilityRepository;
+    private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
     @Transactional
     public void generateSharedGroupAvailability(Long groupId) {
@@ -167,5 +174,11 @@ public class SharedGroupAvailabilityService {
 
     public List<SharedGroupAvailability> getGroupSharedAvailabilities(Long groupId) {
         return sharedGroupAvailabilityRepository.findAllByGroupId(groupId);
+    }
+
+    @AuthorizeCoordinatorShared
+    public void acceptSharedGroupAvailability(Long sharedGroupAvailabilityId) {
+        var sharedAvailability = sharedGroupAvailabilityRepository.findById(sharedGroupAvailabilityId).orElseThrow(() -> new EntityNotFoundException(SHARED_AVAILABILITY_NOT_FOUND));
+        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, sharedAvailability.getGroupId(), sharedGroupAvailabilityId);
     }
 }

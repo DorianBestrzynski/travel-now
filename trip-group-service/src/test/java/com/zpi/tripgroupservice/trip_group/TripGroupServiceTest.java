@@ -204,7 +204,7 @@ class TripGroupServiceTest {
 
         //then
         var expectedTripGroup = new TripGroup("Name", Currency.EURO, "Updated Desc", 1, "Raclawicka",
-                "China" , 1, 2 );
+                "China" , 1, 1 );
         assertThat(actualTripGroup).isEqualTo(expectedTripGroup);
         verify(tripGroupRepository, times(1)).save(any());
         verify(tripGroupRepository, times(1)).findById(anyLong());
@@ -348,32 +348,15 @@ class TripGroupServiceTest {
 
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
-        when(accommodationProxy.getAccommodationInfo(anyString(), anyLong())).thenReturn(new AccommodationInfoDto());
+        when(tripGroupRepository.save(any(TripGroup.class))).thenAnswer(s -> s.getArguments()[0]);
+
         var actualResult = tripGroupService.setSelectedAccommodation(1L, 1L);
         //then
         var expectedResult = new TripGroup();
         expectedResult.setSelectedAccommodationId(1L);
         assertThat(actualResult.getSelectedAccommodationId()).isEqualTo(expectedResult.getSelectedAccommodationId());
         verify(tripGroupRepository, times(1)).findById(anyLong());
-        verify(accommodationProxy, times(1)).getAccommodationInfo(anyString(), anyLong());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenAccommodationInfoDoesNotExist() {
-        //given
-        var tripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
-                "Wroclaw" , 3, 3 );
-
-        //when
-        when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
-        when(accommodationProxy.getAccommodationInfo(anyString(), anyLong())).thenReturn(null);
-        var exception = assertThrows(ApiRequestException.class,
-                () -> tripGroupService.setSelectedAccommodation(1L, 1L));
-
-        //then
-        assertThat(exception.getMessage()).isEqualTo("Accommodation not found");
-        verify(tripGroupRepository, times(1)).findById(anyLong());
-        verify(accommodationProxy, times(1)).getAccommodationInfo(anyString(), anyLong());
+        verify(tripGroupRepository, times(1)).save(any(TripGroup.class));
     }
 
     @Test

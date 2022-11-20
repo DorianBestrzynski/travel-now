@@ -12,7 +12,5 @@ import org.mapstruct.*;
 )
 public interface MapStructMapper {
 
-    @Mapping(target = "tripGroup.minimalNumberOfDays", source = "minimalNumberOfDays")
-    @Mapping(target = "tripGroup.minimalNumberOfParticipants", source = "minimalNumberOfParticipants")
     void updateFromTripGroupDtoToTripGroup(@MappingTarget TripGroup tripGroup, TripGroupDto tripGroupDto);
 }

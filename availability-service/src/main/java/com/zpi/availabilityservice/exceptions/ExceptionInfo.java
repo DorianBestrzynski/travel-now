@@ -32,4 +32,5 @@ public final class ExceptionInfo {
     public final static String NOT_A_GROUP_MEMBER = "This user is not a member of this group!";
 
     public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
+    public final static String SHARED_AVAILABILITY_NOT_FOUND = "Shared availability not found";
 }
