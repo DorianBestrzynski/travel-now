@@ -6,14 +6,14 @@ import com.zpi.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
-import com.zpi.tripgroupservice.dto.TripDataDto;
+import com.zpi.tripgroupservice.dto.TripExtendedDataDto;
+import com.zpi.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.exception.ExceptionInfo;
 import com.zpi.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.mapper.MapStructMapper;
 import com.zpi.tripgroupservice.proxy.AccommodationProxy;
 import com.zpi.tripgroupservice.proxy.FinanceProxy;
-import com.zpi.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,7 @@ import java.util.List;
 
 import static com.zpi.tripgroupservice.commons.Utils.LATITUDE_INDEX;
 import static com.zpi.tripgroupservice.commons.Utils.LONGITUDE_INDEX;
+import static com.zpi.tripgroupservice.exception.ExceptionInfo.GROUP_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -66,9 +67,9 @@ public class TripGroupService {
 
     @Transactional
     @AuthorizeCoordinator
-    public void deleteGroup(Long groupId, Long userId) {
-        if(groupId == null || userId == null){
-            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID + "or" + ExceptionInfo.INVALID_USER_ID);
+    public void deleteGroup(Long groupId) {
+        if(groupId == null){
+            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID);
         }
         tripGroupRepository.deleteById(groupId);
         userGroupService.deletionGroupCleanUp(groupId);
@@ -76,7 +77,7 @@ public class TripGroupService {
 
    @Transactional
    @AuthorizeCoordinator
-    public TripGroup updateGroup(Long groupId, Long userId, TripGroupDto tripGroupDto) {
+    public TripGroup updateGroup(Long groupId, TripGroupDto tripGroupDto) {
         var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
                 ExceptionInfo.GROUP_NOT_FOUND));
         mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
@@ -84,15 +85,33 @@ public class TripGroupService {
         return tripGroup;
     }
 
-    public TripDataDto getTripData(Long groupId) {
-        return tripGroupRepository.findTripData(groupId).orElseThrow(() -> new ApiRequestException(
-                ExceptionInfo.GROUP_NOT_FOUND));
+    public TripExtendedDataDto getTripData(Long groupId) {
+        var group = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
+                GROUP_NOT_FOUND));
+        var numOfParticipants = userGroupService.getNumberOfParticipants(groupId);
+        return TripExtendedDataDto.builder()
+                .name(group.getName())
+                .currency(group.getCurrency())
+                .description(group.getDescription())
+                .votesLimit(group.getVotesLimit())
+                .startLocation(group.getStartLocation())
+                .startCity(group.getStartCity())
+                .startDate(group.getStartDate())
+                .endDate(group.getEndDate())
+                .latitude(group.getLatitude())
+                .longitude(group.getLongitude())
+                .groupStage(group.getGroupStage())
+                .minimalNumberOfDays(group.getMinimalNumberOfDays())
+                .minimalNumberOfParticipants(group.getMinimalNumberOfParticipants())
+                .selectedAccommodationId(group.getSelectedAccommodationId())
+                .participantsNum(numOfParticipants)
+                .build();
     }
 
 
     public AvailabilityConstraintsDto getAvailabilityConstraints(Long groupId) {
         var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
-                ExceptionInfo.GROUP_NOT_FOUND));
+                GROUP_NOT_FOUND));
         return new AvailabilityConstraintsDto(tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants());
         }
 
@@ -102,7 +121,7 @@ public class TripGroupService {
         }
 
         var tripGroup = tripGroupRepository.findById(groupId)
-                                           .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+                                           .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
         if(tripGroup.getSelectedAccommodationId() != null)
             return accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION, tripGroup.getSelectedAccommodationId());
@@ -117,7 +136,7 @@ public class TripGroupService {
                     ExceptionInfo.INVALID_GROUP_ID + "or" + ExceptionInfo.INVALID_ACCOMMODATION_ID);
 
         var tripGroup = tripGroupRepository.findById(groupId)
-                                           .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+                                           .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
 
         if(accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION,  accommodationId) == null)
             throw new ApiRequestException(ExceptionInfo.ACCOMMODATION_NOT_FOUND);
@@ -128,9 +147,9 @@ public class TripGroupService {
 
     @Transactional
     @AuthorizeCoordinator
-    public TripGroup setCurrencyInGroup(Long groupId, Long userId, Currency currency) {
+    public TripGroup setCurrencyInGroup(Long groupId, Currency currency) {
         var tripGroup = tripGroupRepository.findById(groupId)
-                .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+                .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
         tripGroup.setCurrency(currency);
         return tripGroupRepository.save(tripGroup);
     }
@@ -138,7 +157,7 @@ public class TripGroupService {
     @Transactional
     @AuthorizePartOfTheGroup
     public void leaveGroup(Long groupId, Long userId) {
-        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION,groupId, userId)){
+        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, userId)){
             throw new ApiRequestException(ExceptionInfo.CANNOT_LEAVE_GROUP);
         }
         userGroupService.deleteUserFromGroup(groupId, userId);

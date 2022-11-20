@@ -30,8 +30,8 @@ public class InvitationService {
 
     @Transactional
     @AuthorizeCoordinator
-    public String createInvitation(Long userId, Long groupId) {
-        if (userId < 0 || groupId < 0) {
+    public String createInvitation(Long groupId) {
+        if (groupId < 0) {
             throw new IllegalArgumentException(ExceptionInfo.INVALID_USER_ID_GROUP_ID);
         }
 

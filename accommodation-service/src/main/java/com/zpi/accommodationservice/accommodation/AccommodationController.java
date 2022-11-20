@@ -2,6 +2,7 @@ package com.zpi.accommodationservice.accommodation;
 
 import com.zpi.accommodationservice.dto.AccommodationDto;
 import com.zpi.accommodationservice.dto.AccommodationInfoDto;
+import com.zpi.accommodationservice.dto.AccommodationWithVotesDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +15,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccommodationController {
     private final AccommodationService accommodationService;
+
     @GetMapping()
     public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId){
         var result = accommodationService.getAllAccommodationsForGroup(groupId);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<AccommodationWithVotesDto>> getAllAccommodationsForGroupWithVotes(@RequestParam Long groupId){
+        long start = System.currentTimeMillis();
+        var result = accommodationService.getAllAccommodationsForGroupWithVotes(groupId);
+        long finish = System.currentTimeMillis();
+        System.out.println(finish - start);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping()
     public ResponseEntity<Accommodation> addAccommodation(@RequestBody AccommodationDto accommodationDto) {
         var accommodation = accommodationService.addAccommodation(accommodationDto);
         return ResponseEntity.ok(accommodation);
     }
+
     @DeleteMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteAccommodation(@RequestParam Long accommodationId){
