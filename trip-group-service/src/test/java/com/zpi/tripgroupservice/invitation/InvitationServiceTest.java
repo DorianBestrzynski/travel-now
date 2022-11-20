@@ -64,7 +64,7 @@ class InvitationServiceTest {
 
         //when
         when(tripGroupService.getTripGroupById(1L)).thenReturn(tripGroup);
-        var result = invitationService.createInvitation(1L, 1L);
+        var result = invitationService.createInvitation(1L);
 
         //then
         verify(invitationRepository, times(1)).save(invitationArgumentCaptor.capture());
@@ -79,7 +79,7 @@ class InvitationServiceTest {
 
         //when
         var exception = assertThrows(IllegalArgumentException.class ,
-                () ->  invitationService.createInvitation(-1L, 1L));
+                () ->  invitationService.createInvitation(-1L));
 
         //then
         verify(invitationRepository, never()).save(any());
