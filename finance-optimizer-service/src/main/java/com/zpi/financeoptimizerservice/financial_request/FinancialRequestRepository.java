@@ -12,6 +12,9 @@ public interface FinancialRequestRepository extends JpaRepository<FinancialReque
     @Query("from FinancialRequest fr where fr.status = 'PENDING' and fr.groupId = :groupId")
     Set<FinancialRequest> getAllActiveInGroup(Long groupId);
 
+    @Query("from FinancialRequest fr where fr.groupId = :groupId")
+    Set<FinancialRequest> getAllFinancialRequestInGroup(Long groupId);
+
     @Query("from FinancialRequest f where (f.debtor = :debtorId  or f.debtee = :debtorId) and f.groupId = :groupId and f.status = 'PENDING'")
     Set<FinancialRequest> getAllByDebtorAndExpenditure(@Param("debtorId") Long debtorId, @Param("groupId") Long groupId);
 

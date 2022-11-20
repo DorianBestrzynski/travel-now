@@ -1,3 +1,4 @@
+DROP SEQUENCE IF EXISTS "accommodation_sequence";
 CREATE SEQUENCE "accommodation_sequence"
     MINVALUE 1
     MAXVALUE 999999999

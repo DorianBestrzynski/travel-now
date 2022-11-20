@@ -162,6 +162,20 @@ class FinancialRequestServiceTest {
     }
 
     @Test
+    void shouldGetAllExpensesInGroup() {
+        //given
+        mockAuthorizePartOfTheGroupAspect();
+        var financialRequests = Set.of(new FinancialRequest(BigDecimal.valueOf(-4000).setScale(1, RoundingMode.CEILING), 1L, 2L, 1L, Status.RESOLVED));
+        //when
+        when(financialRequestRepository.getAllFinancialRequestInGroup(anyLong())).thenReturn(financialRequests);
+        var actualResult = financialRequestService.getAllFinancialRequestInGroup(1L, 1L);
+
+        //then
+        verify(financialRequestRepository, times(1)).getAllFinancialRequestInGroup(anyLong());
+        assertThat(actualResult).isEqualTo(financialRequests);
+    }
+
+    @Test
     void shouldReturnTrueThatIsDebtorOrDebteeToAnyRequests() {
         //given
         mockAuthorizePartOfTheGroupAspect();
