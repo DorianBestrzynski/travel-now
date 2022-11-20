@@ -30,8 +30,8 @@ public class AppUser {
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
     @Getter
-    @Column(name = "username", nullable = false, length = 50)
-    private String username;
+    @Column(name = "phoneNumber", nullable = false, length = 50)
+    private String phoneNumber;
 
     @Column(name = "email", nullable = false, unique = true ,length = 150)
     private String email;
@@ -53,8 +53,8 @@ public class AppUser {
     @ToString.Exclude
     private Password password;
 
-    public AppUser(String username, String email, String firstName, String surname, LocalDate birthday, LocalDateTime registrationDate, Password password){
-        this.username = username;
+    public AppUser(String phoneNumber, String email, String firstName, String surname, LocalDate birthday, LocalDateTime registrationDate, Password password){
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.firstName = firstName;
         this.surname = surname;

@@ -11,6 +11,7 @@ import com.zpi.dayplanservice.aspects.AuthorizeCoordinator;
 import com.zpi.dayplanservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.dayplanservice.day_plan.DayPlanService;
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
+import com.zpi.dayplanservice.dto.AttractionPlanDto;
 import com.zpi.dayplanservice.dto.RouteDto;
 import com.zpi.dayplanservice.mapstruct.MapStructMapper;
 import com.zpi.dayplanservice.proxies.TripGroupProxy;
@@ -135,7 +136,7 @@ public class AttractionService {
         return attractionRepository.save(attraction);
     }
 
-    public List<Attraction> findOptimalDayPlan(Long dayPlanId) {
+    public List<AttractionPlanDto> findOptimalDayPlan(Long dayPlanId) {
         var dayPlan = dayPlanService.getDayPlanById(dayPlanId);
         var attractions = new ArrayList<>(dayPlan.getDayAttractions());
 
@@ -172,9 +173,11 @@ public class AttractionService {
     public RouteDto findBestAttractionsOrder(List<Attraction> attractions, int startingPointIndex) {
         var distanceMatrix = getDistanceMatrix(attractions);
         var attractionList = new LinkedHashSet<Attraction>();
+        var attractionDtoList = new ArrayList<AttractionPlanDto>();
 
         int currentAttractionIndex = startingPointIndex;
         attractionList.add(attractions.get(currentAttractionIndex));
+        attractionDtoList.add(new AttractionPlanDto(attractions.get(currentAttractionIndex)));
 
         var routeDistance = 0L;
 
@@ -192,14 +195,21 @@ public class AttractionService {
                     minDistance = rowElems[i].distance.inMeters;
                 }
             }
-            if(minDistance != Long.MAX_VALUE)
+
+            if(minDistance != Long.MAX_VALUE) {
                 routeDistance += minDistance;
+                attractionDtoList.get(attractionDtoList.size() - 1)
+                                 .setDistanceToNextAttraction(Long.valueOf(minDistance)
+                                                                  .doubleValue());
+            }
+
 
             attractionList.add(attractions.get(bestAttractionIndex));
+            attractionDtoList.add(new AttractionPlanDto(attractions.get(bestAttractionIndex)));
             currentAttractionIndex = bestAttractionIndex;
         }
 
-        return new RouteDto(new ArrayList<>(attractionList), routeDistance);
+        return new RouteDto(new ArrayList<>(attractionDtoList), routeDistance);
     }
 
 

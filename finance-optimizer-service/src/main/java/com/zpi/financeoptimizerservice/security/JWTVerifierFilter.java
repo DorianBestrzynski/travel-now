@@ -22,7 +22,11 @@ public class JWTVerifierFilter extends OncePerRequestFilter {
         String authHeader = httpServletRequest.getHeader("Authorization");
         String innerCommunicationHeader = httpServletRequest.getHeader("innerCommunication");
         if (innerCommunicationHeader != null) {
-            Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null, null, null, null);
+            Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null,
+                                                                                          null,
+                                                                                          null,
+                                                                                          httpServletRequest.getHeader("userId") != null ?
+                                                                                                  Long.parseLong(httpServletRequest.getHeader("userId")) : null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(httpServletRequest, httpServletResponse);
             return;

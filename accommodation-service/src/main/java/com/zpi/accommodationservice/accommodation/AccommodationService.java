@@ -11,16 +11,23 @@ import com.zpi.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.proxies.TripGroupProxy;
 import com.zpi.accommodationservice.comons.Utils;
+import com.zpi.accommodationservice.dto.*;
+import com.zpi.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.exceptions.ExceptionsInfo;
+import com.zpi.accommodationservice.mapstruct.MapStructMapper;
+import com.zpi.accommodationservice.proxies.AppUserProxy;
+import com.zpi.accommodationservice.votes.AccommodationVoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static com.zpi.accommodationservice.comons.Utils.INNER_COMMUNICATION;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +42,13 @@ public class AccommodationService {
     private final MapStructMapper mapstructMapper;
 
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
+
+    private final AccommodationVoteService accommodationVoteService;
+
+    private final MapStructMapper mapstructMapper;
+
+    private final AppUserProxy appUserProxy;
+
 
     @Qualifier("serviceRegexPattern")
     private final Pattern pattern;
@@ -79,10 +93,67 @@ public class AccommodationService {
                 ExceptionsInfo.ENTITY_NOT_FOUND));
     }
 
+    @AuthorizePartOfTheGroup
+    public List<AccommodationWithVotesDto> getAllAccommodationsForGroupWithVotes(Long groupId) {
+        if (groupId == null)
+            throw new IllegalArgumentException(ExceptionsInfo.INVALID_GROUP_ID);
+
+        var accommodations = accommodationRepository.findAllByGroupId(groupId)
+                                                    .orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+
+        var votes = accommodationVoteService.getVotesForAccommodations(accommodations.stream()
+                                                                                     .map(Accommodation::getAccommodationId)
+                                                                                     .toList());
+
+        var users = appUserProxy.getUsersDtos(INNER_COMMUNICATION, votes.parallelStream()
+                                                                        .map(acc -> acc.getId().getUserId())
+                                                                        .toList());
+
+
+        var result = votes.parallelStream()
+                          .collect(Collectors.groupingBy(
+                                  vote -> findAccommodationById(accommodations, vote.getId().getAccommodationId()),
+                                  Collectors.mapping(
+                                          vote -> findUserById(users, vote.getId().getUserId()),
+                                          Collectors.filtering(Objects::nonNull, Collectors.toList())
+                                  ))
+                          );
+
+        if(result.size() == accommodations.size())
+            return result.entrySet()
+                         .parallelStream()
+                         .map(e -> new AccommodationWithVotesDto(e.getKey(), e.getValue()))
+                         .collect(Collectors.toList());
+
+        return putMissingAccommodation(result, accommodations).entrySet()
+                                                              .parallelStream()
+                                                              .map(e -> new AccommodationWithVotesDto(e.getKey(), e.getValue()))
+                                                              .collect(Collectors.toList());
+    }
+
+    private Accommodation findAccommodationById(List<Accommodation> accommodations, Long id) {
+        return accommodations.parallelStream()
+                             .filter(acc -> acc.getAccommodationId().equals(id))
+                             .findAny()
+                             .orElse(null);
+    }
+
+    private UserDto findUserById(List<UserDto> users, Long id) {
+        return users.parallelStream()
+                    .filter(acc -> acc.userId().equals(id))
+                    .findAny()
+                    .orElse(null);
+    }
+
+    private Map<Accommodation, List<UserDto>> putMissingAccommodation(Map<Accommodation, List<UserDto>> map, List<Accommodation> accommodations) {
+        accommodations.forEach(acc -> map.putIfAbsent(acc, new ArrayList<>()));
+        return map;
+    }
+
     @Transactional
     @AuthorizeAuthorOrCoordinator
     public void deleteAccommodation(Long accommodationId) {
-        if(accommodationId == null){
+        if (accommodationId == null) {
             throw new IllegalArgumentException(
                     ExceptionsInfo.INVALID_ACCOMMODATION_ID + Utils.OR_WORD + ExceptionsInfo.INVALID_USER_ID);
         }

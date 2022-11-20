@@ -16,8 +16,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -57,7 +56,7 @@ public class TripGroupFinanceIntegrationTests {
                     assertThat(res.getStatusCode().is2xxSuccessful()).isTrue();
                     assertThat(res.getStatusCodeValue()).isEqualTo(200);
                     assertThat(Objects.requireNonNull(res.getHeaders().get("Content-Type")).get(0)).isEqualTo("application/json");
-                    assertTrue(res.getBody());
+                    assertFalse(res.getBody());
                 }
         );
     }
@@ -86,6 +85,7 @@ public class TripGroupFinanceIntegrationTests {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         headers.set("innerCommunication", "trip-group");
+        headers.set("userId", String.valueOf(1L));
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(BASE_URL + suffix)

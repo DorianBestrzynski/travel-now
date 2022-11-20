@@ -28,7 +28,7 @@ public class ExpenditureService {
 
 
     @AuthorizePartOfTheGroup
-    public Set<Expenditure> getExpendituresMetadata(Long groupId, Long userId) {
+    public Set<Expenditure> getExpendituresMetadata(Long groupId) {
         return expenditureRepository.findAllByGroupId(groupId);
     }
 
@@ -68,7 +68,7 @@ public class ExpenditureService {
     @Transactional
     @AuthorizePartOfTheGroup
     @AuthorizeAuthorOrCoordinatorExpenditure
-    public Expenditure editExpenditure(Long groupId, Long expenditureId, Long userId, ExpenditureInputDto expenditureInput) {
+    public Expenditure editExpenditure(Long groupId, Long expenditureId, ExpenditureInputDto expenditureInput) {
         var expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         var shouldTriggerRequests = updateExpenditure(expenditure, expenditureInput);
         var updatedExpenditure = expenditureRepository.save(expenditure);
@@ -101,7 +101,7 @@ public class ExpenditureService {
     @Transactional
     @AuthorizePartOfTheGroup
     @AuthorizeAuthorOrCoordinatorExpenditure
-    public void deleteExpenditure(Long expenditureId, Long userId, Long groupId) {
+    public void deleteExpenditure(Long expenditureId, Long groupId) {
         var expenditure = expenditureRepository.findById(expenditureId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         expenditureRepository.delete(expenditure);
         regenerateOptimizationProcess(groupId);
@@ -117,7 +117,7 @@ public class ExpenditureService {
     }
 
     @AuthorizePartOfTheGroup
-    public Map<Long, BigDecimal> getGroupBalance(Long groupId, Long userId) {
+    public Map<Long, BigDecimal> getGroupBalance(Long groupId) {
         var financialRequests = financialRequestService.getAllActiveFinancialRequestsIn(groupId);
         var balanceDouble = financialRequestOptimizer.calculateNetCashFlowIn(financialRequests);
         return financialRequestOptimizer.convertPricesToBigDecimal(balanceDouble);

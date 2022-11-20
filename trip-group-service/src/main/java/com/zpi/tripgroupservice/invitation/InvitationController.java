@@ -15,16 +15,15 @@ public class InvitationController {
     private final InvitationService invitationService;
 
     @GetMapping()
-    public ResponseEntity<String> createInvitation(@RequestParam(name = "user", required = true) Long userId,
-                                                   @RequestParam(name = "group", required = true) Long groupId) {
-        var invitationLink = invitationService.createInvitation(userId, groupId);
+    public ResponseEntity<String> createInvitation(@RequestParam(name = "group") Long groupId) {
+        var invitationLink = invitationService.createInvitation(groupId);
 
         return ResponseEntity.created(URI.create(invitationLink)).build();
     }
 
     @PutMapping()
-    public ResponseEntity<UserGroup> acceptInvitation(@RequestParam(name = "token", required = true) String token,
-                                                      @RequestParam(name = "user", required = true) Long userId) {
+    public ResponseEntity<UserGroup> acceptInvitation(@RequestParam(name = "token") String token,
+                                                      @RequestParam(name = "user") Long userId) {
         var result = invitationService.acceptInvitation(userId, token);
 
         return ResponseEntity.ok(result);

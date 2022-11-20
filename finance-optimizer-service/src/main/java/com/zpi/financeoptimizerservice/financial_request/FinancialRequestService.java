@@ -47,7 +47,7 @@ public class FinancialRequestService {
     @Transactional
     @AuthorizePartOfTheGroup
     @AuthorizeAuthorOrCoordinatorRequest
-    public void acceptFinancialRequest(Long requestId, Long userId, Long groupId) {
+    public void acceptFinancialRequest(Long requestId) {
         var financialRequest = financialRequestRepository.findById(requestId).orElseThrow();
         financialRequest.setStatus(Status.RESOLVED);
         financialRequestRepository.save(financialRequest);
@@ -58,12 +58,12 @@ public class FinancialRequestService {
     }
 
     @AuthorizePartOfTheGroup
-    public Set<FinancialRequest> getAllUnsettledFinanceRequests(Long groupId, Long userId) {
+    public Set<FinancialRequest> getAllUnsettledFinanceRequests(Long groupId) {
         return getAllActiveFinancialRequestsIn(groupId);
     }
 
     @AuthorizePartOfTheGroup
-    public Boolean isDebtorOrDebteeToanyFinancialRequests(Long groupId, Long userId) {
+    public Boolean isDebtorOrDebteeToAnyFinancialRequests(Long groupId, Long userId) {
         if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_PARAMS);
         var financialRequestSet =  financialRequestRepository.getAllByDebtorAndExpenditure(userId, groupId);

@@ -2,10 +2,7 @@ package com.zpi.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.commons.Role;
-import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
-import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
-import com.zpi.tripgroupservice.dto.TripDataDto;
-import com.zpi.tripgroupservice.dto.TripGroupDto;
+import com.zpi.tripgroupservice.dto.*;
 import com.zpi.tripgroupservice.user_group.UserGroup;
 import com.zpi.tripgroupservice.user_group.UserGroupKey;
 import com.zpi.tripgroupservice.user_group.UserGroupRepository;
@@ -41,17 +38,16 @@ public class TripGroupController {
     }
     @DeleteMapping("/group")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deleteGroup(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId", required = false) Long userId) {
-        tripGroupService.deleteGroup(groupId, userId);
+    public void deleteGroup(@RequestParam(name = "groupId") Long groupId) {
+        tripGroupService.deleteGroup(groupId);
     }
     @PatchMapping("/group")
-    public ResponseEntity<TripGroup> changeGroup(@RequestParam Long groupId, @RequestParam Long userId,
-                                                 @RequestBody TripGroupDto tripGroupDto) {
-        var result = tripGroupService.updateGroup(groupId, userId, tripGroupDto);
+    public ResponseEntity<TripGroup> changeGroup(@RequestParam Long groupId, @RequestBody TripGroupDto tripGroupDto) {
+        var result = tripGroupService.updateGroup(groupId, tripGroupDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @GetMapping("/data")
-    public ResponseEntity<TripDataDto> getTripData(@RequestParam Long groupId){
+    public ResponseEntity<TripExtendedDataDto> getTripData(@RequestParam Long groupId){
         var tripData = tripGroupService.getTripData(groupId);
         return ResponseEntity.ok(tripData);
     }
@@ -81,8 +77,8 @@ public class TripGroupController {
     }
 
     @PatchMapping("/currency")
-    public ResponseEntity<TripGroup> setCurrency(@RequestParam Long groupId, @RequestParam Long userId, @RequestParam Currency currency){
-        var result = tripGroupService.setCurrencyInGroup(groupId, userId, currency);
+    public ResponseEntity<TripGroup> setCurrency(@RequestParam Long groupId, @RequestParam Currency currency){
+        var result = tripGroupService.setCurrencyInGroup(groupId, currency);
         return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
     }
 
