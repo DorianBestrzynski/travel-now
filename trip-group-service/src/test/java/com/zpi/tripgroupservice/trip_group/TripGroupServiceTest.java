@@ -166,7 +166,7 @@ class TripGroupServiceTest {
         mockAuthorizeCoordinatorAspect();
 
         //when
-        tripGroupService.deleteGroup(1L, 1L);
+        tripGroupService.deleteGroup(1L);
 
         //then
         verify(tripGroupRepository, times(1)).deleteById(1L);
@@ -180,7 +180,7 @@ class TripGroupServiceTest {
 
         //when
         var exception = assertThrows(IllegalArgumentException.class,
-                () -> tripGroupService.deleteGroup(1L, null));
+                () -> tripGroupService.deleteGroup(1L));
 
         //then
         verify(tripGroupRepository, never()).deleteById(anyLong());
@@ -200,7 +200,7 @@ class TripGroupServiceTest {
 
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
-        var actualTripGroup = tripGroupService.updateGroup(1L, 1L, tripGroupDto);
+        var actualTripGroup = tripGroupService.updateGroup(1L, tripGroupDto);
 
         //then
         var expectedTripGroup = new TripGroup("Name", Currency.EURO, "Updated Desc", 1, "Raclawicka",
@@ -218,7 +218,7 @@ class TripGroupServiceTest {
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.empty());
         var exception = assertThrows(ApiRequestException.class,
-                () -> tripGroupService.updateGroup(1L, 1L, null));
+                () -> tripGroupService.updateGroup(1L, null));
 
         //then
         assertThat(exception.getMessage()).isEqualTo("There is no group with given group_id ");
@@ -413,7 +413,7 @@ class TripGroupServiceTest {
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
         when(tripGroupRepository.save(any(TripGroup.class))).thenAnswer(i -> i.getArguments()[0]);
-        var actualResult = tripGroupService.setCurrencyInGroup(1L, 1L, currency);
+        var actualResult = tripGroupService.setCurrencyInGroup(1L, currency);
 
         //then
         assertThat(actualResult.getCurrency()).isEqualTo(currency);
@@ -429,7 +429,7 @@ class TripGroupServiceTest {
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.empty());
         var exception = assertThrows(ApiRequestException.class,
-                () -> tripGroupService.setCurrencyInGroup(1L, 1L, Currency.PLN));
+                () -> tripGroupService.setCurrencyInGroup(1L, Currency.PLN));
 
         //then
         assertThat(exception.getMessage()).isEqualTo("There is no group with given group_id ");
