@@ -33,7 +33,6 @@ public class TripGroup {
             name = "group_sequence",
             sequenceName = "group_sequence", allocationSize = 1)
     @Column(unique = true, nullable = false)
-    @Getter
     private Long groupId;
 
     @Column(name = "name", nullable = false, length = 20)
@@ -80,8 +79,6 @@ public class TripGroup {
     @Column(name = "minimal_number_of_participants", nullable = false)
     private Integer minimalNumberOfParticipants;
 
-    @Getter
-    @Setter
     @Column(name = "selected_accommodation_id", nullable = true)
     private Long selectedAccommodationId;
 
