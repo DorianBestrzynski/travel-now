@@ -1,8 +1,6 @@
 package com.zpi.transportservice.transport;
 
-import com.google.maps.DirectionsApi;
-import com.google.maps.GeoApiContext;
-import com.google.maps.errors.ApiException;
+import com.zpi.transportservice.accommodation_transport.AccommodationTransportService;
 import com.zpi.transportservice.adapter.GeoLocationAdapter;
 import com.zpi.transportservice.adapter.LufthansaAdapter;
 import com.zpi.transportservice.aspects.AuthorizeCreatorOrCoordinator;
@@ -12,7 +10,6 @@ import com.zpi.transportservice.dto.UserTransportDto;
 import com.zpi.transportservice.flight.Flight;
 import com.zpi.transportservice.flight.FlightService;
 import com.zpi.transportservice.mapper.MapStructMapper;
-import com.zpi.transportservice.accommodation_transport.AccommodationTransportService;
 import com.zpi.transportservice.proxy.AccommodationProxy;
 import com.zpi.transportservice.proxy.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -183,5 +179,15 @@ public class TransportService {
     @AuthorizeCreatorOrCoordinator
     public void deleteUserTransport(Long accommodationId, Long transportId) {
         transportRepository.deleteById(transportId);
+    }
+
+    @Transactional
+    public UserTransport changeUserTransport(Long transportId, UserTransportDto userTransportDto) {
+        var transport = transportRepository.findUserTransport(List.of(transportId))
+                                           .stream()
+                                           .findFirst()
+                                           .orElseThrow();
+        mapper.mapFromUserTransportDtoToUserTransport(transport, userTransportDto);
+        return transportRepository.save(transport);
     }
 }

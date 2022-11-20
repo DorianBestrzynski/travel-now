@@ -26,6 +26,12 @@ public class TransportController {
         return ResponseEntity.ok(transport);
     }
 
+    @PatchMapping("/user-transport")
+    public ResponseEntity<UserTransport> changeUserTransport(@RequestParam Long transportId, @RequestBody UserTransportDto userTransportDto) {
+        var transport = transportService.changeUserTransport(transportId, userTransportDto);
+        return ResponseEntity.ok(transport);
+    }
+
     @DeleteMapping("/user-transport")
     public void createUserTransport(@RequestParam Long accommodationId, @RequestParam Long transportId) {
         transportService.deleteUserTransport(accommodationId, transportId);
