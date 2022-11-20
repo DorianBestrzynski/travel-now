@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class UserGroupService {
     private final UserGroupRepository userGroupRepository;
     private final AppUserProxy appUserProxy;
-
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
     public UserGroup createUserGroup(Long creatorId, Long groupId, Integer votesInGroup) {

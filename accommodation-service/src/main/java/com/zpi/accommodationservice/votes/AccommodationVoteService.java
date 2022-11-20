@@ -43,6 +43,10 @@ public class AccommodationVoteService {
         return accommodationVoteRepository.findAllByIdAccommodationId(accommodationId);
     }
 
+    public List<AccommodationVote> getVotesForAccommodations(List<Long> accommodationIds) {
+        return accommodationVoteRepository.findAllByAccommodationsId(accommodationIds);
+    }
+
     @Transactional
     public AccommodationVote deleteVote(AccommodationVoteId accommodationVoteId) {
         var accommodationVote = accommodationVoteRepository.findById(accommodationVoteId)

@@ -35,4 +35,6 @@ public interface Utils {
     int LATITUDE_INDEX = 0;
 
     int LONGITUDE_INDEX = 1;
+
+    String INNER_COMMUNICATION = "microserviceCommunication";
 }

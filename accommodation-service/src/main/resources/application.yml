@@ -1,10 +1,11 @@
 server.port: 8088
 spring.application.name: accommodation
 
-#spring.config.import: "configserver:"
+spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 app.group-service: localhost
+app.user-service: localhost
 
 spring:
   cloud:
@@ -37,6 +38,7 @@ spring.config.activate.on-profile: docker
 app.config-server: config-server
 app.database: postgres
 app.group-service: group
+app.user-service: user
 
 ---
 spring.config.activate.on-profile: test
