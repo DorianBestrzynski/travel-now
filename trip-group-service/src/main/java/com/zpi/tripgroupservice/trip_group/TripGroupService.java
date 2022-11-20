@@ -104,6 +104,7 @@ public class TripGroupService {
                 .minimalNumberOfDays(group.getMinimalNumberOfDays())
                 .minimalNumberOfParticipants(group.getMinimalNumberOfParticipants())
                 .selectedAccommodationId(group.getSelectedAccommodationId())
+                .selectedSharedAvailability(group.getSelectedSharedAvailability())
                 .participantsNum(numOfParticipants)
                 .build();
     }
