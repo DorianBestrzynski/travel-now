@@ -71,7 +71,7 @@ class ExpenditureServiceTest {
 
         //when
         when(expenditureRepository.findAllByGroupId(anyLong())).thenReturn(expenditureSet);
-        var result = expenditureService.getExpendituresMetadata(1L, 1L);
+        var result = expenditureService.getExpendituresMetadata(1L);
 
         //then
         assertThat(result).isEqualTo(expenditureSet);
@@ -116,7 +116,7 @@ class ExpenditureServiceTest {
         //when
         when(expenditureRepository.findById(anyLong())).thenReturn(Optional.of(existingExpenditure));
         when(expenditureRepository.save(any(Expenditure.class))).thenAnswer(i -> i.getArguments()[0]);
-        var actualResult = expenditureService.editExpenditure(1L, 1L, 1L , expenditureInput);
+        var actualResult = expenditureService.editExpenditure(1L, 1L, expenditureInput);
 
         //then
         var expectedResult = new Expenditure("Title", BigDecimal.valueOf(10.0), 1L, 1L, List.of(1L, 2L));
@@ -146,7 +146,7 @@ class ExpenditureServiceTest {
         //when
         when(expenditureRepository.findById(anyLong())).thenReturn(Optional.of(existingExpenditure));
         when(expenditureRepository.save(any(Expenditure.class))).thenAnswer(i -> i.getArguments()[0]);
-        var actualResult = expenditureService.editExpenditure(1L, 1L, 1L , expenditureInput);
+        var actualResult = expenditureService.editExpenditure(1L, 1L, expenditureInput);
 
         //then
         var expectedResult = new Expenditure("Changed Title", BigDecimal.valueOf(10.0), 1L, 1L, List.of(1L, 2L));
@@ -172,7 +172,7 @@ class ExpenditureServiceTest {
         mockAuthorizeAuthorOrCoordinatorExpenditureAspect();
 
         //when
-        expenditureService.deleteExpenditure(1L, 1L, 1L);
+        expenditureService.deleteExpenditure(1L,1L);
 
         //then
         verify(expenditureRepository, times(1)).delete(any(Expenditure.class));
@@ -194,7 +194,7 @@ class ExpenditureServiceTest {
         when(financialRequestService.getAllActiveFinancialRequestsIn(anyLong())).thenReturn(financialRequests);
         when(financialRequestOptimizer.calculateNetCashFlowIn(financialRequests)).thenCallRealMethod();
         when(financialRequestOptimizer.convertPricesToBigDecimal(financialRequestOptimizer.calculateNetCashFlowIn(financialRequests))).thenCallRealMethod();
-        var actualBalance = expenditureService.getGroupBalance(1L, 1L);
+        var actualBalance = expenditureService.getGroupBalance(1L);
 
         //then
         var expectedBalance = Map.of(0L, BigDecimal.valueOf(-3000.00).setScale(2, RoundingMode.CEILING), 1L, BigDecimal.valueOf(-4000.00).setScale(2, RoundingMode.CEILING), 2L, BigDecimal.valueOf(7000.00).setScale(2, RoundingMode.CEILING));
