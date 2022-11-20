@@ -4,7 +4,6 @@ import com.zpi.availabilityservice.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
@@ -32,7 +31,7 @@ public class AvailabilityUserServiceIntegrationTest {
         var user = parseToListOfUsers(result.getBody());
         assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(result.getStatusCode().value()).isEqualTo(200);
-        assertThat(user.username()).isEqualTo("DorBest");
+        assertThat(user.phoneNumber()).isEqualTo("DorBest");
         assertThat(user.firstName()).isEqualTo("Dorian");
         assertThat(user.lastName()).isEqualTo("Best");
     }

@@ -44,7 +44,7 @@ public class AccommodationServiceTests {
     private final static String BOOKING_TEST_URL = "https://www.booking.com/hotel/pl/hornigold-w-zielonej-kamienicy.pl.html?aid=304142&label=gen173nr-1FCAEoggI46AdIHlgEaLYBiAEBmAEeuAEXyAEM2AEB6AEB-AECiAIBqAIDuAK7iMWbBsACAdICJDlmNmQ1NmY1LTgyN2EtNGY4Ny1hNmU1LTViNjEwZjk2NzcyMdgCBeACAQ&sid=d1a3e492f31416c795760c610d8aeabd&all_sr_blocks=2346602_95147485_0_2_0;checkin=2022-11-18;checkout=2022-11-19;dest_id=-507224;dest_type=city;dist=0;group_adults=2;group_children=0;hapos=1;highlighted_blocks=2346602_95147485_0_2_0;hpos=1;matching_block_id=2346602_95147485_0_2_0;no_rooms=1;req_adults=2;req_children=0;room1=A%2CA;sb_price_type=total;sr_order=late_escape_deals_upsorter;sr_pri_blocks=2346602_95147485_0_2_0__32130;srepoch=1668367428;srpvid=5fdb886171210379;type=total;ucfs=1&#hotelTmpl";
     private final static String AIRBNB_TEST_URL = "https://www.airbnb.pl/rooms/654017285821150998?check_in=2022-12-30&check_out=2023-01-02&guests=1&adults=15&s=67&unique_share_id=72e7b39a-9552-4fac-b21e-918a47000775";
     private final static String KAYAK_TEST_URL = "https://www.kayak.pl/hotels/Malediwy-u149/2022-11-14/2022-11-15/2adults?sort=rank_a";
-    private final static String BAD_URL = "https://www.airbnb.pl/P/Polska/";
+    private final static String BAD_URL = "https://www.airbnb.pl/Pdsadsad/Polska/";
 
     void mockAuthorizePartOfTheGroupAspect(){
         Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null, null, 1L);

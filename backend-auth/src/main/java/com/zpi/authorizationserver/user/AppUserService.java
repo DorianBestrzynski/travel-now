@@ -23,7 +23,7 @@ public class AppUserService {
         return usersList.parallelStream()
                         .map(u -> new UserDto(u.getUserId(),
                                               u.getEmail(),
-                                              u.getUsername(),
+                                              u.getPhoneNumber(),
                                               u.getFirstName(),
                                               u.getSurname()))
                         .toList();
@@ -37,7 +37,7 @@ public class AppUserService {
         var encodedPassword = passwordEncoder.encode(registerRequestDto.password());
         var password = new Password(encodedPassword);
         var user = new AppUser(registerRequestDto.email(),
-                               registerRequestDto.username(),
+                               registerRequestDto.phoneNumber(),
                                registerRequestDto.firstName(),
                                registerRequestDto.surname(),
                                registerRequestDto.birthday(),

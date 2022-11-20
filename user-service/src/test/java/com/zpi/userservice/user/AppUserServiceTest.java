@@ -29,7 +29,7 @@ class AppUserServiceTest {
     void shouldReturnListOfUsersDto() {
         //given
         var userIdsList = List.of(1L, 2L);
-        AppUser appUser = new AppUser(1L, "username", "email", "firstName", "surname",
+        AppUser appUser = new AppUser(1L, "phoneNumber", "email", "firstName", "surname",
                 LocalDate.now(), new Password("hashedPassword"));
         AppUser appUser2 = new AppUser(2L, "username2", "email2", "firstName2", "surname2",
                 LocalDate.now(), new Password("hashedPassword2"));
@@ -40,7 +40,7 @@ class AppUserServiceTest {
         var actualResult = appUserService.getUsers(userIdsList);
 
         //then
-        var expectedResult = List.of(new UserDto(1L, "username", "firstName", "surname"),
+        var expectedResult = List.of(new UserDto(1L, "phoneNumber", "firstName", "surname"),
                 new UserDto(2L, "username2", "firstName2", "surname2"));
         verify(appUserRepository, times(1)).findAllById(userIdsList);
         assertThat(actualResult).hasSameElementsAs(expectedResult);
