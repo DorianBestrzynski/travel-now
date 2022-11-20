@@ -2,12 +2,15 @@ package com.zpi.accommodationservice.accommodation;
 
 import com.zpi.accommodationservice.accomodation_strategy.AccommodationDataExtractionStrategy;
 import com.zpi.accommodationservice.aspects.AuthorizeAuthorOrCoordinator;
+import com.zpi.accommodationservice.aspects.AuthorizeCoordinator;
 import com.zpi.accommodationservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.accommodationservice.dto.AccommodationDataDto;
 import com.zpi.accommodationservice.dto.AccommodationDto;
 import com.zpi.accommodationservice.dto.AccommodationInfoDto;
+import com.zpi.accommodationservice.dto.TripGroupDto;
 import com.zpi.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.mapstruct.MapStructMapper;
+import com.zpi.accommodationservice.proxies.TripGroupProxy;
 import com.zpi.accommodationservice.proxies.UserGroupProxy;
 import com.zpi.accommodationservice.comons.Utils;
 import com.zpi.accommodationservice.exceptions.ExceptionsInfo;
@@ -29,9 +32,11 @@ public class AccommodationService {
 
     private final HashMap<String, AccommodationDataExtractionStrategy> extractionStrategies;
 
-    private final UserGroupProxy userGroupProxy;
+    private final TripGroupProxy tripGroupProxy;
 
     private final MapStructMapper mapstructMapper;
+
+    private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
     @Qualifier("serviceRegexPattern")
     private final Pattern pattern;
@@ -110,6 +115,13 @@ public class AccommodationService {
     public AccommodationInfoDto getAccommodationInfo(Long accommodationId) {
        return accommodationRepository.getAccommodationInfoDto(accommodationId)
                                      .orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+
+    }
+
+    @AuthorizeCoordinator
+    public void acceptAccommodation(Long accommodationId) {
+        var accommodation = accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+        tripGroupProxy.setSelectedAccommodation(INNER_COMMUNICATION, accommodation.getGroupId(), accommodationId);
 
     }
 }

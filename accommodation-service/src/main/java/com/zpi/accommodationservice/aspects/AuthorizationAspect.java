@@ -4,6 +4,7 @@ package com.zpi.accommodationservice.aspects;
 import com.zpi.accommodationservice.accommodation.AccommodationRepository;
 import com.zpi.accommodationservice.dto.AccommodationDto;
 import com.zpi.accommodationservice.exceptions.ApiPermissionException;
+import com.zpi.accommodationservice.exceptions.ExceptionsInfo;
 import com.zpi.accommodationservice.proxies.UserGroupProxy;
 import com.zpi.accommodationservice.security.CustomUsernamePasswordAuthenticationToken;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,19 @@ public class AuthorizationAspect {
     public Object authorizeCoordinator(ProceedingJoinPoint joinPoint, final AccommodationDto body) throws Throwable {
         CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         if (!userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, body.groupId(), authentication.getUserId()))
+            throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
+
+
+        return joinPoint.proceed();
+    }
+
+    @Around("@annotation(com.zpi.accommodationservice.aspects.AuthorizeCoordinator)")
+    public Object authorizeCoordinatorSelectAccommodation(ProceedingJoinPoint joinPoint) throws Throwable {
+        var accommodationId = getAccommodationId(joinPoint);
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        var accommodation = accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+
+        if (!userGroupProxy.isUserCoordinator(INNER_COMMUNICATION, accommodation.getGroupId(), authentication.getUserId()))
             throw new ApiPermissionException(INSUFFICIENT_PERMISSIONS);
 
 

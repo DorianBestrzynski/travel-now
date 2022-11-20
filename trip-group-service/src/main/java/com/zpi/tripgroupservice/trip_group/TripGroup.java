@@ -82,6 +82,9 @@ public class TripGroup {
     @Column(name = "selected_accommodation_id", nullable = true)
     private Long selectedAccommodationId;
 
+    @Column(name = "selected_shared_availability")
+    private Long selectedSharedAvailability;
+
     public TripGroup(String name, Currency currency, String description, Integer votesLimit, String startLocation, String startingCity, Integer minimalNumberOfDays, Integer minimalNumberOfParticipants) {
         this.name = name;
         this.currency = currency;
