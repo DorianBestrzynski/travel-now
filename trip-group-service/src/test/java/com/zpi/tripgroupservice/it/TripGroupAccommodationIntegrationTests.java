@@ -43,7 +43,7 @@ public class TripGroupAccommodationIntegrationTests {
 
     @Test
     void shouldReturnErrorWhenAccommodationIdInvalid() {
-        Long accommodationId = 1L;
+        Long accommodationId = 15L;
         String suffix = "info";
 
         var ex = assertThrows(HttpClientErrorException.NotFound.class,

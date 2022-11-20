@@ -39,6 +39,12 @@ public class FinancialRequestController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping()
+    public ResponseEntity<Set<FinancialRequest>> getAllFinancialRequestInGroup(@RequestParam Long groupId, @RequestParam Long userId){
+        var result = financialRequestService.getAllFinancialRequestInGroup(groupId, userId);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/user")
     public ResponseEntity<Boolean> isDebtorOrDebteeToAnyFinancialRequests(@RequestParam Long groupId, @RequestParam Long userId){
         var result = financialRequestService.isDebtorOrDebteeToanyFinancialRequests(groupId, userId);
