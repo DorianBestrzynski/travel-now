@@ -1,3 +1,6 @@
+DROP SEQUENCE IF EXISTS "request_sequence";
+DROP SEQUENCE IF EXISTS "finance_sequence";
+
 CREATE SEQUENCE "request_sequence"
     MINVALUE 1
     MAXVALUE 999999999
@@ -5,6 +8,7 @@ CREATE SEQUENCE "request_sequence"
     START WITH 1
     NOCACHE
 NOCYCLE;
+
 
 CREATE SEQUENCE "finance_sequence"
     MINVALUE 1

@@ -1,3 +1,4 @@
+DROP SEQUENCE IF EXISTS "group_sequence";
 CREATE SEQUENCE "group_sequence"
     MINVALUE 1
     MAXVALUE 999999999

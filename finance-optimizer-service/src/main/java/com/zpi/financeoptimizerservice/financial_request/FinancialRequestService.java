@@ -69,4 +69,9 @@ public class FinancialRequestService {
         var financialRequestSet =  financialRequestRepository.getAllByDebtorAndExpenditure(userId, groupId);
         return !financialRequestSet.isEmpty();
     }
+
+    @AuthorizePartOfTheGroup
+    public Set<FinancialRequest> getAllFinancialRequestInGroup(Long groupId, Long userId) {
+        return financialRequestRepository.getAllFinancialRequestInGroup(groupId);
+    }
 }
