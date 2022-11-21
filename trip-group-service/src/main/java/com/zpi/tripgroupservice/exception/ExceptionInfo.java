@@ -3,6 +3,8 @@ package com.zpi.tripgroupservice.exception;
 public final class ExceptionInfo {
 
     private ExceptionInfo(){}
+    public static final String LAST_COORDINATOR = "You cannot leave the group because you are last coordinator in group";
+
     public final static String NO_GROUPS_FOR_USER = "There are no groups for requested user";
 
     public final static String GROUP_DOES_NOT_EXIST = "There are no group for given id: ";
@@ -30,6 +32,8 @@ public final class ExceptionInfo {
     public final static String EDITING_PERMISSION_VIOLATION = "Only user with role of coordinator can edit group! ";
 
     public final static String GROUP_NOT_FOUND = "There is no group with given group_id ";
+
+    public final static String USER_GROUP_NOT_FOUND = "There is no user group with given id ";
 
     public final static String ILLEGAL_ARGUMENT_FEIGN = "In request there were illegal argument via feign";
 
