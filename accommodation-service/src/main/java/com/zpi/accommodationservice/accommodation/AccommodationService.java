@@ -45,8 +45,6 @@ public class AccommodationService {
 
     private final AccommodationVoteService accommodationVoteService;
 
-    private final MapStructMapper mapstructMapper;
-
     private final AppUserProxy appUserProxy;
 
 
