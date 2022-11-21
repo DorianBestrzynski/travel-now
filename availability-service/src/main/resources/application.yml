@@ -39,7 +39,7 @@ spring.config.import: "configserver:"
 app.config-server: config-server
 app.database: postgres
 app.user-service: user
-app.group-service: group
+app.group-service: trip-group
 
 ---
 

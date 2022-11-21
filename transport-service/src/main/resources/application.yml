@@ -40,7 +40,7 @@ spring.config.activate.on-profile: docker
 spring.config.import: "configserver:"
 app.config-server: config-server
 app.database: postgres
-app.group-service: group
+app.group-service: trip-group
 app.accommodation-service: accommodation
 
 ---
