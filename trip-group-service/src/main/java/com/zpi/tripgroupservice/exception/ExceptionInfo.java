@@ -3,6 +3,8 @@ package com.zpi.tripgroupservice.exception;
 public final class ExceptionInfo {
 
     private ExceptionInfo(){}
+    public static final String LAST_COORDINATOR = "You cannot leave the group because you are last coordinator in group";
+
     public final static String NO_GROUPS_FOR_USER = "There are no groups for requested user";
 
     public final static String GROUP_DOES_NOT_EXIST = "There are no group for given id: ";

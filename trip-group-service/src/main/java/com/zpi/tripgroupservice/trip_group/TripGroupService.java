@@ -8,6 +8,7 @@ import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.dto.TripExtendedDataDto;
 import com.zpi.tripgroupservice.dto.TripGroupDto;
+import com.zpi.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.exception.ExceptionInfo;
 import com.zpi.tripgroupservice.google_api.Geolocation;
@@ -155,8 +156,12 @@ public class TripGroupService {
     @Transactional
     @AuthorizePartOfTheGroup
     public void leaveGroup(Long groupId, Long userId) {
-        if(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, userId)){
-            throw new ApiRequestException(ExceptionInfo.CANNOT_LEAVE_GROUP);
+        if (financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, userId)) {
+            throw new ApiPermissionException(ExceptionInfo.CANNOT_LEAVE_GROUP);
+        }
+        if (userGroupService.getAllCoordinatorsInGroup(groupId).size() == 1 && userGroupService.isUserCoordinator(userId, groupId)) {
+            throw new ApiPermissionException(ExceptionInfo.LAST_COORDINATOR);
+
         }
         userGroupService.deleteUserFromGroup(groupId, userId);
     }
