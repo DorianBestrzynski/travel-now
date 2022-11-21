@@ -33,6 +33,8 @@ public final class ExceptionInfo {
 
     public final static String GROUP_NOT_FOUND = "There is no group with given group_id ";
 
+    public final static String USER_GROUP_NOT_FOUND = "There is no user group with given id ";
+
     public final static String ILLEGAL_ARGUMENT_FEIGN = "In request there were illegal argument via feign";
 
     public final static String EXCEPTION_FEIGN = "There was exception while feign communication";

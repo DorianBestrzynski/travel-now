@@ -1,5 +1,6 @@
 package com.zpi.tripgroupservice.user_group;
 
+import com.zpi.tripgroupservice.aspects.AuthorizeCoordinator;
 import com.zpi.tripgroupservice.commons.Role;
 import com.zpi.tripgroupservice.dto.UserDto;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
@@ -8,8 +9,11 @@ import com.zpi.tripgroupservice.proxy.AppUserProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.zpi.tripgroupservice.exception.ExceptionInfo.USER_GROUP_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -91,5 +95,13 @@ public class UserGroupService {
                                                             .mapToLong(ug -> ug.getId().getUserId())
                                                             .boxed()
                                                             .collect(Collectors.toList()));
+    }
+
+    @AuthorizeCoordinator
+    @Transactional
+    public void setCoordinator(Long groupId, Long userId) {
+        var userGroup = userGroupRepository.findById(new UserGroupKey(userId, groupId)).orElseThrow(() -> new ApiRequestException(USER_GROUP_NOT_FOUND));
+        userGroup.setRole(Role.COORDINATOR);
+        userGroupRepository.save(userGroup);
     }
 }

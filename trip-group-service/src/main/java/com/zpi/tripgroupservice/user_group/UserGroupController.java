@@ -2,11 +2,9 @@ package com.zpi.tripgroupservice.user_group;
 
 import com.zpi.tripgroupservice.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,6 +37,12 @@ public class UserGroupController {
     public ResponseEntity<List<UserDto>> getAllGroupCoordinators(@RequestParam(name = "groupId") Long groupId) {
         var result = userGroupService.getAllCoordinatorsInGroup(groupId);
         return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/coordinator")
+    @ResponseStatus(HttpStatus.OK)
+    public void set(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "userId") Long userId) {
+        userGroupService.setCoordinator(groupId, userId);
     }
 
 }
