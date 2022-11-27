@@ -2,7 +2,6 @@ server.port: 8088
 spring.application.name: accommodation
 
 
-spring.config.import: "configserver:"
 app.config-server: localhost
 app.database: localhost
 app.group-service: localhost

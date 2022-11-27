@@ -35,15 +35,13 @@ public class AttractionController {
 
     @PostMapping()
     public ResponseEntity<Attraction> addAttraction(@RequestParam(name = "dayPlanId") List<Long> dayPlanIds,
-                                                    @RequestParam(name = "userId") Long userId,
                                                     @RequestBody AttractionCandidateDto attractionCandidateDto){
-        var result = attractionService.addAttraction(dayPlanIds, userId,  attractionCandidateDto);
+        var result = attractionService.addAttraction(dayPlanIds,attractionCandidateDto);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PatchMapping()
-    public ResponseEntity<Attraction> editAttraction(@RequestParam(name = "userId") Long userId,
-                                                    @RequestBody Attraction attraction) {
+    public ResponseEntity<Attraction> editAttraction(@RequestBody Attraction attraction) {
         var result = attractionService.editAttraction(attraction);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

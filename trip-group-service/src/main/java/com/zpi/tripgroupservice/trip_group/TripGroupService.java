@@ -16,8 +16,10 @@ import com.zpi.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.mapper.MapStructMapper;
 import com.zpi.tripgroupservice.proxy.AccommodationProxy;
 import com.zpi.tripgroupservice.proxy.FinanceProxy;
+import com.zpi.tripgroupservice.security.CustomUsernamePasswordAuthenticationToken;
 import com.zpi.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -54,15 +56,16 @@ public class TripGroupService {
                 .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_DOES_NOT_EXIST + groupId));
     }
     @Transactional
-    public TripGroup createGroup(Long userId, TripGroupDto groupDto) {
-            var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(),
+    public TripGroup createGroup(TripGroupDto groupDto) {
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        var tripGroup = new TripGroup(groupDto.name(),groupDto.currency(),groupDto.description(), groupDto.votesLimit(),
                                           groupDto.startLocation(), groupDto.startCity(),
                                           groupDto.minimalNumberOfDays(), groupDto.minimalNumberOfParticipants());
             var coordinates = geolocation.findCoordinates(groupDto.startLocation());
             tripGroup.setLatitude(coordinates[LATITUDE_INDEX]);
             tripGroup.setLongitude(coordinates[LONGITUDE_INDEX]);
             tripGroupRepository.save(tripGroup);
-            userGroupService.createUserGroup(userId, tripGroup.getGroupId(), tripGroup.getVotesLimit());
+            userGroupService.createUserGroup(authentication.getUserId(), tripGroup.getGroupId(), tripGroup.getVotesLimit());
             return tripGroup;
     }
 

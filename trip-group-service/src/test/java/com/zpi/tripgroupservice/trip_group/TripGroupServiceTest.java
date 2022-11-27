@@ -1,10 +1,8 @@
 package com.zpi.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.commons.Currency;
-import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
-import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
-import com.zpi.tripgroupservice.dto.TripDataDto;
-import com.zpi.tripgroupservice.dto.TripGroupDto;
+import com.zpi.tripgroupservice.dto.*;
+import com.zpi.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.mapper.MapStructMapper;
@@ -58,13 +56,18 @@ class TripGroupServiceTest {
     void mockAuthorizePartOfTheGroupAspect(){
         Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null, null, 1L);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        doReturn(Boolean.TRUE).when(userGroupService).checkIfUserIsInGroup(anyLong(), anyLong());
+        doReturn(Boolean.TRUE).when(userGroupService).checkIfUserIsInGroup(any(), any());
     }
 
     void mockAuthorizeCoordinatorAspect(){
         Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null, null, 1L);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        doReturn(Boolean.TRUE).when(userGroupService).isUserCoordinator(anyLong(), anyLong());
+        doReturn(Boolean.TRUE).when(userGroupService).isUserCoordinator(any(), any());
+    }
+
+    void mockCustomUsernamePasswordAuthentication(){
+        Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null, null, 1L);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     @Test
@@ -140,6 +143,7 @@ class TripGroupServiceTest {
 
     @Test
     void shouldSuccessfullyCreateGroup() {
+        mockCustomUsernamePasswordAuthentication();
         //given
         var tripGroupDto = new TripGroupDto("Name", Currency.PLN, "Desc", 1,
                                             "Raclawicka", "Wroclaw", 1, 1);
@@ -147,11 +151,11 @@ class TripGroupServiceTest {
 
         //when
         when(geolocation.findCoordinates(anyString())).thenReturn(coordinates);
-        var actualTripGroup = tripGroupService.createGroup(1L, tripGroupDto);
+        var actualTripGroup = tripGroupService.createGroup(tripGroupDto);
 
         //then
         var expectedTripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
-                "Wroclaw" , 1, 2 );
+                "Wroclaw" , 1, 1 );
         expectedTripGroup.setLatitude(11.22);
         expectedTripGroup.setLongitude(22.33);
         assertThat(actualTripGroup).isEqualTo(expectedTripGroup);
@@ -180,13 +184,12 @@ class TripGroupServiceTest {
 
         //when
         var exception = assertThrows(IllegalArgumentException.class,
-                () -> tripGroupService.deleteGroup(1L));
+                () -> tripGroupService.deleteGroup(null));
 
         //then
         verify(tripGroupRepository, never()).deleteById(anyLong());
         verify(userGroupService, never()).deletionGroupCleanUp(anyLong());
-        assertThat(exception.getMessage()).isEqualTo("Group id is invalid. Id must be a positive number" + "or"
-                + "User id is invalid. Id must be a positive number");
+        assertThat(exception.getMessage()).isEqualTo("Group id is invalid. Id must be a positive number");
     }
 
     @Test
@@ -229,27 +232,34 @@ class TripGroupServiceTest {
     @Test
     void shouldGetTripData() {
         //given
-        var tripData = new TripDataDto("Wroclaw", LocalDate.now(), LocalDate.now(), 12.22, 22.22);
-
+        var tripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
+                "Wroclaw" , 3, 3 );
         //when
-        when(tripGroupRepository.findTripData(anyLong())).thenReturn(Optional.of(tripData));
+        when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
+        when(userGroupService.getNumberOfParticipants(anyLong())).thenReturn(2);
         var actualResult = tripGroupService.getTripData(1L);
 
         //then
-        assertThat(actualResult).isEqualTo(tripData);
-        verify(tripGroupRepository, times(1)).findTripData(anyLong());
+        var expectedResult = new TripExtendedDataDto(tripGroup.getName(), tripGroup.getCurrency(), tripGroup.getDescription(),
+                tripGroup.getVotesLimit(), tripGroup.getStartLocation(), tripGroup.getStartCity(), tripGroup.getStartDate(),
+                tripGroup.getEndDate(), tripGroup.getLatitude(), tripGroup.getLongitude(), tripGroup.getGroupStage(),
+                tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants(), tripGroup.getSelectedAccommodationId(),
+                tripGroup.getSelectedSharedAvailability(), 2);
+        assertThat(actualResult).isEqualTo(expectedResult);
+        verify(tripGroupRepository, times(1)).findById(anyLong());
+        verify(userGroupService, times(1)).getNumberOfParticipants(anyLong());
     }
 
     @Test
     void shouldThrowExceptionWhenGroupNotFound() {
         //when
-        when(tripGroupRepository.findTripData(anyLong())).thenReturn(Optional.empty());
+        when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.empty());
         var exception = assertThrows(ApiRequestException.class,
                 () -> tripGroupService.getTripData(1L));
 
         //then
         assertThat(exception.getMessage()).isEqualTo("There is no group with given group_id ");
-        verify(tripGroupRepository, times(1)).findTripData(anyLong());
+        verify(tripGroupRepository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -441,7 +451,7 @@ class TripGroupServiceTest {
 
         //when
         when(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(anyString(), anyLong(), anyLong())).thenReturn(true);
-        var exception = assertThrows(ApiRequestException.class,
+        var exception = assertThrows(ApiPermissionException.class,
                 () -> tripGroupService.leaveGroup(1L, 1L));
 
         //then

@@ -30,9 +30,8 @@ public class TripGroupController {
         return ResponseEntity.ok(result);
     }
     @PostMapping("/group")
-    public ResponseEntity<TripGroup> createGroup(@RequestParam Long userId,
-                                                 @Valid @RequestBody TripGroupDto tripGroupDto) {
-        var result = tripGroupService.createGroup(userId, tripGroupDto);
+    public ResponseEntity<TripGroup> createGroup(@Valid @RequestBody TripGroupDto tripGroupDto) {
+        var result = tripGroupService.createGroup(tripGroupDto);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
 
     }
@@ -41,6 +40,7 @@ public class TripGroupController {
     public void deleteGroup(@RequestParam(name = "groupId") Long groupId) {
         tripGroupService.deleteGroup(groupId);
     }
+
     @PatchMapping("/group")
     public ResponseEntity<TripGroup> changeGroup(@RequestParam Long groupId, @RequestBody TripGroupDto tripGroupDto) {
         var result = tripGroupService.updateGroup(groupId, tripGroupDto);

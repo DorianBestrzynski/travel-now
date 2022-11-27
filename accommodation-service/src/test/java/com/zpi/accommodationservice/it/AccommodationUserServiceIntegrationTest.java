@@ -39,10 +39,11 @@ public class AccommodationUserServiceIntegrationTest {
     private UserDto parseToListOfUsers(List body) {
         if (body.size() == 1) {
             LinkedHashMap<String, String> user = (LinkedHashMap<String, String>) body.get(0);
+            var email = user.get("email");
             var firstName = user.get("firstName");
             var lastName = user.get("lastName");
             var username = user.get("phoneNumber");
-            return new UserDto(1L, username, firstName, lastName);
+            return new UserDto(1L, username, email, firstName, lastName);
         }
         return new UserDto();
     }

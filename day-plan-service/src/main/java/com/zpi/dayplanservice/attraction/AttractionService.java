@@ -15,7 +15,9 @@ import com.zpi.dayplanservice.dto.AttractionPlanDto;
 import com.zpi.dayplanservice.dto.RouteDto;
 import com.zpi.dayplanservice.mapstruct.MapStructMapper;
 import com.zpi.dayplanservice.proxies.TripGroupProxy;
+import com.zpi.dayplanservice.security.CustomUsernamePasswordAuthenticationToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -72,7 +74,9 @@ public class AttractionService {
     }
 
     @Transactional
-    public Attraction addAttraction(List<Long> dayPlanIds, Long userId, AttractionCandidateDto attractionCandidateDto) {
+    public Attraction addAttraction(List<Long> dayPlanIds, AttractionCandidateDto attractionCandidateDto) {
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        var userId = authentication.getUserId();
         if(dayPlanIds.isEmpty())
             throw new IllegalArgumentException("Day plan ids cannot be empty");
 

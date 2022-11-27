@@ -5,7 +5,9 @@ import com.zpi.accommodationservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.accommodationservice.dto.AccommodationVoteDto;
 import com.zpi.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.proxies.UserGroupProxy;
+import com.zpi.accommodationservice.security.CustomUsernamePasswordAuthenticationToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,8 +28,8 @@ public class AccommodationVoteService {
     @Transactional
     @AuthorizePartOfTheGroup
     public AccommodationVote vote(AccommodationVoteDto accommodationVoteDto) {
-        var accommodationVoteId = mapper.getAccommodationVoteIdFromDto(accommodationVoteDto);
-
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        var accommodationVoteId = new AccommodationVoteId(authentication.getUserId(), accommodationVoteDto.accommodationId());
         if(accommodationVoteRepository.existsById(accommodationVoteId))
             throw new IllegalArgumentException("User already voted for this accommodation");
         if(!accommodationRepository.existsByAccommodationIdAndGroupId(accommodationVoteDto.accommodationId(), accommodationVoteDto.groupId()))

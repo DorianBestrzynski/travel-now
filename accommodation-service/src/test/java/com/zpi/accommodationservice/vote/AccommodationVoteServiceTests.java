@@ -64,7 +64,7 @@ public class AccommodationVoteServiceTests {
     void shouldVoteForAccommodation() {
         //given
         mockAuthorizePartOfTheGroupAspect();
-        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L, 1L);
+        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L);
         var accommodation = new Accommodation();
         accommodation.setGivenVotes(0);
 
@@ -84,7 +84,7 @@ public class AccommodationVoteServiceTests {
         //given
         mockAuthorizePartOfTheGroupAspect();
         var accommodationVoteId = new AccommodationVoteId(1L, 1L);
-        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L, 1L);
+        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L);
         var accommodation = new Accommodation();
         accommodation.setGivenVotes(1);
 
@@ -112,7 +112,7 @@ public class AccommodationVoteServiceTests {
     void shouldThrowExceptionsWhenAlreadyVoted() {
         //given
         mockAuthorizePartOfTheGroupAspect();
-        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L, 1L);
+        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L);
 
         //when
         when(accommodationVoteRepository.existsById(any(AccommodationVoteId.class))).thenReturn(true);
@@ -125,7 +125,7 @@ public class AccommodationVoteServiceTests {
     void shouldThrowExceptionsWhenInvalidAccommodation() {
         //given
         mockAuthorizePartOfTheGroupAspect();
-        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L, 1L);
+        var accommodationVoteDto = new AccommodationVoteDto(1L, 1L);
 
         //when
         when(accommodationVoteRepository.existsById(any(AccommodationVoteId.class))).thenReturn(false);

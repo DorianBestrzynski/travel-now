@@ -40,8 +40,8 @@ class AppUserServiceTest {
         var actualResult = appUserService.getUsers(userIdsList);
 
         //then
-        var expectedResult = List.of(new UserDto(1L, "phoneNumber", "firstName", "surname"),
-                new UserDto(2L, "username2", "firstName2", "surname2"));
+        var expectedResult = List.of(new UserDto(1L, "phoneNumber", "email", "firstName", "surname"),
+                new UserDto(2L, "username2", "email2", "firstName2", "surname2"));
         verify(appUserRepository, times(1)).findAllById(userIdsList);
         assertThat(actualResult).hasSameElementsAs(expectedResult);
     }

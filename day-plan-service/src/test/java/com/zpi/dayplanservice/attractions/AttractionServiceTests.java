@@ -131,7 +131,7 @@ public class AttractionServiceTests {
         //when
         when(dayPlanService.getDayPlanById(anyList(), anyLong())).thenReturn(List.of(firstDay, secondPlan));
         when(attractionRepository.save(any(Attraction.class))).thenAnswer(i -> i.getArguments()[0]);
-        var result = attractionService.addAttraction(List.of(1L, 2L), 1L, attractionCandidateDto);
+        var result = attractionService.addAttraction(List.of(1L, 2L), attractionCandidateDto);
 
         //then
         verify(attractionRepository).save(any(Attraction.class));
@@ -225,8 +225,8 @@ public class AttractionServiceTests {
         //then
         assertThrows(IllegalArgumentException.class, () -> attractionService.deleteAttraction(null, null));
         assertThrows(IllegalArgumentException.class, () -> attractionService.deleteAttraction(-1L, -2L));
-        assertThrows(IllegalArgumentException.class, () -> attractionService.addAttraction(new ArrayList<Long>(), 1L, null));
-        assertThrows(IllegalArgumentException.class, () -> attractionService.addAttraction(List.of(1L), null, null));
+        assertThrows(IllegalArgumentException.class, () -> attractionService.addAttraction(new ArrayList<Long>(), null));
+        assertThrows(IllegalArgumentException.class, () -> attractionService.addAttraction(List.of(1L), null));
         assertThrows(IllegalArgumentException.class, () -> attractionService.editAttraction(null));
         assertThrows(IllegalArgumentException.class, () -> attractionService.editAttraction(new Attraction()));
     }
