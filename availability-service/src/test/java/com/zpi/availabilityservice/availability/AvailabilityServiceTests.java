@@ -234,8 +234,8 @@ public class AvailabilityServiceTests {
         );
 
         var users = List.of(
-                new UserDto(1L, "first", "first", "first"),
-                new UserDto(2L, "second", "second", "second")
+                new UserDto(1L, "first","email", "first", "first"),
+                new UserDto(2L, "second", "email", "second", "second")
         );
 
         //when
