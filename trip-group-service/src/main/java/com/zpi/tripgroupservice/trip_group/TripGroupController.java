@@ -88,6 +88,12 @@ public class TripGroupController {
         tripGroupService.leaveGroup(groupId, userId);
     }
 
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void changeGroupStage(@RequestParam Long groupId) {
+        tripGroupService.changeGroupStage(groupId);
+    }
+
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {

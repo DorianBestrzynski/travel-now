@@ -4,6 +4,7 @@ package com.zpi.tripgroupservice.trip_group;
 import com.zpi.tripgroupservice.aspects.AuthorizeCoordinator;
 import com.zpi.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.commons.Currency;
+import com.zpi.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
 import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
 import com.zpi.tripgroupservice.dto.TripExtendedDataDto;
@@ -174,4 +175,15 @@ public class TripGroupService {
         tripGroupRepository.save(tripGroup);
     }
 
+    @Transactional
+    public void changeGroupStage(Long groupId) {
+        var tripGroup = tripGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+        var tripGroupStage = tripGroup.getGroupStage();
+        switch (tripGroupStage) {
+            case PLANNING_STAGE -> tripGroup.setGroupStage(GroupStage.TRIP_STAGE);
+            case TRIP_STAGE, AFTER_TRIP_STAGE -> tripGroup.setGroupStage(GroupStage.AFTER_TRIP_STAGE);
+        }
+        tripGroupRepository.save(tripGroup);
+    }
 }
