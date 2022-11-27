@@ -25,7 +25,7 @@ public class TripGroupController {
     private final UserGroupRepository userGroupRepository;
 
     @GetMapping("/groups/{userId}")
-    public ResponseEntity<List<TripGroup>> getAllGroupsForUser(@PathVariable Long userId) {
+    public ResponseEntity<List<TripExtendedDataDto>> getAllGroupsForUser(@PathVariable Long userId) {
         var result = tripGroupService.getAllGroupsForUser(userId);
         return ResponseEntity.ok(result);
     }

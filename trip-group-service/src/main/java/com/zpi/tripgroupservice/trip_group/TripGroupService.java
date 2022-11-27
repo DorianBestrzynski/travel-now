@@ -41,12 +41,33 @@ public class TripGroupService {
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
 
-    public List<TripGroup> getAllGroupsForUser(Long userId){
-        if(userId == null){
+    public List<TripExtendedDataDto> getAllGroupsForUser(Long userId) {
+        if (userId == null) {
             throw new IllegalArgumentException(ExceptionInfo.INVALID_USER_ID);
         }
-        return tripGroupRepository.findAllGroupsForUser(userId);
+        var tripGroups = tripGroupRepository.findAllGroupsForUser(userId);
+        return tripGroups.stream()
+                .map(group -> new TripExtendedDataDto(
+                        group.getName(),
+                        group.getCurrency(),
+                        group.getDescription(),
+                        group.getVotesLimit(),
+                        group.getStartLocation(),
+                        group.getStartCity(),
+                        group.getStartDate(),
+                        group.getEndDate(),
+                        group.getLatitude(),
+                        group.getLongitude(),
+                        group.getGroupStage(),
+                        group.getMinimalNumberOfDays(),
+                        group.getMinimalNumberOfParticipants(),
+                        group.getSelectedAccommodationId(),
+                        group.getSelectedSharedAvailability(),
+                        userGroupService.getNumberOfParticipants(group.getGroupId())
+                )).toList();
     }
+
+
     @AuthorizePartOfTheGroup
     public TripGroup getTripGroupById(Long groupId) {
         if (groupId == null || groupId < 0) {
@@ -94,24 +115,23 @@ public class TripGroupService {
         var group = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
                 GROUP_NOT_FOUND));
         var numOfParticipants = userGroupService.getNumberOfParticipants(groupId);
-        return TripExtendedDataDto.builder()
-                .name(group.getName())
-                .currency(group.getCurrency())
-                .description(group.getDescription())
-                .votesLimit(group.getVotesLimit())
-                .startLocation(group.getStartLocation())
-                .startCity(group.getStartCity())
-                .startDate(group.getStartDate())
-                .endDate(group.getEndDate())
-                .latitude(group.getLatitude())
-                .longitude(group.getLongitude())
-                .groupStage(group.getGroupStage())
-                .minimalNumberOfDays(group.getMinimalNumberOfDays())
-                .minimalNumberOfParticipants(group.getMinimalNumberOfParticipants())
-                .selectedAccommodationId(group.getSelectedAccommodationId())
-                .selectedSharedAvailability(group.getSelectedSharedAvailability())
-                .participantsNum(numOfParticipants)
-                .build();
+        return new TripExtendedDataDto(
+                group.getName(),
+                group.getCurrency(),
+                group.getDescription(),
+                group.getVotesLimit(),
+                group.getStartLocation(),
+                group.getStartCity(),
+                group.getStartDate(),
+                group.getEndDate(),
+                group.getLatitude(),
+                group.getLongitude(),
+                group.getGroupStage(),
+                group.getMinimalNumberOfDays(),
+                group.getMinimalNumberOfParticipants(),
+                group.getSelectedAccommodationId(),
+                group.getSelectedSharedAvailability(),
+                numOfParticipants);
     }
 
 

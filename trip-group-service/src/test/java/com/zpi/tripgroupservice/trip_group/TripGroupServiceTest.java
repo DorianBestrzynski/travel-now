@@ -1,6 +1,7 @@
 package com.zpi.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.commons.Currency;
+import com.zpi.tripgroupservice.commons.GroupStage;
 import com.zpi.tripgroupservice.dto.*;
 import com.zpi.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
@@ -78,11 +79,16 @@ class TripGroupServiceTest {
 
         //when
         when(tripGroupRepository.findAllGroupsForUser(anyLong())).thenReturn(groups);
+        when(userGroupService.getNumberOfParticipants(any())).thenReturn(2);
         var actualResult = tripGroupService.getAllGroupsForUser(1L);
 
+        var expectedGroups = List.of(new TripExtendedDataDto("Test", Currency.PLN, "Desc", 1, "Raclawicka",
+                "Wroclaw", null, null, null, null, GroupStage.PLANNING_STAGE,
+                3, 3, null, null, 2));
         //then
         verify(tripGroupRepository, times(1)).findAllGroupsForUser(anyLong());
-        assertThat(actualResult).hasSameElementsAs(groups);
+        verify(userGroupService, times(1)).getNumberOfParticipants(any());
+        assertThat(actualResult).hasSameElementsAs(expectedGroups);
     }
 
     @Test
