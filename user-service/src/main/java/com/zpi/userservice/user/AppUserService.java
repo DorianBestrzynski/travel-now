@@ -19,6 +19,7 @@ public class AppUserService {
         return usersList.parallelStream()
                         .map(u -> new UserDto(u.getUserId(),
                                               u.getPhoneNumber(),
+                                              u.getEmail(),
                                               u.getFirstName(),
                                               u.getSurname()))
                         .toList();
