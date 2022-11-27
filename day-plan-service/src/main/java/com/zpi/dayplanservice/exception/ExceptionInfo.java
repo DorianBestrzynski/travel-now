@@ -5,6 +5,8 @@ public final class ExceptionInfo {
 
     public final static String DAY_PLAN_NOT_FOUND = "There are no day plans for given id";
 
+    public final static String ATTRACTION_NOT_FOUND = "There are no attraction for given id";
+
     public final static String INVALID_GROUP_ID = "Group id is invalid. Id must be a positive number";
 
     public final static String TAKEN_DATE = "There is already a day plan for this date. Try deleting existing one if you want to add current plan";

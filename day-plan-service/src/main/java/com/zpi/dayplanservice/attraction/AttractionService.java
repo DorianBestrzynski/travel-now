@@ -13,6 +13,7 @@ import com.zpi.dayplanservice.day_plan.DayPlanService;
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
 import com.zpi.dayplanservice.dto.AttractionPlanDto;
 import com.zpi.dayplanservice.dto.RouteDto;
+import com.zpi.dayplanservice.exception.ApiRequestException;
 import com.zpi.dayplanservice.mapstruct.MapStructMapper;
 import com.zpi.dayplanservice.proxies.TripGroupProxy;
 import com.zpi.dayplanservice.security.CustomUsernamePasswordAuthenticationToken;
@@ -20,12 +21,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.zpi.dayplanservice.exception.ExceptionInfo.ATTRACTION_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -130,14 +134,18 @@ public class AttractionService {
         return candidates;
     }
 
+    @Transactional
     public Attraction editAttraction(Attraction attraction) {
         if(attraction == null)
             throw new IllegalArgumentException("User id or attraction candidate dto is null");
 
-        if(!attractionRepository.existsById(attraction.getAttractionId()))
-            throw new IllegalArgumentException("Attraction not found");
+        var currentAttraction = attractionRepository.findById(attraction.getAttractionId()).orElseThrow(() -> new ApiRequestException(ATTRACTION_NOT_FOUND));
 
-        return attractionRepository.save(attraction);
+        if(attraction.getDescription() == null){
+            return currentAttraction;
+        }
+        currentAttraction.setDescription(attraction.getDescription());
+        return attractionRepository.save(currentAttraction);
     }
 
     public List<AttractionPlanDto> findOptimalDayPlan(Long dayPlanId) {
