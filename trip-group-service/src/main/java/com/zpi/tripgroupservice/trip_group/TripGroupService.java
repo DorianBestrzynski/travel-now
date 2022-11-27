@@ -209,4 +209,20 @@ public class TripGroupService {
         }
         tripGroupRepository.save(tripGroup);
     }
+
+    @Transactional
+    public void unselectAvailability(Long groupId) {
+        var tripGroup = tripGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+        tripGroup.setSelectedSharedAvailability(null);
+        tripGroupRepository.save(tripGroup);
+    }
+
+    @Transactional
+    public void unselectAccommodation(Long groupId) {
+        var tripGroup = tripGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
+        tripGroup.setSelectedAccommodationId(null);
+        tripGroupRepository.save(tripGroup);
+    }
 }

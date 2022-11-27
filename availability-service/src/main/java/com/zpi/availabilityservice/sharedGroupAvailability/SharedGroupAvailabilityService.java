@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.zpi.availabilityservice.exceptions.ExceptionInfo.SHARED_AVAILABILITY_NOT_FOUND;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @RequiredArgsConstructor
@@ -180,5 +181,20 @@ public class SharedGroupAvailabilityService {
     public void acceptSharedGroupAvailability(Long sharedGroupAvailabilityId) {
         var sharedAvailability = sharedGroupAvailabilityRepository.findById(sharedGroupAvailabilityId).orElseThrow(() -> new EntityNotFoundException(SHARED_AVAILABILITY_NOT_FOUND));
         tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, sharedAvailability.getGroupId(), sharedGroupAvailabilityId);
+    }
+
+    @Transactional
+    public SharedGroupAvailability createSharedGroupAvailability(LocalDate dateFrom, LocalDate dateTo, Long groupId) {
+        sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
+        int daysBetween = (int) DAYS.between(dateFrom, dateTo);
+        var sharedGroupAvailability = new SharedGroupAvailability(groupId, Collections.emptyList(), dateFrom, dateTo, daysBetween);
+        var savedAvailability = sharedGroupAvailabilityRepository.save(sharedGroupAvailability);
+        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, groupId, savedAvailability.getSharedGroupAvailabilityId());
+        return savedAvailability;
+
+    }
+
+    public SharedGroupAvailability getSharedGroupAvailability(Long sharedGroupAvailabilityId) {
+        return sharedGroupAvailabilityRepository.findById(sharedGroupAvailabilityId).orElseThrow(() -> new EntityNotFoundException(SHARED_AVAILABILITY_NOT_FOUND));
     }
 }

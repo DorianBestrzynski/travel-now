@@ -16,13 +16,13 @@ import java.util.List;
 public class AccommodationController {
     private final AccommodationService accommodationService;
 
-    @GetMapping()
+    @GetMapping("/list")
     public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId){
         var result = accommodationService.getAllAccommodationsForGroup(groupId);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/list")
+    @GetMapping("/votes")
     public ResponseEntity<List<AccommodationWithVotesDto>> getAllAccommodationsForGroupWithVotes(@RequestParam Long groupId){
         long start = System.currentTimeMillis();
         var result = accommodationService.getAllAccommodationsForGroupWithVotes(groupId);
@@ -60,6 +60,12 @@ public class AccommodationController {
     @GetMapping("/info")
     public ResponseEntity<AccommodationInfoDto> getAccommodationInfo(@RequestParam Long accommodationId){
         var result = accommodationService.getAccommodationInfo(accommodationId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping()
+    public ResponseEntity<Accommodation> getAccommodation(@RequestParam Long accommodationId){
+        var result = accommodationService.getAccommodation(accommodationId);
         return ResponseEntity.ok(result);
     }
 

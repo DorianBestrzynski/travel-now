@@ -94,6 +94,18 @@ public class TripGroupController {
         tripGroupService.changeGroupStage(groupId);
     }
 
+    @PutMapping("/selected-availability")
+    @ResponseStatus(HttpStatus.OK)
+    public void unselectAvailability(@RequestParam Long groupId) {
+        tripGroupService.unselectAvailability(groupId);
+    }
+
+    @PutMapping("/selected-accommodation")
+    @ResponseStatus(HttpStatus.OK)
+    public void unselectAccommodation(@RequestParam Long groupId) {
+        tripGroupService.unselectAccommodation(groupId);
+    }
+
 
     @GetMapping("/sampleData")
     public String creatingSampleData() {

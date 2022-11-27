@@ -191,4 +191,8 @@ public class AccommodationService {
         tripGroupProxy.setSelectedAccommodation(INNER_COMMUNICATION, accommodation.getGroupId(), accommodationId);
 
     }
+
+    public Accommodation getAccommodation(Long accommodationId) {
+        return accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+    }
 }
