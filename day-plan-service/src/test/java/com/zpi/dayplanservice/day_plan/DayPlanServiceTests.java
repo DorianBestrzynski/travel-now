@@ -80,7 +80,7 @@ public class DayPlanServiceTests {
     void shouldCreateNewDayPlan() {
         //given
         mockAuthorizeCoordinatorAspect();
-        var dayPlanDto = new DayPlanDto(1L, LocalDate.now(), "test");
+        var dayPlanDto = new DayPlanDto(1L, LocalDate.now(), 0, "test");
         var dayPlan = new DayPlan(dayPlanDto.groupId(), dayPlanDto.date(), dayPlanDto.name());
 
         //when
@@ -104,7 +104,7 @@ public class DayPlanServiceTests {
     void shouldNotCreateNewDayPlan() {
         //given
         mockAuthorizeCoordinatorAspect();
-        var dayPlanDto = new DayPlanDto(1L, LocalDate.now(), "test");
+        var dayPlanDto = new DayPlanDto(1L, LocalDate.now(), 0, "test");
         var dayPlan = new DayPlan(dayPlanDto.groupId(), dayPlanDto.date(), dayPlanDto.name());
 
         //when
@@ -136,7 +136,7 @@ public class DayPlanServiceTests {
         //given
         mockAuthorizeCoordinatorAspect();
 
-        var dayPlanDto = new DayPlanDto(1L, LocalDate.now(), "after");
+        var dayPlanDto = new DayPlanDto(1L, LocalDate.now(), 0,"after");
         var dayPlanToUpdate = new DayPlan(1L, LocalDate.now().minusDays(1L), "before");
 
         //when
@@ -185,10 +185,10 @@ public class DayPlanServiceTests {
 
         //then
         assertThrows(IllegalArgumentException.class, () -> dayPlanService.getAllDayPlansForGroup(null));
-        assertThrows(IllegalDateException.class, () -> dayPlanService.createDayPlan(new DayPlanDto(null, null, null)));
+        assertThrows(IllegalDateException.class, () -> dayPlanService.createDayPlan(new DayPlanDto(null,  null,null, null)));
         assertThrows(IllegalArgumentException.class, () -> dayPlanService.deleteDayPlan(null));
         assertThrows(IllegalArgumentException.class, () -> dayPlanService.deleteDayPlan(-1L));
-        assertThrows(IllegalArgumentException.class, () -> dayPlanService.editDayPlan(-1L, new DayPlanDto(null, null, null)));
+        assertThrows(IllegalArgumentException.class, () -> dayPlanService.editDayPlan(-1L, new DayPlanDto(null, null, null, null)));
         assertThrows(IllegalArgumentException.class, () -> dayPlanService.getDayPlanById(List.of(1L), null));
         assertThrows(IllegalArgumentException.class, () -> dayPlanService.getDayPlanById(null, 1L));
         assertThrows(IllegalArgumentException.class, () -> dayPlanService.getDayPlanById(null));

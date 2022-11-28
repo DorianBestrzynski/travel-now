@@ -12,6 +12,10 @@ public record DayPlanDto(
     @NotNull
     @JsonProperty("date")
     LocalDate date,
+
+    @JsonProperty("iconType")
+    Integer iconType,
+
     @NotEmpty
     @Length(max = 100)
     @JsonProperty("name")
