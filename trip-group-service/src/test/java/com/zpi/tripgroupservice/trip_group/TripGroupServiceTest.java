@@ -82,7 +82,7 @@ class TripGroupServiceTest {
         when(userGroupService.getNumberOfParticipants(any())).thenReturn(2);
         var actualResult = tripGroupService.getAllGroupsForUser(1L);
 
-        var expectedGroups = List.of(new TripExtendedDataDto("Test", Currency.PLN, "Desc", 1, "Raclawicka",
+        var expectedGroups = List.of(new TripExtendedDataDto(0L,"Test", Currency.PLN, "Desc", 1, "Raclawicka",
                 "Wroclaw", null, null, null, null, GroupStage.PLANNING_STAGE,
                 3, 3, null, null, 2));
         //then
@@ -246,7 +246,7 @@ class TripGroupServiceTest {
         var actualResult = tripGroupService.getTripData(1L);
 
         //then
-        var expectedResult = new TripExtendedDataDto(tripGroup.getName(), tripGroup.getCurrency(), tripGroup.getDescription(),
+        var expectedResult = new TripExtendedDataDto(tripGroup.getGroupId(), tripGroup.getName(), tripGroup.getCurrency(), tripGroup.getDescription(),
                 tripGroup.getVotesLimit(), tripGroup.getStartLocation(), tripGroup.getStartCity(), tripGroup.getStartDate(),
                 tripGroup.getEndDate(), tripGroup.getLatitude(), tripGroup.getLongitude(), tripGroup.getGroupStage(),
                 tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants(), tripGroup.getSelectedAccommodationId(),
