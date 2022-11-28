@@ -32,7 +32,7 @@ public record TripGroupDto(
         @JsonProperty("minimalNumberOfDays")
         Integer minimalNumberOfDays,
 
-        @JsonProperty("minimalNumberOfDays")
+        @JsonProperty("minimalNumberOfParticipants")
         Integer minimalNumberOfParticipants
 )
 {

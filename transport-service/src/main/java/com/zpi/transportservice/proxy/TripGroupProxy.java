@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "trip-group", url = "${app.group-service}:8082/api/v1",configuration = CustomFeignConfiguration.class)
 public interface TripGroupProxy {
 
-    @GetMapping("/trip-group/data")
+    @GetMapping("/trip-group/transport-data")
     TripDataDto getTripData(@RequestHeader("innerCommunication") String header, @RequestParam Long groupId);
 
     @GetMapping("/user-group/role")

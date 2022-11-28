@@ -5,10 +5,7 @@ import com.zpi.tripgroupservice.aspects.AuthorizeCoordinator;
 import com.zpi.tripgroupservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.commons.GroupStage;
-import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
-import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
-import com.zpi.tripgroupservice.dto.TripExtendedDataDto;
-import com.zpi.tripgroupservice.dto.TripGroupDto;
+import com.zpi.tripgroupservice.dto.*;
 import com.zpi.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.exception.ExceptionInfo;
@@ -224,5 +221,9 @@ public class TripGroupService {
                 .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
         tripGroup.setSelectedAccommodationId(null);
         tripGroupRepository.save(tripGroup);
+    }
+
+    public TripDataDto getTripDataForTransport(Long groupId) {
+        return tripGroupRepository.findTripData(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
     }
 }
