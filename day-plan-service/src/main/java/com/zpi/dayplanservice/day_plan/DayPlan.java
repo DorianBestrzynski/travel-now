@@ -66,7 +66,7 @@ public class DayPlan {
         this.groupId = groupId;
         this.date = date;
         this.name = name;
-        this.iconType = iconType;
+        this.iconType = iconType == null ? 0 : iconType;
         this.dayAttractions = new HashSet<>();
     }
 

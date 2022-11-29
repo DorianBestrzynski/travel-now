@@ -2,7 +2,7 @@ server:
   port: 8090
 
 app.config-server: localhost
-spring.config.import: "configserver:"
+#spring.config.import: "configserver:"
 app.database: localhost
 app.auth-server: localhost
 
@@ -16,7 +16,9 @@ jwt:
 
 spring:
   cloud.config:
-    failFast: true
+    failFast: false
+    import-check:
+      enabled: false
     retry:
       initialInterval: 3000
       multiplier: 1.3

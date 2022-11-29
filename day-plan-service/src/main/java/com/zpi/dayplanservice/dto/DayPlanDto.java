@@ -9,12 +9,17 @@ public record DayPlanDto(
     @NotNull
     @JsonProperty("groupId")
     Long groupId,
+
     @NotNull
     @JsonProperty("date")
     LocalDate date,
+
     @NotEmpty
     @Length(max = 100)
     @JsonProperty("name")
-    String name)
+    String name,
+
+    @JsonProperty("iconType")
+    Integer iconType)
 {
 }
