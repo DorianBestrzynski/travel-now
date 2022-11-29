@@ -121,8 +121,12 @@ public class TransportService {
 
         var transportAir = shouldGenerateAirTransport(accommodationTransportIds, accommodationInfo, tripData, accommodationId);
         if (transportAir == null) {
-            var flightProposals = lufthansaAdapter.generateTransportAir(accommodationInfo, tripData);
-            return selectBestFlight(flightProposals, accommodationId, accommodationInfo, tripData);
+            try {
+                var flightProposals = lufthansaAdapter.generateTransportAir(accommodationInfo, tripData);
+                return selectBestFlight(flightProposals, accommodationId, accommodationInfo, tripData);
+            } catch (Exception ex) {
+                return null;
+            }
         }
         return transportAir;
     }

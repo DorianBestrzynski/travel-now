@@ -18,7 +18,7 @@ public class TransportServiceApplication {
 
 	@Bean
 	public GeoApiContext context() {
-		return new GeoApiContext.Builder().apiKey("")
+		return new GeoApiContext.Builder().apiKey("nope")
 										  .build();
 	}
 

@@ -52,6 +52,12 @@ public class TripGroupController {
         return ResponseEntity.ok(tripData);
     }
 
+    @GetMapping("/transport-data")
+    public ResponseEntity<TripDataDto> getTripDataForTransport(@RequestParam Long groupId){
+        var tripData = tripGroupService.getTripDataForTransport(groupId);
+        return ResponseEntity.ok(tripData);
+    }
+
     @GetMapping("/availability-info")
     public ResponseEntity<AvailabilityConstraintsDto> getAvailabilityConstraints(@RequestParam Long groupId){
         var availabilityConstraints = tripGroupService.getAvailabilityConstraints(groupId);

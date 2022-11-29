@@ -2,7 +2,10 @@ package com.zpi.tripgroupservice.trip_group;
 
 import com.zpi.tripgroupservice.commons.Currency;
 import com.zpi.tripgroupservice.commons.GroupStage;
-import com.zpi.tripgroupservice.dto.*;
+import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
+import com.zpi.tripgroupservice.dto.AvailabilityConstraintsDto;
+import com.zpi.tripgroupservice.dto.TripExtendedDataDto;
+import com.zpi.tripgroupservice.dto.TripGroupDto;
 import com.zpi.tripgroupservice.exception.ApiPermissionException;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
 import com.zpi.tripgroupservice.google_api.Geolocation;
@@ -20,12 +23,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -82,7 +84,7 @@ class TripGroupServiceTest {
         when(userGroupService.getNumberOfParticipants(any())).thenReturn(2);
         var actualResult = tripGroupService.getAllGroupsForUser(1L);
 
-        var expectedGroups = List.of(new TripExtendedDataDto("Test", Currency.PLN, "Desc", 1, "Raclawicka",
+        var expectedGroups = List.of(new TripExtendedDataDto(0L,"Test", Currency.PLN, "Desc", 1, "Raclawicka",
                 "Wroclaw", null, null, null, null, GroupStage.PLANNING_STAGE,
                 3, 3, null, null, 2));
         //then
@@ -246,7 +248,7 @@ class TripGroupServiceTest {
         var actualResult = tripGroupService.getTripData(1L);
 
         //then
-        var expectedResult = new TripExtendedDataDto(tripGroup.getName(), tripGroup.getCurrency(), tripGroup.getDescription(),
+        var expectedResult = new TripExtendedDataDto(tripGroup.getGroupId(), tripGroup.getName(), tripGroup.getCurrency(), tripGroup.getDescription(),
                 tripGroup.getVotesLimit(), tripGroup.getStartLocation(), tripGroup.getStartCity(), tripGroup.getStartDate(),
                 tripGroup.getEndDate(), tripGroup.getLatitude(), tripGroup.getLongitude(), tripGroup.getGroupStage(),
                 tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants(), tripGroup.getSelectedAccommodationId(),

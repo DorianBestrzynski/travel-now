@@ -11,6 +11,7 @@ import com.zpi.transportservice.dto.TripDataDto;
 import com.zpi.transportservice.exception.LufthansaApiException;
 import com.zpi.transportservice.flight.Flight;
 import com.zpi.transportservice.flight.FlightService;
+import com.zpi.transportservice.lufthansa.LufthansaKey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +48,10 @@ public class LufthansaAdapter {
     private final RestTemplate restTemplate;
     private Instant tokenExpirationDate;
     private final FlightService flightService;
+    private final LufthansaKey lufthansaKey;
 
     private final GeoApiContext context;
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
-    private String bearerAccessToken = "Bearer vhddytj3vnfaf7gqna4s55c2";
     @Value("${client_id}")
     private String client_id;
     @Value("${client_secret}")
@@ -62,12 +63,15 @@ public class LufthansaAdapter {
         if(isTokenExpiredEx()){
             generateAccessToken();
         }
-        var nearestAirportSource = findNearestAirport(tripData.latitude(), tripData.longitude());
-        var nearestAirportDestination = findNearestAirport(accommodationInfoDto.destinationLatitude(), accommodationInfoDto.destinationLongitude());
+
+        var nearestAirportSource = findNearestAirport(tripData.latitude(), tripData.longitude(), false);
+        var nearestAirportDestination = findNearestAirport(accommodationInfoDto.destinationLatitude(), accommodationInfoDto.destinationLongitude(), false);
         return findFlightProposals(nearestAirportSource, nearestAirportDestination, tripData, accommodationInfoDto);
+
+
     }
 
-    private List<AirportInfoDto> findNearestAirport(Double latitude, Double longitude) {
+    private List<AirportInfoDto> findNearestAirport(Double latitude, Double longitude, boolean retry) {
         try {
             HttpEntity<?> entity = getHttpEntity();
             var url = Constants.BASE_URL + Constants.NEAREST_AIRPORT + latitude + "," + longitude;
@@ -91,14 +95,17 @@ public class LufthansaAdapter {
 
             return airportInfo;
         } catch (Exception ex) {
-            throw new LufthansaApiException(LUFTHANSA_API_EXCEPTION);
+            if(retry) {
+                throw new LufthansaApiException(LUFTHANSA_API_EXCEPTION);
+            }
+            return findNearestAirport(latitude, longitude, true);
         }
     }
 
     @NotNull
     private HttpEntity<?> getHttpEntity() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization",bearerAccessToken);
+        headers.set("Authorization",lufthansaKey.getLufthansaToken());
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         return new HttpEntity<>(headers);
     }
@@ -226,11 +233,12 @@ public class LufthansaAdapter {
                                           String.class);
             JSONObject json = new JSONObject(response.getBody());
 
-            this.bearerAccessToken = "Bearer " + json.getString(Constants.ACCESS_TOKEN);
+            lufthansaKey.setLufthansaToken("Bearer " + json.getString(Constants.ACCESS_TOKEN));
             var expirationTime = json.getLong(Constants.EXPIRATION);
             this.tokenExpirationDate = Instant.now().plusSeconds(expirationTime);
+            testLufthansaRequest();
 
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException("Exception while getting Lufthansa access token");
         }
     }
@@ -239,7 +247,15 @@ public class LufthansaAdapter {
         return tokenExpirationDate == null || !Instant.now().isBefore(tokenExpirationDate);
     }
 
-    private boolean isTokenExpiredEx(){
+    private boolean isTokenExpiredEx() {
+
+        if (lufthansaKey.getLufthansaToken() == null || !lufthansaKey.getLufthansaToken().startsWith("Bearer")) {
+            return true;
+        }
+        return testLufthansaRequest();
+    }
+
+    private boolean testLufthansaRequest() {
         try {
             HttpEntity<?> entity = getHttpEntity();
             HttpHeaders headers = new HttpHeaders();
@@ -253,9 +269,9 @@ public class LufthansaAdapter {
                     String.class);
 
             return false;
-        } catch (Exception ex){
+        }
+        catch (Exception ex){
             return true;
         }
-
     }
 }
