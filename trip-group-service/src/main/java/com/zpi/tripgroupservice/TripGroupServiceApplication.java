@@ -18,12 +18,6 @@ public class TripGroupServiceApplication {
 	}
 
 	@Bean
-	public GeoApiContext context() {
-		return new GeoApiContext.Builder().apiKey("nope")
-				.build();
-	}
-
-	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}

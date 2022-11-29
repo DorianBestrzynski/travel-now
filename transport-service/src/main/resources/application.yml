@@ -6,10 +6,6 @@ app.database: localhost
 app.group-service: localhost
 app.accommodation-service: localhost
 
-
-client_id: yu9gyeetpbdpkrwg8k5hr3qt
-client_secret: vrrkmvP2VUtJknqB6JkG
-grant_type: client_credentials
 spring:
   cloud:
     config:

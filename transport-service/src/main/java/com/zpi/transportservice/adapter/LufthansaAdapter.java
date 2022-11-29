@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -44,6 +45,7 @@ import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_NO_AIR
 @RequiredArgsConstructor
 @Slf4j
 @Component
+@PropertySource("classpath:application-keys.yml")
 public class LufthansaAdapter {
     private final RestTemplate restTemplate;
     private Instant tokenExpirationDate;
