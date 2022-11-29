@@ -37,7 +37,7 @@ public class DayPlanService {
     @AuthorizeCoordinator
     public DayPlan createDayPlan(DayPlanDto dayPlanDto) {
         if (isDateAvailable(dayPlanDto)) {
-            var dayPlan = new DayPlan(dayPlanDto.groupId(), dayPlanDto.date(), dayPlanDto.name());
+            var dayPlan = new DayPlan(dayPlanDto.groupId(), dayPlanDto.date(), dayPlanDto.name(), dayPlanDto.iconType());
             dayPlanRepository.save(dayPlan);
             return dayPlan;
         }
