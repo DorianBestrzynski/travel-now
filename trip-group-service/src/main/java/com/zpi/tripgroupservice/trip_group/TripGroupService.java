@@ -45,6 +45,7 @@ public class TripGroupService {
         var tripGroups = tripGroupRepository.findAllGroupsForUser(userId);
         return tripGroups.stream()
                 .map(group -> new TripExtendedDataDto(
+                        group.getGroupId(),
                         group.getName(),
                         group.getCurrency(),
                         group.getDescription(),
@@ -113,6 +114,7 @@ public class TripGroupService {
                 GROUP_NOT_FOUND));
         var numOfParticipants = userGroupService.getNumberOfParticipants(groupId);
         return new TripExtendedDataDto(
+                groupId,
                 group.getName(),
                 group.getCurrency(),
                 group.getDescription(),

@@ -36,8 +36,8 @@ public class AppUserService {
     public void registerUser(RegisterRequestDto registerRequestDto) {
         var encodedPassword = passwordEncoder.encode(registerRequestDto.password());
         var password = new Password(encodedPassword);
-        var user = new AppUser(registerRequestDto.email(),
-                               registerRequestDto.phoneNumber(),
+        var user = new AppUser(registerRequestDto.phoneNumber(),
+                               registerRequestDto.email(),
                                registerRequestDto.firstName(),
                                registerRequestDto.surname(),
                                registerRequestDto.birthday(),

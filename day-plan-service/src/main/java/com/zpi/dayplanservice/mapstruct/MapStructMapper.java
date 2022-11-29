@@ -14,6 +14,7 @@ import org.mapstruct.*;
 )
 public interface MapStructMapper {
 
+    @Mapping(target = "date", source = "date")
     void updateFromDayPlanDtoToDayPlan(@MappingTarget DayPlan dayPlan, DayPlanDto dayPlanDto);
     @Mapping(target = "openingHours", expression = "java(java.util.Arrays.toString(attractionCandidateDto.getOpeningHours()))")
     @Mapping(target = "name", source = "attractionName")

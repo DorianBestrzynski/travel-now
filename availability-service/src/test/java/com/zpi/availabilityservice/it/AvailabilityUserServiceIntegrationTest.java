@@ -33,7 +33,7 @@ public class AvailabilityUserServiceIntegrationTest {
         assertThat(result.getStatusCode().value()).isEqualTo(200);
         assertThat(user.phoneNumber()).isEqualTo("DorBest");
         assertThat(user.firstName()).isEqualTo("Dorian");
-        assertThat(user.lastName()).isEqualTo("Best");
+        assertThat(user.surname()).isEqualTo("Best");
     }
 
     private UserDto parseToListOfUsers(List body) {
@@ -41,7 +41,7 @@ public class AvailabilityUserServiceIntegrationTest {
             LinkedHashMap<String, String> user = (LinkedHashMap<String, String>) body.get(0);
             var firstName = user.get("firstName");
             var email = user.get("email");
-            var lastName = user.get("lastName");
+            var lastName = user.get("surname");
             var username = user.get("phoneNumber");
             return new UserDto(1L, username, email, firstName, lastName);
         }
