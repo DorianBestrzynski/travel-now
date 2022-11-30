@@ -51,4 +51,10 @@ public class DayPlanController {
         return "Added sample data";
     }
 
+    @PatchMapping("/start")
+    public void setStartingPoint(@RequestParam(name = "dayPlanId") Long dayPlanId,
+                                         @RequestParam(name = "attractionId") Long attractionId){
+        dayPlanService.setStartingPoint(dayPlanId, attractionId);
+    }
+
 }

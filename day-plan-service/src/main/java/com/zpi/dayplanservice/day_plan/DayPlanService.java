@@ -104,4 +104,8 @@ public class DayPlanService {
         return dayPlanRepository.existsById(dayPlanId);
     }
 
+    @Transactional
+    public void setStartingPoint(Long dayPlanId, Long attractionId) {
+        dayPlanRepository.findById(dayPlanId).orElseThrow().setDayPlanStartingPointId(attractionId);
+    }
 }
