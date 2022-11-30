@@ -2,7 +2,6 @@ server:
   port: 8090
 
 app.config-server: localhost
-#spring.config.import: "configserver:"
 app.database: localhost
 app.auth-server: localhost
 
@@ -51,3 +50,4 @@ spring.config.activate.on-profile: docker
 app.config-server: config-server
 app.database: postgres
 app.auth-server: backend-auth
+spring.config.import: "configserver:"
