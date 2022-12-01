@@ -180,7 +180,7 @@ public class SharedGroupAvailabilityService {
     @AuthorizeCoordinatorShared
     public void acceptSharedGroupAvailability(Long sharedGroupAvailabilityId) {
         var sharedAvailability = sharedGroupAvailabilityRepository.findById(sharedGroupAvailabilityId).orElseThrow(() -> new EntityNotFoundException(SHARED_AVAILABILITY_NOT_FOUND));
-        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, sharedAvailability.getGroupId(), sharedGroupAvailabilityId);
+        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, sharedAvailability.getGroupId(), sharedGroupAvailabilityId, sharedAvailability.getDateFrom(), sharedAvailability.getDateTo());
     }
 
     @Transactional
@@ -189,7 +189,7 @@ public class SharedGroupAvailabilityService {
         int daysBetween = (int) DAYS.between(dateFrom, dateTo);
         var sharedGroupAvailability = new SharedGroupAvailability(groupId, Collections.emptyList(), dateFrom, dateTo, daysBetween);
         var savedAvailability = sharedGroupAvailabilityRepository.save(sharedGroupAvailability);
-        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, groupId, savedAvailability.getSharedGroupAvailabilityId());
+        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, groupId, savedAvailability.getSharedGroupAvailabilityId(), savedAvailability.getDateFrom(), savedAvailability.getDateTo());
         return savedAvailability;
 
     }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+
 @FeignClient(name = "trip-group", url = "${app.group-service}:8082/")
 public interface TripGroupProxy {
 
@@ -20,5 +22,6 @@ public interface TripGroupProxy {
     Boolean isUserPartOfTheGroup(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("userId") Long userId);
 
     @PutMapping( "api/v1/trip-group/availability")
-    void setSelectedAvailability(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("availabilityId") Long availabilityId);
+    void setSelectedAvailability(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("availabilityId") Long availabilityId,
+                                 @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate);
 }

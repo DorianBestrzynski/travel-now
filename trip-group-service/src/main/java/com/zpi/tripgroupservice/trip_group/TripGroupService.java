@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.zpi.tripgroupservice.commons.Utils.LATITUDE_INDEX;
@@ -189,11 +190,13 @@ public class TripGroupService {
         userGroupService.deleteUserFromGroup(groupId, userId);
     }
     @Transactional
-    public void setSelectedAvailability(Long groupId, Long availabilityId) {
+    public void setSelectedAvailability(Long groupId, Long availabilityId, LocalDate startDate, LocalDate endDate) {
         var tripGroup = tripGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
 
         tripGroup.setSelectedSharedAvailability(availabilityId);
+        tripGroup.setStartDate(startDate);
+        tripGroup.setEndDate(endDate);
         tripGroupRepository.save(tripGroup);
     }
 
