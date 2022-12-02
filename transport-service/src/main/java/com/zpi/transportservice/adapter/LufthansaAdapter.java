@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.zpi.transportservice.commons.Constants.THRESHOLD_DISTANCE_BETWEEN_START_AND_END_AIR;
 import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_API_EXCEPTION;
 import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_NO_AIRPORT_MATCHING;
 
@@ -53,6 +54,7 @@ public class LufthansaAdapter {
     private final LufthansaKey lufthansaKey;
 
     private final GeoApiContext context;
+    private final GeoLocationAdapter geoLocationAdapter;
     private static final String ISO_8601_24H_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm";
     @Value("${client_id}")
     private String client_id;
@@ -65,12 +67,24 @@ public class LufthansaAdapter {
         if(isTokenExpiredEx()){
             generateAccessToken();
         }
-
+        try {
+            var distance = computeDistance(tripData.startingLocation(), accommodationInfoDto.streetAddress());
+            if (distance < THRESHOLD_DISTANCE_BETWEEN_START_AND_END_AIR) {
+                return null;
+            }
+        } catch (Exception ex) {
+            return null;
+        }
         var nearestAirportSource = findNearestAirport(tripData.latitude(), tripData.longitude(), false);
         var nearestAirportDestination = findNearestAirport(accommodationInfoDto.destinationLatitude(), accommodationInfoDto.destinationLongitude(), false);
         return findFlightProposals(nearestAirportSource, nearestAirportDestination, tripData, accommodationInfoDto);
 
 
+    }
+
+    private Long computeDistance(String startingLocation, String streetAddress) {
+        var route = geoLocationAdapter.getRoute(startingLocation, streetAddress);
+        return geoLocationAdapter.getDistance(route);
     }
 
     private List<AirportInfoDto> findNearestAirport(Double latitude, Double longitude, boolean retry) {

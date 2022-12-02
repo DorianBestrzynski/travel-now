@@ -11,8 +11,9 @@ public class Constants {
     public static final String GRANT_TYPE = "grant_type";
     public static final String NEAREST_AIRPORT = "/v1/mds-references/airports/nearest/";
     public static final String FLIGHT_SCHEDULES = "/v1/operations/schedules/";
-    public static final Integer THRESHOLD_DISTANCE_DESTINATION = 150;
-    public static final Integer THRESHOLD_DISTANCE_SOURCE = 200;
+    public static final Integer THRESHOLD_DISTANCE_DESTINATION = 100 ;
+    public static final Integer THRESHOLD_DISTANCE_SOURCE = 100;
+    public static final Integer THRESHOLD_DISTANCE_BETWEEN_START_AND_END_AIR = 200;
     public static final Integer FLIGHT_PROPOSAL_LIMIT = 1;
     public static final Integer COUNTRY_LIMIT = 1;
     public static final String COUNTRY_QUERY = "/v1/mds-references/countries/";
