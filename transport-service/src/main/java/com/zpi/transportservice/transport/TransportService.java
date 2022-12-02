@@ -126,7 +126,8 @@ public class TransportService {
         if (transportAir == null) {
             try {
                 var flightProposals = lufthansaAdapter.generateTransportAir(accommodationInfo, tripData);
-                return selectBestFlight(flightProposals, accommodationId, accommodationInfo, tripData);
+                var bestFlight = selectBestFlight(flightProposals, accommodationId, accommodationInfo, tripData);
+                return lufthansaAdapter.fixTimeZoneInAirTransport(bestFlight);
             } catch (Exception ex) {
                 return null;
             }

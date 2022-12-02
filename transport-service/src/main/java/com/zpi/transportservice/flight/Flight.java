@@ -41,6 +41,7 @@ public class Flight {
     private LocalDateTime arrivalTime;
 
     @Column(name = "flight_duration")
+    @Setter
     private Duration flightDuration;
 
     @Setter
