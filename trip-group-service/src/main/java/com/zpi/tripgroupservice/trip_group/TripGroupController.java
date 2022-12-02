@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RequestMapping("api/v1/trip-group")
@@ -78,8 +79,8 @@ public class TripGroupController {
 
     @PutMapping("/availability")
     @ResponseStatus(HttpStatus.OK)
-    public void setSelectedAvailability(@RequestParam Long groupId, @RequestParam Long availabilityId){
-        tripGroupService.setSelectedAvailability(groupId, availabilityId);
+    public void setSelectedAvailability(@RequestParam Long groupId, @RequestParam Long availabilityId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate){
+        tripGroupService.setSelectedAvailability(groupId, availabilityId, startDate, endDate);
     }
 
     @PatchMapping("/currency")

@@ -78,6 +78,7 @@ class TripGroupServiceTest {
         //given
         var groups = List.of(new TripGroup("Test", Currency.PLN, "Desc", 1, "Raclawicka",
                                            "Wroclaw" , 3, 3 ));
+        groups.get(0).setGroupId(0L);
 
         //when
         when(tripGroupRepository.findAllGroupsForUser(anyLong())).thenReturn(groups);
@@ -242,6 +243,7 @@ class TripGroupServiceTest {
         //given
         var tripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
                 "Wroclaw" , 3, 3 );
+        tripGroup.setGroupId(1L);
         //when
         when(tripGroupRepository.findById(anyLong())).thenReturn(Optional.of(tripGroup));
         when(userGroupService.getNumberOfParticipants(anyLong())).thenReturn(2);
