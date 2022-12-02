@@ -41,7 +41,7 @@ spring.config.import: "configserver:"
 app.config-server: config-server
 app.database: postgres
 app.accommodation-service: accommodation
-app.finance-service: finance
+app.finance-service: finance-optimizer
 app.user-service: user
 
 ---
