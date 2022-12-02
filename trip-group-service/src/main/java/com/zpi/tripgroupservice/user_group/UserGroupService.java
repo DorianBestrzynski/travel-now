@@ -75,7 +75,7 @@ public class UserGroupService {
         }
 
 
-        return appUserProxy.getUsersDtos(INNER_COMMUNICATION,
+        return appUserProxy.getUsersByIds(INNER_COMMUNICATION,
                                          userGroupRepository.findAllById_GroupId(groupId)
                                                             .stream()
                                                             .mapToLong(ug -> ug.getId().getUserId())
@@ -89,12 +89,22 @@ public class UserGroupService {
         }
 
 
-        return appUserProxy.getUsersDtos(INNER_COMMUNICATION,
+        return appUserProxy.getUsersByIds(INNER_COMMUNICATION,
                                          userGroupRepository.findAllById_GroupIdAndRoleEquals(groupId, Role.COORDINATOR)
                                                             .stream()
                                                             .mapToLong(ug -> ug.getId().getUserId())
                                                             .boxed()
                                                             .collect(Collectors.toList()));
+    }
+
+    public List<Long> getAllCoordinatorsIdsInGroup(Long groupId) {
+        if(groupId == null || groupId < 0){
+            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID);
+        }
+        return userGroupRepository.findAllById_GroupIdAndRoleEquals(groupId, Role.COORDINATOR)
+                .stream()
+                .map(userGroup -> userGroup.getId().getUserId())
+                .toList();
     }
 
     @AuthorizeCoordinator

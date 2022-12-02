@@ -179,15 +179,16 @@ public class TripGroupService {
 
     @Transactional
     @AuthorizePartOfTheGroup
-    public void leaveGroup(Long groupId, Long userId) {
-        if (financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, userId)) {
+    public void leaveGroup(Long groupId) {
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, authentication.getUserId())) {
             throw new ApiPermissionException(ExceptionInfo.CANNOT_LEAVE_GROUP);
         }
-        if (userGroupService.getAllCoordinatorsInGroup(groupId).size() == 1 && userGroupService.isUserCoordinator(userId, groupId)) {
+        if (userGroupService.getAllCoordinatorsIdsInGroup(groupId).size() == 1 && userGroupService.isUserCoordinator(authentication.getUserId(), groupId)) {
             throw new ApiPermissionException(ExceptionInfo.LAST_COORDINATOR);
 
         }
-        userGroupService.deleteUserFromGroup(groupId, userId);
+        userGroupService.deleteUserFromGroup(groupId, authentication.getUserId());
     }
     @Transactional
     public void setSelectedAvailability(Long groupId, Long availabilityId, LocalDate startDate, LocalDate endDate) {

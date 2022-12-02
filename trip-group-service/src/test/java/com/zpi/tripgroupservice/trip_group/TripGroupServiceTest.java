@@ -447,7 +447,7 @@ class TripGroupServiceTest {
 
         //when
         when(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(anyString(), anyLong(), anyLong())).thenReturn(false);
-        tripGroupService.leaveGroup(1L, 1L);
+        tripGroupService.leaveGroup( 1L);
 
         //then
         verify(financeProxy, times(1)).isDebtorOrDebteeToAnyFinancialRequests(anyString(), anyLong(), anyLong());
@@ -462,7 +462,7 @@ class TripGroupServiceTest {
         //when
         when(financeProxy.isDebtorOrDebteeToAnyFinancialRequests(anyString(), anyLong(), anyLong())).thenReturn(true);
         var exception = assertThrows(ApiPermissionException.class,
-                () -> tripGroupService.leaveGroup(1L, 1L));
+                () -> tripGroupService.leaveGroup( 1L));
 
         //then
         assertThat(exception.getMessage()).isEqualTo("You cannot leave group if you have unsettled expenses");

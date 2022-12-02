@@ -91,8 +91,8 @@ public class TripGroupController {
 
     @DeleteMapping("/user")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void leaveGroup(@RequestParam Long groupId, @RequestParam Long userId){
-        tripGroupService.leaveGroup(groupId, userId);
+    public void leaveGroup(@RequestParam Long groupId) {
+        tripGroupService.leaveGroup(groupId);
     }
 
     @PutMapping
