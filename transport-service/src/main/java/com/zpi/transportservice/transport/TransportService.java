@@ -74,6 +74,9 @@ public class TransportService {
         if (carTransport == null) {
             try {
                 var route = geoLocationAdapter.getRoute(tripData.startingLocation(), accommodationInfo.streetAddress());
+                if(route == null)
+                    return null;
+
                 var distance = geoLocationAdapter.getDistance(route);
                 var duration = geoLocationAdapter.getDuration(route);
                 var endDate = tripData.startDate().plus(duration.toDays(), ChronoUnit.DAYS);

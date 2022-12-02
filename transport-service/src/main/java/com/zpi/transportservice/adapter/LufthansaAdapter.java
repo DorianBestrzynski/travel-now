@@ -217,7 +217,7 @@ public class LufthansaAdapter {
     private Duration findTravelDuration(String airport, String location)  {
         DirectionsResult route;
         try {
-            route = DirectionsApi.getDirections(context, location, "airport" + airport).await();
+            route = DirectionsApi.getDirections(context, location, "airport " + airport).await();
         } catch (ApiException | InterruptedException | IOException e) {
             return Duration.ZERO;
         }
