@@ -17,7 +17,6 @@ import com.zpi.tripgroupservice.proxy.FinanceProxy;
 import com.zpi.tripgroupservice.security.CustomUsernamePasswordAuthenticationToken;
 import com.zpi.tripgroupservice.user_group.UserGroupService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.ru.INN;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -156,6 +155,20 @@ public class TripGroupService {
             return accommodationProxy.getAccommodationInfo(INNER_COMMUNICATION, tripGroup.getSelectedAccommodationId());
 
         return new AccommodationInfoDto();
+    }
+
+    public AccommodationDto getAccommodationDto(Long groupId) {
+        if(groupId == null || groupId < 0){
+            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID);
+        }
+
+        var tripGroup = tripGroupRepository.findById(groupId)
+                                           .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+
+        if(tripGroup.getSelectedAccommodationId() != null)
+            return accommodationProxy.getAccommodation(INNER_COMMUNICATION, tripGroup.getSelectedAccommodationId());
+
+        return new AccommodationDto();
     }
 
     @Transactional

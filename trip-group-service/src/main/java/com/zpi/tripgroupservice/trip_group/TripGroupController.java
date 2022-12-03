@@ -71,6 +71,12 @@ public class TripGroupController {
         return ResponseEntity.ok(accommodation);
     }
 
+    @GetMapping("/accommodation-dto")
+    public ResponseEntity<AccommodationDto> getAccommodationDto(@RequestParam Long groupId){
+        var accommodation = tripGroupService.getAccommodationDto(groupId);
+        return ResponseEntity.ok(accommodation);
+    }
+
     @PutMapping("/accommodation")
     @ResponseStatus(HttpStatus.OK)
     public void setSelectedAccommodation(@RequestParam Long groupId, @RequestParam Long accommodationId){

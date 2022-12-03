@@ -1,6 +1,7 @@
 package com.zpi.tripgroupservice.proxy;
 
 import com.zpi.tripgroupservice.config.CustomFeignConfiguration;
+import com.zpi.tripgroupservice.dto.AccommodationDto;
 import com.zpi.tripgroupservice.dto.AccommodationInfoDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,4 +17,7 @@ public interface AccommodationProxy {
 
     @DeleteMapping("/user-votes")
     void deleteAllVotesForUserInGivenGroup(@RequestHeader("innerCommunication") String header, @RequestParam Long userId, @RequestParam Long groupId);
+
+    @GetMapping()
+    AccommodationDto getAccommodation(@RequestHeader("innerCommunication") String header, @RequestParam Long accommodationId);
 }
