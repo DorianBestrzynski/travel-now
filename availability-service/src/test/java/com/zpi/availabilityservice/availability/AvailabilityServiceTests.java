@@ -72,7 +72,7 @@ public class AvailabilityServiceTests {
 
     @BeforeEach
     void mockGetAvailabilityConstraints() {
-        doReturn(new AvailabilityConstraintsDto(3, 3)).when(tripGroupProxy).getAvailabilityConstraints(any());
+        doReturn(new AvailabilityConstraintsDto(3, 3)).when(tripGroupProxy).getAvailabilityConstraints(any(), any());
     }
 
     @Test

@@ -50,7 +50,7 @@ class SharedGroupAvailabilityServiceTest {
         var availabilities = getDisJointAvailabilities();
 
         //when
-        doReturn(new AvailabilityConstraintsDto(3, 1)).when(tripGroupProxy).getAvailabilityConstraints(any());
+        doReturn(new AvailabilityConstraintsDto(3, 1)).when(tripGroupProxy).getAvailabilityConstraints(any(), any());
         when(availabilityRepository.findAvailabilitiesByGroupId(anyLong())).thenReturn(availabilities);
         doNothing().when(sharedGroupAvailabilityRepository).deleteAllByGroupId(anyLong());
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
@@ -68,7 +68,7 @@ class SharedGroupAvailabilityServiceTest {
         var availabilities = getAvailabilitiesWithGivenLength(3);
 
         //when
-        doReturn(new AvailabilityConstraintsDto(3, 3)).when(tripGroupProxy).getAvailabilityConstraints(any());
+        doReturn(new AvailabilityConstraintsDto(3, 3)).when(tripGroupProxy).getAvailabilityConstraints(any(), any());
         when(availabilityRepository.findAvailabilitiesByGroupId(anyLong())).thenReturn(availabilities);
         doNothing().when(sharedGroupAvailabilityRepository).deleteAllByGroupId(anyLong());
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
@@ -86,7 +86,7 @@ class SharedGroupAvailabilityServiceTest {
         var availabilities = getDisjointAvailabilities4Users();
 
         //when
-        doReturn(new AvailabilityConstraintsDto(3, 2)).when(tripGroupProxy).getAvailabilityConstraints(any());
+        doReturn(new AvailabilityConstraintsDto(3, 2)).when(tripGroupProxy).getAvailabilityConstraints(any(), any());
         when(availabilityRepository.findAvailabilitiesByGroupId(anyLong())).thenReturn(availabilities);
         doNothing().when(sharedGroupAvailabilityRepository).deleteAllByGroupId(anyLong());
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
