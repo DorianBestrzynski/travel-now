@@ -49,6 +49,12 @@ public class AvailabilityController {
          availabilityService.deleteAvailability(availabilityId, groupId);
     }
 
+    @DeleteMapping("/all-user")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void deleteAllAvailabilitiesForUser(@RequestParam Long userId, @RequestParam Long groupId) {
+        availabilityService.deleteAllAvailabilitiesForUser(userId, groupId);
+    }
+
     @PatchMapping("/user/{availabilityId}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public ResponseEntity<Availability> changeAvailability(@PathVariable Long availabilityId,
