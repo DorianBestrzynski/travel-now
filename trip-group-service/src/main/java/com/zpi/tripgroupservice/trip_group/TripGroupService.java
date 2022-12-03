@@ -12,6 +12,7 @@ import com.zpi.tripgroupservice.exception.ExceptionInfo;
 import com.zpi.tripgroupservice.google_api.Geolocation;
 import com.zpi.tripgroupservice.mapper.MapStructMapper;
 import com.zpi.tripgroupservice.proxy.AccommodationProxy;
+import com.zpi.tripgroupservice.proxy.AvailabilityProxy;
 import com.zpi.tripgroupservice.proxy.FinanceProxy;
 import com.zpi.tripgroupservice.security.CustomUsernamePasswordAuthenticationToken;
 import com.zpi.tripgroupservice.user_group.UserGroupService;
@@ -36,6 +37,7 @@ public class TripGroupService {
     private final Geolocation geolocation;
     private final FinanceProxy financeProxy;
     private final AccommodationProxy accommodationProxy;
+    private final AvailabilityProxy availabilityProxy;
     private static final String INNER_COMMUNICATION = "microserviceCommunication";
 
 
@@ -193,16 +195,22 @@ public class TripGroupService {
 
     @Transactional
     @AuthorizePartOfTheGroup
-    public void leaveGroup(Long groupId, Long userId) {
+    public void leaveGroup(Long groupId) {
+        var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+        CustomUsernamePasswordAuthenticationToken authentication = (CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        deletingUserCleanUp(authentication.getUserId(), groupId, tripGroup.getGroupStage());
+        userGroupService.deleteUserFromGroup(groupId, authentication.getUserId());
+    }
+
+    private void afterPlanningStageCheck(Long groupId, Long userId) {
         if (financeProxy.isDebtorOrDebteeToAnyFinancialRequests(INNER_COMMUNICATION, groupId, userId)) {
             throw new ApiPermissionException(ExceptionInfo.CANNOT_LEAVE_GROUP);
         }
-        if (userGroupService.getAllCoordinatorsInGroup(groupId).size() == 1 && userGroupService.isUserCoordinator(userId, groupId)) {
+        if (userGroupService.getAllCoordinatorsIdsInGroup(groupId).size() == 1 && userGroupService.isUserCoordinator(userId, groupId)) {
             throw new ApiPermissionException(ExceptionInfo.LAST_COORDINATOR);
-
         }
-        userGroupService.deleteUserFromGroup(groupId, userId);
     }
+
     @Transactional
     public void setSelectedAvailability(Long groupId, Long availabilityId, LocalDate startDate, LocalDate endDate) {
         var tripGroup = tripGroupRepository.findById(groupId)
@@ -244,5 +252,28 @@ public class TripGroupService {
 
     public TripDataDto getTripDataForTransport(Long groupId) {
         return tripGroupRepository.findTripData(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+    }
+
+    @Transactional
+    @AuthorizeCoordinator
+    public void deleteUserFromGroup(Long groupId, Long userId) {
+        var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+        deletingUserCleanUp(userId, groupId, tripGroup.getGroupStage());
+        userGroupService.deleteUserFromGroup(groupId, userId);
+    }
+
+    public void deletingUserCleanUp(Long userId, Long groupId, GroupStage groupStage) {
+        switch (groupStage) {
+            case PLANNING_STAGE -> planningStageCleanUp(userId, groupId);
+            case TRIP_STAGE, AFTER_TRIP_STAGE -> afterPlanningStageCheck(groupId, userId);
+        }
+    }
+
+    private void planningStageCleanUp(Long userId, Long groupId) {
+        if (userGroupService.getAllCoordinatorsIdsInGroup(groupId).size() == 1 && userGroupService.isUserCoordinator(userId, groupId)) {
+            throw new ApiPermissionException(ExceptionInfo.LAST_COORDINATOR);
+        }
+        availabilityProxy.deleteAllAvailabilitiesForUser(INNER_COMMUNICATION, userId, groupId);
+        accommodationProxy.deleteAllVotesForUserInGivenGroup(INNER_COMMUNICATION, userId, groupId);
     }
 }

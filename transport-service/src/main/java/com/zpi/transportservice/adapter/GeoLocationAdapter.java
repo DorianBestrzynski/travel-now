@@ -17,7 +17,7 @@ public class GeoLocationAdapter {
     public DirectionsResult getRoute(String startingLocation, String streetAddress){
         try {
             return DirectionsApi.getDirections(context, startingLocation, streetAddress).await();
-        }catch (Exception ex){
+        } catch (Exception ex){
             ex.printStackTrace();
             return null;
         }

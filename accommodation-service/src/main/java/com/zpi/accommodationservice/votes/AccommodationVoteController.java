@@ -31,6 +31,12 @@ public class AccommodationVoteController {
         return ResponseEntity.ok(accommodationVoteService.deleteVote(accommodationVoteId));
     }
 
+    @DeleteMapping("/user-votes")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void deleteAllVotesForUserInGivenGroup(@RequestParam Long userId, @RequestParam Long groupId) {
+        accommodationVoteService.deleteAllUserVotesInGroup(userId, groupId);
+    }
+
     @PatchMapping("/vote")
     public ResponseEntity<AccommodationVote> unVote(@RequestBody @Validated AccommodationVoteId accommodationVoteId) {
         return ResponseEntity.ok(accommodationVoteService.deleteVote(accommodationVoteId));

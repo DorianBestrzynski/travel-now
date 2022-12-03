@@ -12,6 +12,7 @@ import com.zpi.transportservice.exception.LufthansaApiException;
 import com.zpi.transportservice.flight.Flight;
 import com.zpi.transportservice.flight.FlightService;
 import com.zpi.transportservice.lufthansa.LufthansaKey;
+import com.zpi.transportservice.transport.AirTransport;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
+import static com.zpi.transportservice.commons.Constants.THRESHOLD_DISTANCE_BETWEEN_START_AND_END_AIR;
 import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_API_EXCEPTION;
 import static com.zpi.transportservice.exception.ExceptionsInfo.LUFTHANSA_NO_AIRPORT_MATCHING;
 
@@ -65,12 +68,32 @@ public class LufthansaAdapter {
         if(isTokenExpiredEx()){
             generateAccessToken();
         }
+        var distance = computeDistance(tripData.latitude(), accommodationInfoDto.destinationLatitude(), tripData.longitude(), accommodationInfoDto.destinationLongitude());
+        if (distance < THRESHOLD_DISTANCE_BETWEEN_START_AND_END_AIR) {
+            return null;
+        }
 
         var nearestAirportSource = findNearestAirport(tripData.latitude(), tripData.longitude(), false);
         var nearestAirportDestination = findNearestAirport(accommodationInfoDto.destinationLatitude(), accommodationInfoDto.destinationLongitude(), false);
         return findFlightProposals(nearestAirportSource, nearestAirportDestination, tripData, accommodationInfoDto);
 
 
+    }
+    private double computeDistance(double lat1, double lat2, double lon1,
+                                  double lon2) {
+
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+        distance = Math.pow(distance, 2);
+
+        return Math.sqrt(distance) / 1000;
     }
 
     private List<AirportInfoDto> findNearestAirport(Double latitude, Double longitude, boolean retry) {
@@ -275,5 +298,67 @@ public class LufthansaAdapter {
         catch (Exception ex){
             return true;
         }
+    }
+
+    public AirTransport fixTimeZoneInAirTransport(AirTransport bestFlight) {
+        bestFlight.getFlight().forEach(this::fixTimeZoneInFlight);
+        return bestFlight;
+    }
+
+    private void fixTimeZoneInFlight(Flight flight) {
+        var fixedTime = timeDifference(flight.getDepartureAirport(), flight.getArrivalAirport());
+        var currentDuration = flight.getFlightDuration();
+        flight.setFlightDuration(currentDuration.plusHours(fixedTime));
+    }
+
+    private Long timeDifference(String startAirportCode, String destinationAirportCode) {
+        var startAirportTimeZone = getAirportTimeZone(startAirportCode, false);
+        var destinationAirportTimeZone = getAirportTimeZone(destinationAirportCode, false);
+        if(startAirportTimeZone == null || destinationAirportTimeZone == null){
+            return 0L;
+        }
+        var pattern = Pattern.compile("[+\\-][0-1][0-9]");
+        var startMatcher = pattern.matcher(startAirportTimeZone);
+        var destinationMatcher = pattern.matcher(destinationAirportTimeZone);
+        if(startMatcher.find() && destinationMatcher.find()) {
+            var startTime = startMatcher.group();
+            var startTimeDifference = Long.parseLong(startTime);
+            var endTime = destinationMatcher.group();
+            var endTimeDifference = Long.parseLong(endTime);
+
+            if((startTimeDifference >= 0 && endTimeDifference >= 0) || (startTimeDifference <= 0 && endTimeDifference <= 0)) {
+                return Math.abs(startTimeDifference - endTimeDifference);
+            }
+            return Math.abs(startTimeDifference) + Math.abs(endTimeDifference);
+        }
+        return 0L;
+    }
+
+    private String getAirportTimeZone(String airportCode, boolean retry) {
+        HttpEntity<?> entity = getHttpEntity();
+        String finalUrl = Constants.BASE_URL + Constants.AIRPORT_INFO + airportCode;
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    finalUrl,
+                    HttpMethod.GET,
+                    entity,
+                    String.class);
+
+            return parseResponseToAirport(response.getBody());
+
+        } catch (Exception ex) {
+            log.warn("Flight not found");
+            if(!retry){
+                getAirportTimeZone(airportCode, true);
+            }
+            return null;
+        }
+    }
+
+    private String parseResponseToAirport(String airportInfo) {
+        JSONObject flightSchedules = new JSONObject(airportInfo);
+        var airport = flightSchedules.getJSONObject("AirportResource").getJSONObject("Airports").getJSONObject("Airport");
+        return airport.getString("UtcOffset");
+
     }
 }
