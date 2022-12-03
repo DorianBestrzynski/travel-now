@@ -155,6 +155,20 @@ public class TripGroupService {
         return new AccommodationInfoDto();
     }
 
+    public AccommodationDto getAccommodationDto(Long groupId) {
+        if(groupId == null || groupId < 0){
+            throw new IllegalArgumentException(ExceptionInfo.INVALID_GROUP_ID);
+        }
+
+        var tripGroup = tripGroupRepository.findById(groupId)
+                                           .orElseThrow(() -> new ApiRequestException(GROUP_NOT_FOUND));
+
+        if(tripGroup.getSelectedAccommodationId() != null)
+            return accommodationProxy.getAccommodation(INNER_COMMUNICATION, tripGroup.getSelectedAccommodationId());
+
+        return new AccommodationDto();
+    }
+
     @Transactional
     public TripGroup setSelectedAccommodation(Long groupId, Long accommodationId) {
         if(groupId == null || accommodationId == null)

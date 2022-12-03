@@ -12,4 +12,7 @@ public interface AccommodationVoteRepository extends JpaRepository<Accommodation
 
     @Query("SELECT v FROM AccommodationVote v WHERE v.id.accommodationId IN :accommodationIds")
     List<AccommodationVote> findAllByAccommodationsId(List<Long> accommodationIds);
+
+    @Query("SELECT v FROM AccommodationVote v WHERE v.id.userId =?1")
+    List<AccommodationVote> findAllByUserId(Long userId);
 }

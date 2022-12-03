@@ -150,7 +150,7 @@ public class AccommodationServiceTests {
 
         //when
         when(accommodationRepository.findAllByGroupId(anyLong())).thenReturn(Optional.of(List.of(new Accommodation())));
-        accommodationService.getAllAccommodationsForGroup(1L);
+        accommodationService.getAllAccommodationsForGroup(1L, null);
 
         //then
         verify(accommodationRepository).findAllByGroupId(1L);
@@ -241,7 +241,7 @@ public class AccommodationServiceTests {
         mockAuthorizeAuthorOrCoordinatorExpenditureAspect();
         mockAuthorizePartOfTheGroupAspect();
 
-        assertThrows(IllegalArgumentException.class, () -> accommodationService.getAllAccommodationsForGroup(null));
+        assertThrows(IllegalArgumentException.class, () -> accommodationService.getAllAccommodationsForGroup(null, null));
         assertThrows(IllegalArgumentException.class, () -> accommodationService.deleteAccommodation(null));
         assertThrows(IllegalArgumentException.class, () -> accommodationService.editAccommodation(null, 1L, null));
         assertThrows(IllegalArgumentException.class, () -> accommodationService.editAccommodation(1L, null, null));

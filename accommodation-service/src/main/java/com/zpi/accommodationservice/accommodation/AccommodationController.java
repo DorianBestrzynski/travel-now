@@ -17,8 +17,8 @@ public class AccommodationController {
     private final AccommodationService accommodationService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId){
-        var result = accommodationService.getAllAccommodationsForGroup(groupId);
+    public ResponseEntity<List<Accommodation>> getAllAccommodationsForGroup(@RequestParam Long groupId, @RequestParam(required = false) Long userId){
+        var result = accommodationService.getAllAccommodationsForGroup(groupId, userId);
         return ResponseEntity.ok(result);
     }
 
@@ -29,6 +29,11 @@ public class AccommodationController {
         long finish = System.currentTimeMillis();
         System.out.println(finish - start);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/votes/user")
+    public ResponseEntity<List<AccommodationWithVotesDto>> getUserVotes(@RequestParam Long userId, @RequestParam Long groupId) {
+        return ResponseEntity.ok(accommodationService.getUserVotes(userId, groupId));
     }
 
     @PostMapping()

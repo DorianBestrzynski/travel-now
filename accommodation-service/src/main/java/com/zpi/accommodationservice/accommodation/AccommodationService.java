@@ -4,18 +4,13 @@ import com.zpi.accommodationservice.accomodation_strategy.AccommodationDataExtra
 import com.zpi.accommodationservice.aspects.AuthorizeAuthorOrCoordinator;
 import com.zpi.accommodationservice.aspects.AuthorizeCoordinator;
 import com.zpi.accommodationservice.aspects.AuthorizePartOfTheGroup;
-import com.zpi.accommodationservice.dto.AccommodationDataDto;
-import com.zpi.accommodationservice.dto.AccommodationDto;
-import com.zpi.accommodationservice.dto.AccommodationInfoDto;
-import com.zpi.accommodationservice.exceptions.DataExtractionNotSupported;
-import com.zpi.accommodationservice.mapstruct.MapStructMapper;
-import com.zpi.accommodationservice.proxies.TripGroupProxy;
 import com.zpi.accommodationservice.comons.Utils;
 import com.zpi.accommodationservice.dto.*;
 import com.zpi.accommodationservice.exceptions.DataExtractionNotSupported;
 import com.zpi.accommodationservice.exceptions.ExceptionsInfo;
 import com.zpi.accommodationservice.mapstruct.MapStructMapper;
 import com.zpi.accommodationservice.proxies.AppUserProxy;
+import com.zpi.accommodationservice.proxies.TripGroupProxy;
 import com.zpi.accommodationservice.votes.AccommodationVoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,8 +21,6 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static com.zpi.accommodationservice.comons.Utils.INNER_COMMUNICATION;
 
 @Service
 @RequiredArgsConstructor
@@ -84,11 +77,15 @@ public class AccommodationService {
     }
 
     @AuthorizePartOfTheGroup
-    public List<Accommodation> getAllAccommodationsForGroup(Long groupId) {
+    public List<Accommodation> getAllAccommodationsForGroup(Long groupId, Long userId) {
         if(groupId == null)
             throw new IllegalArgumentException(ExceptionsInfo.INVALID_GROUP_ID + " or " + ExceptionsInfo.INVALID_USER_ID);
-        return accommodationRepository.findAllByGroupId(groupId).orElseThrow(() -> new EntityNotFoundException(
-                ExceptionsInfo.ENTITY_NOT_FOUND));
+        if(userId == null)
+            return accommodationRepository.findAllByGroupId(groupId).orElseThrow(() -> new EntityNotFoundException(
+                    ExceptionsInfo.ENTITY_NOT_FOUND));
+        else
+            return accommodationRepository.findAllByGroupIdAndCreatorId(groupId, userId).orElseThrow(() -> new EntityNotFoundException(
+                    ExceptionsInfo.ENTITY_NOT_FOUND));
     }
 
     @AuthorizePartOfTheGroup
@@ -194,5 +191,15 @@ public class AccommodationService {
 
     public Accommodation getAccommodation(Long accommodationId) {
         return accommodationRepository.findById(accommodationId).orElseThrow(() -> new EntityNotFoundException(ExceptionsInfo.ENTITY_NOT_FOUND));
+    }
+
+    public List<AccommodationWithVotesDto> getUserVotes(Long userId, Long groupId) {
+        var votesForGroup = getAllAccommodationsForGroupWithVotes(groupId);
+
+        return votesForGroup.parallelStream()
+                            .filter(acc -> acc.userVoted()
+                                              .parallelStream()
+                                              .anyMatch(dto -> dto.userId().equals(userId)))
+                            .collect(Collectors.toList());
     }
 }

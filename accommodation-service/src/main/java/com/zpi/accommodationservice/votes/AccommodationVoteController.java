@@ -30,4 +30,9 @@ public class AccommodationVoteController {
     public ResponseEntity<AccommodationVote> deleteVote(@RequestBody @Validated AccommodationVoteId accommodationVoteId) {
         return ResponseEntity.ok(accommodationVoteService.deleteVote(accommodationVoteId));
     }
+
+    @PatchMapping("/vote")
+    public ResponseEntity<AccommodationVote> unVote(@RequestBody @Validated AccommodationVoteId accommodationVoteId) {
+        return ResponseEntity.ok(accommodationVoteService.deleteVote(accommodationVoteId));
+    }
 }
