@@ -95,6 +95,12 @@ public class TripGroupController {
         tripGroupService.leaveGroup(groupId);
     }
 
+    @DeleteMapping("/coordinator-user")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteUserFromGroup(@RequestParam Long groupId, @RequestParam Long userId) {
+        tripGroupService.deleteUserFromGroup(groupId, userId);
+    }
+
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public void changeGroupStage(@RequestParam Long groupId) {

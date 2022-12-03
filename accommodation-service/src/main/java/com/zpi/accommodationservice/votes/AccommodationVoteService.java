@@ -58,4 +58,10 @@ public class AccommodationVoteService {
         accommodationVoteRepository.delete(accommodationVote);
         return accommodationVote;
     }
+
+    @Transactional
+    public void deleteAllUserVotesInGroup(Long userId, Long groupId) {
+        var userVotesInGroup = accommodationVoteRepository.findAllByUserIdAndGroupId(userId, groupId);
+        accommodationVoteRepository.deleteAll(userVotesInGroup);
+    }
 }

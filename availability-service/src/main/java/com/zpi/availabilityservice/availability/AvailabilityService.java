@@ -178,5 +178,13 @@ public class AvailabilityService {
         return availability.getUserId()
                            .equals(((CustomUsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getUserId());
     }
+
+    @Transactional
+    public void deleteAllAvailabilitiesForUser(Long userId, Long groupId) {
+        var userAvailabilities = availabilityRepository.findAvailabilitiesByUserIdAndGroupId(userId, groupId);
+        availabilityRepository.deleteAll(userAvailabilities);
+        generationAvailabilityPublisher.publishAvailabilityGenerationEvent(groupId);
+
+    }
 }
 
