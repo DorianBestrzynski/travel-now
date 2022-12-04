@@ -34,6 +34,9 @@ public class AppUserService {
     }
 
     public void registerUser(RegisterRequestDto registerRequestDto) {
+        if(appUserRepository.findAppUserByEmail(registerRequestDto.email()).isPresent())
+            throw new IllegalArgumentException("Account with given email already exists");
+
         var encodedPassword = passwordEncoder.encode(registerRequestDto.password());
         var password = new Password(encodedPassword);
         var user = new AppUser(registerRequestDto.phoneNumber(),

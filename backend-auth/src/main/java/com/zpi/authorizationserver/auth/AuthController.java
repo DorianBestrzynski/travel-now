@@ -52,6 +52,7 @@ public class AuthController {
             var userDto = mapStructMapper.getUserDtoFromAppUser(user);
             return ResponseEntity.ok()
                                  .header(HttpHeaders.AUTHORIZATION, jwt)
+                                 .header("Access-Control-Expose-Headers","Authorization")
                                  .body(userDto);
         } catch (BadCredentialsException exception) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
