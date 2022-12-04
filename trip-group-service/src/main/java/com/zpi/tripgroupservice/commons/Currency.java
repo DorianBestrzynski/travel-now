@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum Currency {
     USD("USD", "$"),
     PLN("PLN", "zł"),
-    EURO("EUR", "€"),
+    EUR("EUR", "€"),
     CZK("CZK", "Kč"),
     TRY("TRY", "₺"),
     GBP("GBP", "£"),

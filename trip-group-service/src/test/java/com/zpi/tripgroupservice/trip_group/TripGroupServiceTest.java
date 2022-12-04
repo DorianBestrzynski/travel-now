@@ -205,7 +205,7 @@ class TripGroupServiceTest {
     void shouldCorrectlyUpdateTripGroup() {
         //given
         mockAuthorizeCoordinatorAspect();
-        var tripGroupDto = new TripGroupDto("Name", Currency.EURO, "Updated Desc", 1,
+        var tripGroupDto = new TripGroupDto("Name", Currency.EUR, "Updated Desc", 1,
                 "Raclawicka", "China", 1, 1);
         var tripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
                 "Wroclaw" , 1, 2 );
@@ -215,7 +215,7 @@ class TripGroupServiceTest {
         var actualTripGroup = tripGroupService.updateGroup(1L, tripGroupDto);
 
         //then
-        var expectedTripGroup = new TripGroup("Name", Currency.EURO, "Updated Desc", 1, "Raclawicka",
+        var expectedTripGroup = new TripGroup("Name", Currency.EUR, "Updated Desc", 1, "Raclawicka",
                 "China" , 1, 1 );
         assertThat(actualTripGroup).isEqualTo(expectedTripGroup);
         verify(tripGroupRepository, times(1)).save(any());
@@ -409,7 +409,7 @@ class TripGroupServiceTest {
     void shouldCorrectlySetCurrencyInGroup() {
         //given
         mockAuthorizeCoordinatorAspect();
-        var currency = Currency.EURO;
+        var currency = Currency.EUR;
         var tripGroup = new TripGroup("Name", Currency.PLN, "Desc", 1, "Raclawicka",
                 "Wroclaw" , 3, 3 );
 
