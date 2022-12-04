@@ -140,7 +140,7 @@ public class TripGroupService {
     public AvailabilityConstraintsDto getAvailabilityConstraints(Long groupId) {
         var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
                 GROUP_NOT_FOUND));
-        return new AvailabilityConstraintsDto(tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants());
+        return new AvailabilityConstraintsDto(tripGroup.getMinimalNumberOfDays(), tripGroup.getMinimalNumberOfParticipants(), tripGroup.getSelectedSharedAvailability());
         }
 
     public AccommodationInfoDto getAccommodation(Long groupId) {
