@@ -6,11 +6,13 @@ import com.zpi.financeoptimizerservice.commons.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
+import static com.zpi.financeoptimizerservice.exceptions.ExceptionsInfo.ENTITY_NOT_FOUND;
 import static com.zpi.financeoptimizerservice.exceptions.ExceptionsInfo.INVALID_PARAMS;
 
 
@@ -48,7 +50,7 @@ public class FinancialRequestService {
     @AuthorizePartOfTheGroup
     @AuthorizeAuthorOrCoordinatorRequest
     public void acceptFinancialRequest(Long requestId) {
-        var financialRequest = financialRequestRepository.findById(requestId).orElseThrow();
+        var financialRequest = financialRequestRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         financialRequest.setStatus(Status.RESOLVED);
         financialRequestRepository.save(financialRequest);
     }
