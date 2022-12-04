@@ -1,5 +1,6 @@
 package com.zpi.accommodationservice.votes;
 
+import com.zpi.accommodationservice.accommodation.Accommodation;
 import com.zpi.accommodationservice.accommodation.AccommodationRepository;
 import com.zpi.accommodationservice.aspects.AuthorizePartOfTheGroup;
 import com.zpi.accommodationservice.dto.AccommodationVoteDto;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,12 +58,21 @@ public class AccommodationVoteService {
         var accommodation = accommodationRepository.findById(accommodationVoteId.getAccommodationId()).orElseThrow();
         accommodation.setGivenVotes(accommodation.getGivenVotes() - 1);
         accommodationVoteRepository.delete(accommodationVote);
+        accommodationRepository.save(accommodation);
         return accommodationVote;
     }
 
     @Transactional
     public void deleteAllUserVotesInGroup(Long userId, Long groupId) {
         var userVotesInGroup = accommodationVoteRepository.findAllByUserIdAndGroupId(userId, groupId);
+        var accommodationList = new ArrayList<Accommodation>();
+        for(var uv : userVotesInGroup) {
+            var accommodation = accommodationRepository.findById(uv.getId().getAccommodationId()).orElseThrow();
+            accommodation.setGivenVotes(accommodation.getGivenVotes() - 1);
+            accommodationList.add(accommodation);
+        }
         accommodationVoteRepository.deleteAll(userVotesInGroup);
+        accommodationRepository.saveAll(accommodationList);
+
     }
 }
