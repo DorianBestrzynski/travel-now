@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public interface TripGroupProxy {
 
     @GetMapping("api/v1/trip-group/availability-info")
-    AvailabilityConstraintsDto getAvailabilityConstraints(@RequestParam Long groupId);
+    AvailabilityConstraintsDto getAvailabilityConstraints(@RequestHeader("innerCommunication") String header, @RequestParam Long groupId);
 
     @GetMapping("api/v1/user-group/role")
     boolean isUserCoordinator(@RequestHeader("innerCommunication") String header, @RequestParam(name = "groupId")Long groupId, @RequestParam(name = "userId")Long userId);

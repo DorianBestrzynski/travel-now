@@ -31,7 +31,7 @@ public class SharedGroupAvailabilityService {
 
     @Transactional
     public void generateSharedGroupAvailability(Long groupId) {
-        var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(groupId);
+        var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(INNER_COMMUNICATION,groupId);
         minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
         minimalNumberOfParticipants = getAvailabilityConstraints.numberOfParticipants();
 
