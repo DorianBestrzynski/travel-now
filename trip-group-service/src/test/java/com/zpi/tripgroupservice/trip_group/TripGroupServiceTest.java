@@ -283,7 +283,7 @@ class TripGroupServiceTest {
         var actualResult = tripGroupService.getAvailabilityConstraints(1L);
 
         //then
-        var expectedResult = new AvailabilityConstraintsDto(3, 3);
+        var expectedResult = new AvailabilityConstraintsDto(3, 3, 1L);
         assertThat(actualResult).isEqualTo(expectedResult);
         verify(tripGroupRepository, times(1)).findById(anyLong());
     }
