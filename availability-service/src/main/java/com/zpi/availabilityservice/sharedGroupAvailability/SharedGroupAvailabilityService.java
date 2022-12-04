@@ -57,7 +57,8 @@ public class SharedGroupAvailabilityService {
             sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
         }
         else {
-            sharedGroupAvailabilityRepository.deleteAllByGroupIdWithoutSelected(groupId, getAvailabilityConstraints.selectedSharedAvailability());
+            var allToDelete = sharedGroupAvailabilityRepository.getAllExceptSetSharedAvailability(groupId, getAvailabilityConstraints.selectedSharedAvailability());
+            sharedGroupAvailabilityRepository.deleteAll(allToDelete);
         }
         sharedGroupAvailabilityRepository.saveAll(filteredAvailabilities);
     }

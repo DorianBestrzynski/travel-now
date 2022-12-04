@@ -13,9 +13,8 @@ public interface SharedGroupAvailabilityRepository extends JpaRepository<SharedG
 
     List<SharedGroupAvailability> findAllByGroupId(Long groupId);
 
-    @Modifying
-    @Query("DELETE FROM SharedGroupAvailability s WHERE s.groupId=?1 AND s.sharedGroupAvailabilityId<>?2")
-    void deleteAllByGroupIdWithoutSelected(Long groupId, Long sharedGroupAvailability);
+    @Query("SELECT s  FROM SharedGroupAvailability s WHERE s.groupId=?1 AND s.sharedGroupAvailabilityId<>?2")
+    List<SharedGroupAvailability> getAllExceptSetSharedAvailability(Long groupId, Long sharedGroupAvailability);
 
     void deleteAllByGroupId(Long groupId);
 
