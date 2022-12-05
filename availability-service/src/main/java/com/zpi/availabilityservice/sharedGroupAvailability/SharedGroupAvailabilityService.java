@@ -4,6 +4,7 @@ import com.zpi.availabilityservice.aspects.AuthorizeCoordinator;
 import com.zpi.availabilityservice.aspects.AuthorizeCoordinatorShared;
 import com.zpi.availabilityservice.availability.Availability;
 import com.zpi.availabilityservice.availability.AvailabilityRepository;
+import com.zpi.availabilityservice.dto.AvailabilityConstraintsDto;
 import com.zpi.availabilityservice.proxies.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class SharedGroupAvailabilityService {
         minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
         minimalNumberOfParticipants = getAvailabilityConstraints.numberOfParticipants();
 
+        processGeneration(groupId, getAvailabilityConstraints.selectedSharedAvailability());
+    }
+
+    private void processGeneration(Long groupId, Long selectedSharedAvailability) {
         var allAvailabilitiesInGroup = availabilityRepository.findAvailabilitiesByGroupId(groupId);
 
         var firstDate = LocalDate.MAX;
@@ -53,14 +58,29 @@ public class SharedGroupAvailabilityService {
 
         var filteredAvailabilities = filterAvailabilities(bestAvailabilities);
 
-        if(getAvailabilityConstraints.selectedSharedAvailability() == null){
+        if(selectedSharedAvailability == null){
             sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
         }
         else {
-            var allToDelete = sharedGroupAvailabilityRepository.getAllExceptSetSharedAvailability(groupId, getAvailabilityConstraints.selectedSharedAvailability());
+            var allToDelete = sharedGroupAvailabilityRepository.getAllExceptSetSharedAvailability(groupId, selectedSharedAvailability);
             sharedGroupAvailabilityRepository.deleteAll(allToDelete);
         }
         sharedGroupAvailabilityRepository.saveAll(filteredAvailabilities);
+    }
+
+    @Transactional
+    public void generateSharedGroupAvailability(Long groupId, Integer givenMinimalNumberOfDays, Integer givenMinimalNumberOfParticipants) {
+        var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(INNER_COMMUNICATION,groupId);
+        minimalNumberOfDays = getAvailabilityConstraints.numberOfDays();
+        minimalNumberOfParticipants = getAvailabilityConstraints.numberOfParticipants();
+        if(givenMinimalNumberOfDays != null) {
+            minimalNumberOfDays = givenMinimalNumberOfDays;
+        }
+        if(givenMinimalNumberOfParticipants != null) {
+            minimalNumberOfParticipants = givenMinimalNumberOfParticipants;
+        }
+
+        processGeneration(groupId, getAvailabilityConstraints.selectedSharedAvailability());
     }
 
     public List<SharedGroupAvailability> filterAvailabilities(List<SharedGroupAvailability> availabilities) {

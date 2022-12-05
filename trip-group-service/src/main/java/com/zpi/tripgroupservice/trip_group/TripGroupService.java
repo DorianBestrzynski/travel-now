@@ -109,6 +109,9 @@ public class TripGroupService {
                 ExceptionInfo.GROUP_NOT_FOUND));
         mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
         tripGroupRepository.save(tripGroup);
+        if(tripGroupDto.minimalNumberOfDays() != null || tripGroupDto.minimalNumberOfParticipants() != null) {
+            availabilityProxy.triggerAvailabilityGenerationParams(INNER_COMMUNICATION, groupId, tripGroupDto.minimalNumberOfDays(), tripGroupDto.minimalNumberOfParticipants());
+        }
         return tripGroup;
     }
 

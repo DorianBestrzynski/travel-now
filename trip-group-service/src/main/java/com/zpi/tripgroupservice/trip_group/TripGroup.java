@@ -35,7 +35,7 @@ public class TripGroup {
     @Column(unique = true, nullable = false)
     private Long groupId;
 
-    @Column(name = "name", nullable = false, length = 20)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @Column(name = "currency", nullable = false)

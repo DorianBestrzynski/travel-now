@@ -2,6 +2,8 @@ package com.zpi.availabilityservice.availability;
 
 import com.zpi.availabilityservice.dto.AvailabilityDto;
 import com.zpi.availabilityservice.dto.UserDto;
+import com.zpi.availabilityservice.sharedGroupAvailability.SharedGroupAvailability;
+import com.zpi.availabilityservice.sharedGroupAvailability.SharedGroupAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AvailabilityController {
     private final AvailabilityService availabilityService;
+    private final SharedGroupAvailabilityService sharedGroupAvailabilityService;
     private final AvailabilityRepository availabilityRepository;
 
     @GetMapping("/user")
@@ -82,4 +85,11 @@ public class AvailabilityController {
         availabilityService.trigger(groupId);
         return "triggerred";
     }
+
+    @GetMapping("trigger-params")
+    public String triggerAvailabilityGenerationParams(@RequestParam Long groupId, @RequestParam(required = false) Integer minimalNumberOfDays, @RequestParam(required = false) Integer minimalNumberOfParticipants){
+        sharedGroupAvailabilityService.generateSharedGroupAvailability(groupId, minimalNumberOfDays, minimalNumberOfParticipants);
+        return "triggerred";
+    }
+
 }
