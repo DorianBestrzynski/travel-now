@@ -37,7 +37,7 @@ public class Geolocation {
             result[LATITUDE_INDEX] = latitude;
             result[LONGITUDE_INDEX] = longitude;
         } catch (ApiException | InterruptedException | IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("We cannot find your starting location. Please check or change starting point.");
         }
         return result;
     }
