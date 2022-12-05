@@ -130,7 +130,7 @@ class FinancialRequestServiceTest {
         mockAuthorizeAuthorOrCoordinatorRequestAspect();
 
         //when
-        financialRequestService.acceptFinancialRequest(1L);
+        financialRequestService.acceptFinancialRequest(1L, 1L);
 
         //then
         verify(financialRequestRepository, times(2)).findById(anyLong());

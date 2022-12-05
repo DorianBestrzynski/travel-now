@@ -45,11 +45,11 @@ public class FinancialRequestService {
     public Set<FinancialRequest> getUserFinancialRequests(Long userId, Long groupId) {
         return financialRequestRepository.getAllByDebtorAndExpenditure(userId, groupId);
     }
-
+    /**Do not delete groupId, it is used in aspects!!!**/
     @Transactional
     @AuthorizePartOfTheGroup
     @AuthorizeAuthorOrCoordinatorRequest
-    public void acceptFinancialRequest(Long requestId) {
+    public void acceptFinancialRequest(Long requestId, Long groupId) {
         var financialRequest = financialRequestRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         financialRequest.setStatus(Status.RESOLVED);
         financialRequestRepository.save(financialRequest);
