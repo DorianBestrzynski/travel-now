@@ -195,7 +195,36 @@ public class TransportService {
                                            .stream()
                                            .findFirst()
                                            .orElseThrow();
-        mapper.mapFromUserTransportDtoToUserTransport(transport, userTransportDto);
+        if(userTransportDto.duration() != null) {
+            transport.setDuration(userTransportDto.duration());
+        }
+        if(userTransportDto.price() != null) {
+            transport.setPrice(userTransportDto.price());
+        }
+        if(userTransportDto.source() != null) {
+            transport.setSource(userTransportDto.source());
+        }
+        if(userTransportDto.destination() != null) {
+            transport.setDestination(userTransportDto.destination());
+        }
+        if(userTransportDto.startDate() != null) {
+            transport.setStartDate(userTransportDto.startDate());
+        }
+        if(userTransportDto.endDate() != null) {
+            transport.setEndDate(userTransportDto.endDate());
+        }
+        if(userTransportDto.link() != null) {
+            transport.setLink(userTransportDto.link());
+        }
+        if(userTransportDto.meanOfTransport() != null) {
+            transport.setMeanOfTransport(userTransportDto.meanOfTransport());
+        }
+        if(userTransportDto.description() != null) {
+            transport.setDescription(userTransportDto.description());
+        }
+        if(userTransportDto.meetingTime() != null) {
+            transport.setMeetingTime(userTransportDto.meetingTime());
+        }
         return transportRepository.save(transport);
     }
 }
