@@ -1,8 +1,8 @@
 package com.zpi.transportservice.transport;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @DiscriminatorColumn(name = "transport_type",
                     discriminatorType = DiscriminatorType.INTEGER)
