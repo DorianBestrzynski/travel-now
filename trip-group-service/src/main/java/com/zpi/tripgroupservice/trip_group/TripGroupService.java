@@ -108,6 +108,11 @@ public class TripGroupService {
         var tripGroup = tripGroupRepository.findById(groupId).orElseThrow(() -> new ApiRequestException(
                 ExceptionInfo.GROUP_NOT_FOUND));
         mapstructMapper.updateFromTripGroupDtoToTripGroup(tripGroup,tripGroupDto);
+        if(tripGroupDto.startLocation() != null) {
+            var coordinates = geolocation.findCoordinates(tripGroupDto.startLocation());
+            tripGroup.setLatitude(coordinates[LATITUDE_INDEX]);
+            tripGroup.setLongitude(coordinates[LONGITUDE_INDEX]);
+        }
         tripGroupRepository.save(tripGroup);
         if(tripGroupDto.minimalNumberOfDays() != null || tripGroupDto.minimalNumberOfParticipants() != null) {
             availabilityProxy.triggerAvailabilityGenerationParams(INNER_COMMUNICATION, groupId, tripGroupDto.minimalNumberOfDays(), tripGroupDto.minimalNumberOfParticipants());
