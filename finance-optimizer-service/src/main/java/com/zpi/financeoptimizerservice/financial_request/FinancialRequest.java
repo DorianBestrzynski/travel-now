@@ -25,8 +25,9 @@ public class FinancialRequest {
     @Column(name = "financial_request_id",unique = true, nullable = false)
     private Long financialRequestId;
 
+    @Setter
     @Column(name = "generation_date")
-    private final LocalDateTime generationDate = LocalDateTime.now();
+    private LocalDateTime generationDate = LocalDateTime.now();
 
     @Setter
     @Column(name = "status", nullable = false)

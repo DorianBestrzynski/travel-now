@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,6 +53,7 @@ public class FinancialRequestService {
     public void acceptFinancialRequest(Long requestId, Long groupId) {
         var financialRequest = financialRequestRepository.findById(requestId).orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         financialRequest.setStatus(Status.RESOLVED);
+        financialRequest.setGenerationDate(LocalDateTime.now());
         financialRequestRepository.save(financialRequest);
     }
 
