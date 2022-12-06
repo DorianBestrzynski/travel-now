@@ -1,5 +1,6 @@
 package com.zpi.availabilityservice.sharedGroupAvailability;
 
+import com.zpi.availabilityservice.dto.SharedAvailabilityDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,12 @@ public class SharedGroupAvailabilityController {
     @PostMapping()
     public ResponseEntity<SharedGroupAvailability> addSharedGroupAvailability(@RequestParam LocalDate dateFrom, @RequestParam LocalDate dateTo, @RequestParam Long groupId) {
         var result = sharedGroupAvailabilityService.createSharedGroupAvailability(dateFrom, dateTo, groupId);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/dto")
+    public ResponseEntity<SharedGroupAvailability> addSharedGroupAvailabilityDto(@RequestBody SharedAvailabilityDto availabilityDto, @RequestParam Long groupId) {
+        var result = sharedGroupAvailabilityService.createSharedGroupAvailability(availabilityDto.dateFrom(), availabilityDto.dateTo(), groupId);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
