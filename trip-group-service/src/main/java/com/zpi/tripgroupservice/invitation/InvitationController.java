@@ -18,7 +18,9 @@ public class InvitationController {
     public ResponseEntity<String> createInvitation(@RequestParam(name = "group") Long groupId) {
         var invitationLink = invitationService.createInvitation(groupId);
 
-        return ResponseEntity.created(URI.create(invitationLink)).build();
+        return ResponseEntity.created(URI.create(invitationLink))
+                             .header("Access-Control-Expose-Headers","Location")
+                             .build();
     }
 
     @PutMapping()
