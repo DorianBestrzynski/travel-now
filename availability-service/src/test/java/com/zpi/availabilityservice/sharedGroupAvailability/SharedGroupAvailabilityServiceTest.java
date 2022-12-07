@@ -142,11 +142,11 @@ class SharedGroupAvailabilityServiceTest {
     @Test
     void shouldCorrectlyFilterAvailabilities() {
         //given
-        var sharedGroupAvailability = new SharedGroupAvailability(1L, List.of(1L,2L,3L,4L,5L,6L), LocalDate.now(), LocalDate.now(), 7);
-        var sharedGroupAvailability2 = new SharedGroupAvailability(1L, List.of(1L,2L,3L,4L,5L), LocalDate.now(), LocalDate.now(), 7);
-        var sharedGroupAvailability3 = new SharedGroupAvailability(1L, List.of(1L,2L,3L,4L,5L), LocalDate.now(), LocalDate.now(), 3);
-        var sharedGroupAvailability5 = new SharedGroupAvailability(1L, List.of(1L,2L,6L,3L), LocalDate.now(), LocalDate.now(), 8);
-        var sharedGroupAvailability6 = new SharedGroupAvailability(1L, List.of(1L,2L,6L), LocalDate.now(), LocalDate.now(), 9);
+        var sharedGroupAvailability = new SharedGroupAvailability(1L, List.of(1L,2L,3L,4L,5L,6L), LocalDate.now(), LocalDate.now(), 7, false);
+        var sharedGroupAvailability2 = new SharedGroupAvailability(1L, List.of(1L,2L,3L,4L,5L), LocalDate.now(), LocalDate.now(), 7, false);
+        var sharedGroupAvailability3 = new SharedGroupAvailability(1L, List.of(1L,2L,3L,4L,5L), LocalDate.now(), LocalDate.now(), 3, false);
+        var sharedGroupAvailability5 = new SharedGroupAvailability(1L, List.of(1L,2L,6L,3L), LocalDate.now(), LocalDate.now(), 8, false);
+        var sharedGroupAvailability6 = new SharedGroupAvailability(1L, List.of(1L,2L,6L), LocalDate.now(), LocalDate.now(), 9, false);
         var listOfAvailabilities = List.of(sharedGroupAvailability, sharedGroupAvailability2, sharedGroupAvailability3, sharedGroupAvailability5, sharedGroupAvailability6);
         //when
         var result = sharedGroupAvailabilityService.filterAvailabilities(listOfAvailabilities);
