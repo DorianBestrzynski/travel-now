@@ -62,6 +62,14 @@ public class SharedGroupAvailabilityService {
         else {
             var allToDelete = sharedGroupAvailabilityRepository.getAllExceptSetSharedAvailability(groupId, selectedSharedAvailability);
             sharedGroupAvailabilityRepository.deleteAll(allToDelete);
+            var currentlyAcceptedSharedGroupAvailability = sharedGroupAvailabilityRepository
+                    .findById(selectedSharedAvailability)
+                    .orElseThrow(() -> new EntityNotFoundException(SHARED_AVAILABILITY_NOT_FOUND));
+            if (!currentlyAcceptedSharedGroupAvailability.getIsCreatedManually()) {
+               filteredAvailabilities = filteredAvailabilities.stream()
+                       .filter(availability -> !availability.equals(currentlyAcceptedSharedGroupAvailability))
+                       .toList();
+            }
         }
         sharedGroupAvailabilityRepository.saveAll(filteredAvailabilities);
     }
@@ -150,7 +158,7 @@ public class SharedGroupAvailabilityService {
                 previousDate = checkedDate;
                 consecutiveDaysCounter++;
                 if(isDurationLongEnough(consecutiveDaysCounter)) {
-                    resultList.add(new SharedGroupAvailability(groupId, usersForDate, dates, checkedDate, consecutiveDaysCounter));
+                    resultList.add(new SharedGroupAvailability(groupId, usersForDate, dates, checkedDate, consecutiveDaysCounter, false));
                 }
             }
             consecutiveDaysCounter = 0;
@@ -198,7 +206,10 @@ public class SharedGroupAvailabilityService {
     }
 
     public List<SharedGroupAvailability> getGroupSharedAvailabilities(Long groupId) {
-        return sharedGroupAvailabilityRepository.findAllByGroupId(groupId);
+        return sharedGroupAvailabilityRepository.findAllByGroupId(groupId)
+                .stream()
+                .filter(sharedGroupAvailability -> !sharedGroupAvailability.getIsCreatedManually())
+                .toList();
     }
 
     @AuthorizeCoordinatorShared
@@ -211,7 +222,7 @@ public class SharedGroupAvailabilityService {
     public SharedGroupAvailability createSharedGroupAvailability(LocalDate dateFrom, LocalDate dateTo, Long groupId) {
 //        sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
         int daysBetween = (int) DAYS.between(dateFrom, dateTo);
-        var sharedGroupAvailability = new SharedGroupAvailability(groupId, Collections.emptyList(), dateFrom, dateTo, daysBetween);
+        var sharedGroupAvailability = new SharedGroupAvailability(groupId, Collections.emptyList(), dateFrom, dateTo, daysBetween, true);
         var savedAvailability = sharedGroupAvailabilityRepository.save(sharedGroupAvailability);
         tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, new SelectedAvailabilityDto(groupId, savedAvailability.getSharedGroupAvailabilityId(), savedAvailability.getDateFrom(), savedAvailability.getDateTo()));
         return savedAvailability;

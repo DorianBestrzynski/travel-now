@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
@@ -34,13 +35,37 @@ public class SharedGroupAvailability {
     private LocalDate dateTo;
     @Column(name ="number_of_days" )
     private Integer numberOfDays;
+    @Column(name = "is_created_manually")
+    private Boolean isCreatedManually;
 
-    public SharedGroupAvailability(Long groupId, List<Long> usersList, LocalDate dateFrom, LocalDate dateTo, Integer numberOfDays) {
+//    public SharedGroupAvailability(Long groupId, List<Long> usersList, LocalDate dateFrom, LocalDate dateTo, Integer numberOfDays) {
+//        this.groupId = groupId;
+//        this.dateFrom = dateFrom;
+//        this.dateTo = dateTo;
+//        this.usersList = usersList;
+//        this.numberOfDays = numberOfDays;
+//    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SharedGroupAvailability that = (SharedGroupAvailability) o;
+        return groupId.equals(that.groupId) && Objects.equals(usersList, that.usersList) && dateFrom.equals(that.dateFrom) && dateTo.equals(that.dateTo) && numberOfDays.equals(that.numberOfDays) && isCreatedManually.equals(that.isCreatedManually);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupId, usersList, dateFrom, dateTo, numberOfDays, isCreatedManually);
+    }
+
+    public SharedGroupAvailability(Long groupId, List<Long> usersList, LocalDate dateFrom, LocalDate dateTo, Integer numberOfDays, Boolean isCreatedManually) {
         this.groupId = groupId;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.usersList = usersList;
         this.numberOfDays = numberOfDays;
+        this.isCreatedManually = isCreatedManually;
     }
 
     public int getNumberOfUsers(){
