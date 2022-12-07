@@ -84,7 +84,7 @@ public class TripGroupController {
 
     @PostMapping("/availability")
     @ResponseStatus(HttpStatus.OK)
-    public void setSelectedAvailability(SelectedAvailabilityDto selectedAvailabilityDto){
+    public void setSelectedAvailability(@RequestBody SelectedAvailabilityDto selectedAvailabilityDto){
         tripGroupService.setSelectedAvailability(selectedAvailabilityDto.groupId(),
                                                  selectedAvailabilityDto.availabilityId(),
                                                  selectedAvailabilityDto.startDate(),

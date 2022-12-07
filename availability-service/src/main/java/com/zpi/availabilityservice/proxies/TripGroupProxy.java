@@ -18,5 +18,5 @@ public interface TripGroupProxy {
     Boolean isUserPartOfTheGroup(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("userId") Long userId);
 
     @PostMapping( "api/v1/trip-group/availability")
-    void setSelectedAvailability(@RequestHeader("innerCommunication") String header, @RequestBody SelectedAvailabilityDto selectedAvailability);
+    void setSelectedAvailability(@RequestHeader("innerCommunication") String header, @RequestBody SelectedAvailabilityDto selectedAvailabilityDto);
 }
