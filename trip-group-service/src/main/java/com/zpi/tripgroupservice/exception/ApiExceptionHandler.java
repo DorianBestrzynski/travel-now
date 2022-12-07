@@ -52,6 +52,11 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {UnprocessableEntityException.class})
+    public ResponseEntity<Object> handleUnprocessableEntityException(UnprocessableEntityException ex){
+        return handleExceptions(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     private ResponseEntity<Object> handleExceptions(String message, HttpStatus request){
         ApiException apiException = new ApiException(message, request, ZonedDateTime.now(ZONE_ID));
         return ResponseEntity

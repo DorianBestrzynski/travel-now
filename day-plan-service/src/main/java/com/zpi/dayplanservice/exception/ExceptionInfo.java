@@ -34,4 +34,8 @@ public final class ExceptionInfo {
     public final static String NOT_A_GROUP_MEMBER = "This user is not a member of this group!";
 
     public final static String INSUFFICIENT_PERMISSIONS = "Insufficient permissions";
+
+    public final static String UNPROCESSABLE_ENTITY_FEIGN = "Given entity was unprocessable";
+
+    public final static String SERVICE_UNAVAILABLE_FEIGN = "Requested service is currently unavailable";
 }

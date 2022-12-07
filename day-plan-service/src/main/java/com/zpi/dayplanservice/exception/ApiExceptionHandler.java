@@ -41,6 +41,11 @@ public class ApiExceptionHandler {
         return handleExceptions(DAY_PLAN_CREATION_VALIDATION_ERROR, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(value = {UnprocessableEntityException.class})
+    public ResponseEntity<Object> handleUnprocessableEntityException(UnprocessableEntityException ex){
+        return handleExceptions(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     private ResponseEntity<Object> handleExceptions(String message, HttpStatus request){
         ApiException apiException = new ApiException(message, request, ZonedDateTime.now(ZONE_ID));
         return new ResponseEntity<>(apiException, request);
