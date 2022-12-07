@@ -1,14 +1,9 @@
 package com.zpi.availabilityservice.proxies;
 
 import com.zpi.availabilityservice.dto.AvailabilityConstraintsDto;
+import com.zpi.availabilityservice.dto.SelectedAvailabilityDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.time.LocalDate;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "trip-group", url = "${app.group-service}:8082/")
 public interface TripGroupProxy {
@@ -22,12 +17,6 @@ public interface TripGroupProxy {
     @GetMapping( "api/v1/user-group/group")
     Boolean isUserPartOfTheGroup(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("userId") Long userId);
 
-    @PutMapping( "api/v1/trip-group/availability")
-    void setSelectedAvailability(@RequestHeader("innerCommunication") String header, @RequestParam("groupId") Long groupId, @RequestParam("availabilityId") Long availabilityId,
-                                 @RequestParam("startDate")
-                                 @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                 LocalDate startDate,
-                                 @RequestParam("endDate")
-                                 @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                 LocalDate endDate);
+    @PostMapping( "api/v1/trip-group/availability")
+    void setSelectedAvailability(@RequestHeader("innerCommunication") String header, @RequestBody SelectedAvailabilityDto selectedAvailability);
 }
