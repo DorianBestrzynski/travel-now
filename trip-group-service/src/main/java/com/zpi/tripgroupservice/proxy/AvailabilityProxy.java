@@ -12,6 +12,9 @@ public interface AvailabilityProxy {
     @DeleteMapping("/all-user")
     void deleteAllAvailabilitiesForUser(@RequestHeader("innerCommunication") String header, @RequestParam Long userId, @RequestParam Long groupId);
 
+    @GetMapping("/triggerAvailabilityGeneration")
+    String triggerAvailabilityGeneration(@RequestHeader("innerCommunication") String header, @RequestParam Long groupId);
+
     @GetMapping("/trigger-params")
     String triggerAvailabilityGenerationParams(@RequestHeader("innerCommunication") String header, @RequestParam Long groupId, @RequestParam(required = false) Integer minimalNumberOfDays,  @RequestParam(required = false) Integer minimalNumberOfParticipants );
 }
