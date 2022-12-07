@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 public record TripGroupDto(
         @NotEmpty
-        @Length(max = 20)
+        @Length(max = 50)
         @JsonProperty("name")
         String name,
         @NotNull

@@ -1,13 +1,11 @@
 package com.zpi.availabilityservice.sharedGroupAvailability;
 
-import com.zpi.availabilityservice.aspects.AuthorizeCoordinator;
 import com.zpi.availabilityservice.aspects.AuthorizeCoordinatorShared;
 import com.zpi.availabilityservice.availability.Availability;
 import com.zpi.availabilityservice.availability.AvailabilityRepository;
-import com.zpi.availabilityservice.dto.AvailabilityConstraintsDto;
+import com.zpi.availabilityservice.dto.SelectedAvailabilityDto;
 import com.zpi.availabilityservice.proxies.TripGroupProxy;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -206,7 +204,7 @@ public class SharedGroupAvailabilityService {
     @AuthorizeCoordinatorShared
     public void acceptSharedGroupAvailability(Long sharedGroupAvailabilityId) {
         var sharedAvailability = sharedGroupAvailabilityRepository.findById(sharedGroupAvailabilityId).orElseThrow(() -> new EntityNotFoundException(SHARED_AVAILABILITY_NOT_FOUND));
-        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, sharedAvailability.getGroupId(), sharedGroupAvailabilityId, sharedAvailability.getDateFrom(), sharedAvailability.getDateTo());
+        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, new SelectedAvailabilityDto(sharedAvailability.getGroupId(), sharedGroupAvailabilityId, sharedAvailability.getDateFrom(), sharedAvailability.getDateTo()));
     }
 
     @Transactional
@@ -215,7 +213,7 @@ public class SharedGroupAvailabilityService {
         int daysBetween = (int) DAYS.between(dateFrom, dateTo);
         var sharedGroupAvailability = new SharedGroupAvailability(groupId, Collections.emptyList(), dateFrom, dateTo, daysBetween);
         var savedAvailability = sharedGroupAvailabilityRepository.save(sharedGroupAvailability);
-        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, groupId, savedAvailability.getSharedGroupAvailabilityId(), savedAvailability.getDateFrom(), savedAvailability.getDateTo());
+        tripGroupProxy.setSelectedAvailability(INNER_COMMUNICATION, new SelectedAvailabilityDto(groupId, savedAvailability.getSharedGroupAvailabilityId(), savedAvailability.getDateFrom(), savedAvailability.getDateTo()));
         return savedAvailability;
 
     }
