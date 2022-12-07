@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +41,7 @@ public class InitializeData {
         addAttractions();
     }
 
-    @Transactional
+//    @Transactional
     public void addAttractions() {
         if (!profile.equals("test"))
             return;
