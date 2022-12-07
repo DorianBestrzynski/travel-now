@@ -17,11 +17,20 @@ public final class ExceptionInfo {
 
     public final static String DAY_PLAN_CREATION_VALIDATION_ERROR = "Error while validating day plan";
 
-    public final static String REQUESTED_ENTITY_NOT_FOUND_FEIGN = "Requested entity not found via feign";
+    public final static String REQUESTED_ENTITY_NOT_FOUND_FEIGN = "Requested entity not found";
 
-    public final static String UNAUTHORIZED_REQUEST_FEIGN = "Request was unauthorized via feign";
+    public final static String UNAUTHORIZED_REQUEST_FEIGN = "Request was unauthorized ";
 
-    public final static String ILLEGAL_ARGUMENT_FEIGN = "In request there were illegal argument via feign";
+    public final static String ILLEGAL_ARGUMENT_FEIGN = "In request there were illegal argument";
+
+    public final static String RESOURCE_NOT_FOUND_FEIGN = "Resource was not found";
+
+    public final static String UNPROCESSABLE_ENTITY_FEIGN = "Given entity was unprocessable";
+
+    public final static String FORBIDDEN_FEIGN = "You do not have access to this resource or action";
+
+    public final static String SERVICE_UNAVAILABLE_FEIGN = "Requested service is currently unavailable";
+
 
     public final static String EXCEPTION_FEIGN = "There was exception while feign communication";
 
