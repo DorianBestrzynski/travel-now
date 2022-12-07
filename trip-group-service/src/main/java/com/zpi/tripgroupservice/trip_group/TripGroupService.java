@@ -247,6 +247,7 @@ public class TripGroupService {
         var tripGroup = tripGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ApiRequestException(ExceptionInfo.GROUP_NOT_FOUND));
         tripGroup.setSelectedSharedAvailability(null);
+        availabilityProxy.triggerAvailabilityGeneration(INNER_COMMUNICATION, groupId);
         tripGroupRepository.save(tripGroup);
     }
 

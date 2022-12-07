@@ -209,7 +209,7 @@ public class SharedGroupAvailabilityService {
 
     @Transactional
     public SharedGroupAvailability createSharedGroupAvailability(LocalDate dateFrom, LocalDate dateTo, Long groupId) {
-        sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
+//        sharedGroupAvailabilityRepository.deleteAllByGroupId(groupId);
         int daysBetween = (int) DAYS.between(dateFrom, dateTo);
         var sharedGroupAvailability = new SharedGroupAvailability(groupId, Collections.emptyList(), dateFrom, dateTo, daysBetween);
         var savedAvailability = sharedGroupAvailabilityRepository.save(sharedGroupAvailability);
