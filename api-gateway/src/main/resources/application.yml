@@ -3,7 +3,7 @@ server.port: 8080
 spring.application.name: gateway
 spring.config.import: "configserver:"
 app.config-server: localhost
-allowed.origin: http://localhost:3000
+allowed.origin: http://localhost:3000,https://web-deploy-one.vercel.app
 
 jwt:
   signing-secret: secret
