@@ -2,6 +2,7 @@ package com.zpi.authorizationserver.user;
 
 import com.zpi.authorizationserver.dto.RegisterRequestDto;
 import com.zpi.authorizationserver.dto.UserDto;
+import com.zpi.authorizationserver.exceptions.ApiPermissionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class AppUserService {
     }
 
     public AppUser getAppUserByEmail(String email) {
-        return appUserRepository.findAppUserByEmail(email).orElseThrow();
+        return appUserRepository.findAppUserByEmail(email).orElseThrow(() -> new ApiPermissionException("Incorrect email or password. Permission denied"));
     }
 
     public void registerUser(RegisterRequestDto registerRequestDto) {
