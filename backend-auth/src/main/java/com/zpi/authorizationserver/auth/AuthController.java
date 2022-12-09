@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.zpi.authorizationserver.dto.LoginRequestBodyDto;
 import com.zpi.authorizationserver.dto.RegisterRequestDto;
 import com.zpi.authorizationserver.dto.UserDto;
+import com.zpi.authorizationserver.exceptions.ApiPermissionException;
 import com.zpi.authorizationserver.mapstruct.MapStructMapper;
 import com.zpi.authorizationserver.security.JwtTokenFilter;
 import com.zpi.authorizationserver.user.AppUserService;
@@ -55,7 +56,7 @@ public class AuthController {
                                  .header("Access-Control-Expose-Headers","Authorization")
                                  .body(userDto);
         } catch (BadCredentialsException exception) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new ApiPermissionException("Incorrect email or password. Permission denied");
         }
     }
 

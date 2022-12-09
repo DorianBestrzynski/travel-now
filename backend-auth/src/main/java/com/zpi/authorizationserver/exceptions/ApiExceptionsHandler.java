@@ -36,6 +36,11 @@ public class ApiExceptionsHandler {
         return handleExceptions(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {ApiPermissionException.class})
+    public ResponseEntity<Object> handleApiPermissionException(ApiPermissionException e){
+        return handleExceptions(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
     private ResponseEntity<Object> handleExceptions(String message, HttpStatus request){
         ApiException apiException = new ApiException(message, request, ZonedDateTime.now(ZONE_ID));
         return new ResponseEntity<>(apiException, request);
