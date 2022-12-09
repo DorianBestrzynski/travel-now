@@ -28,6 +28,9 @@ public class InvitationService {
     @Value("${app.salt-length}")
     private int saltLength;
 
+    @Value("${app.invitation-prefix}")
+    private String invitationPrefix;
+
     @Transactional
     @AuthorizeCoordinator
     public String createInvitation(Long groupId) {
@@ -66,7 +69,7 @@ public class InvitationService {
     }
 
     private String getInvitationLink(String invitationToken) {
-        return "http://localhost:8080/api/v1/invitation/?token=" + invitationToken;
+        return invitationPrefix + invitationToken;
     }
 
     @Transactional
