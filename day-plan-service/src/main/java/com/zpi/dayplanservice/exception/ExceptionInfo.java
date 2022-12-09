@@ -9,7 +9,7 @@ public final class ExceptionInfo {
 
     public final static String INVALID_GROUP_ID = "Group id is invalid. Id must be a positive number";
 
-    public final static String TAKEN_DATE = "There is already a day plan for this date. Try deleting existing one if you want to add current plan";
+    public final static String TAKEN_DATE = "There is already a day plan for this date.";
 
     public final static String CREATING_PERMISSION_VIOLATION = "Only user with status COORDINATOR can add new day plan!";
 

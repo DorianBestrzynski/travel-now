@@ -66,7 +66,7 @@ public class DayPlanService {
         }
 
         var newDAte = dayPlanDto.date();
-        if(dayPlanRepository.findAllByGroupId(dayPlanId).stream().anyMatch(dp -> dp.getDate().equals(newDAte) &&
+        if(dayPlanRepository.findAllByGroupId(dayPlanDto.groupId()).stream().anyMatch(dp -> dp.getDate().equals(newDAte) &&
                 !dp.getDayPlanId().equals(dayPlanId)))
             throw new IllegalDateException(TAKEN_DATE);
 
