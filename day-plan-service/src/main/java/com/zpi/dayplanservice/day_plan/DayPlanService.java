@@ -65,7 +65,7 @@ public class DayPlanService {
             throw new IllegalArgumentException(INVALID_DAY_PLAN_ID);
         }
 
-        if(dayPlanRepository.findDayPlanByDate(dayPlanDto.date()).getDayPlanId().equals(dayPlanId))
+        if(!dayPlanRepository.findDayPlanByDate(dayPlanDto.date()).getDayPlanId().equals(dayPlanId))
             throw new IllegalDateException(TAKEN_DATE);
 
         var dayPlan = dayPlanRepository.findById(dayPlanId)
