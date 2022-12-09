@@ -12,4 +12,6 @@ public interface DayPlanRepository extends JpaRepository<DayPlan, Long> {
     List<DayPlan> findAllByGroupId(Long groupId);
 
     DayPlan findDayPlanByGroupIdAndDate(Long groupId, LocalDate date);
+
+    DayPlan findDayPlanByDate(LocalDate date);
 }
