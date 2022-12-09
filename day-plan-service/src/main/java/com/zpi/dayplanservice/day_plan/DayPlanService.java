@@ -64,6 +64,10 @@ public class DayPlanService {
         if (dayPlanId == null || dayPlanId < 0) {
             throw new IllegalArgumentException(INVALID_DAY_PLAN_ID);
         }
+
+        if(!isDateAvailable(dayPlanDto))
+            throw new IllegalDateException(TAKEN_DATE);
+
         var dayPlan = dayPlanRepository.findById(dayPlanId)
                                        .orElseThrow(() -> new ApiRequestException(DAY_PLAN_NOT_FOUND));
 
