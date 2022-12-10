@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -56,6 +57,7 @@ public class TransportService {
         var carTransport = generateCarTransportForAccommodation(accommodationTransportIdList, accommodationInfo,
                                                                 tripInfo, accommodationId);
         if (airTransport != null) {
+            adjustCorrectOrder(airTransport);
             transports.add(airTransport);
         }
 
@@ -64,6 +66,11 @@ public class TransportService {
         }
         transports.addAll(userTransport);
         return transports;
+    }
+
+    private void adjustCorrectOrder(AirTransport airTransport) {
+        var flightsList = airTransport.getFlight();
+        flightsList.sort(Comparator.comparing(Flight::getDepartureTime));
     }
 
     private CarTransport generateCarTransportForAccommodation(List<Long> accommodationTransportIdList,
