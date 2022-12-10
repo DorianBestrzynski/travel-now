@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -128,7 +127,7 @@ public class AttractionService {
                                                 PlaceDetailsRequest.FieldMask.OPENING_HOURS)
                                         .awaitIgnoreError();
             candidate.setUrl(placeDetails.url.toString());
-            candidate.setOpeningHours(placeDetails.openingHours == null ? null : placeDetails.openingHours.weekdayText);
+            candidate.setOpeningHours(new String[] {});
 
         }
         return candidates;
