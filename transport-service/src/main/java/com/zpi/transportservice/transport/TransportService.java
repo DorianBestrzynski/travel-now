@@ -106,7 +106,7 @@ public class TransportService {
                                                     AccommodationInfoDto accommodationInfo, TripDataDto tripData,
                                                     Long accommodationId) {
         var carTransports = transportRepository.findCarTransport(accommodationTransportIds);
-        if (carTransports.isEmpty()) {
+        if (carTransports.isEmpty() || carTransports.stream().noneMatch(carTransport -> carTransport.getSource().equals(tripData.startingLocation()))) {
             var matchingAccommodationCarTransport = transportRepository.findMatchingCarTransport(
                     tripData.startingLocation(),
                     accommodationInfo.city(), tripData.startDate());
@@ -130,7 +130,7 @@ public class TransportService {
                                                              TripDataDto tripData, Long accommodationId) {
 
         var transportAir = shouldGenerateAirTransport(accommodationTransportIds, accommodationInfo, tripData, accommodationId);
-        if (transportAir == null) {
+        if (transportAir == null ) {
             try {
                 var flightProposals = lufthansaAdapter.generateTransportAir(accommodationInfo, tripData);
                 var bestFlight = selectBestFlight(flightProposals, accommodationId, accommodationInfo, tripData);
@@ -163,7 +163,7 @@ public class TransportService {
                                                     AccommodationInfoDto accommodationInfo, TripDataDto tripData,
                                                     Long accommodationId) {
         var transportAir = transportRepository.findAirTransport(accommodationTransportIds);
-        if (transportAir.isEmpty()) {
+        if (transportAir.isEmpty() || transportAir.stream().noneMatch(airTransport -> airTransport.getSource().equals(tripData.startingLocation()))) {
             var matchingAccommodationTransportAir = transportRepository.findMatchingAirTransport(tripData.startingLocation(), accommodationInfo.city(), tripData.startDate());
             if (matchingAccommodationTransportAir.isEmpty()) {
                 return null;
