@@ -32,7 +32,7 @@ public class JWTVerifierFilter extends OncePerRequestFilter {
             return;
         }
 
-        logHeaders(httpServletRequest);
+//        logHeaders(httpServletRequest);
         String username = httpServletRequest.getHeader("username");
         List<Map<String, String>> authorities = new ArrayList<>();
         String authoritiesStr = httpServletRequest.getHeader("authorities");
