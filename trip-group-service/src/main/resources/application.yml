@@ -2,6 +2,7 @@ server.port: 8082
 spring.application.name: trip-group
 
 app.salt-length: 162
+app.invitation-prefix: "https://travelnow.vercel.app/invite/?token="
 app.config-server: localhost
 app.database: localhost
 app.accommodation-service: localhost
