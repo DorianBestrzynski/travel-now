@@ -66,7 +66,6 @@ public class FinancialRequestService {
         return getAllActiveFinancialRequestsIn(groupId);
     }
 
-    @AuthorizePartOfTheGroup
     public Boolean isDebtorOrDebteeToAnyFinancialRequests(Long groupId, Long userId) {
         if(groupId == null || userId == null)
             throw new IllegalArgumentException(INVALID_PARAMS);
