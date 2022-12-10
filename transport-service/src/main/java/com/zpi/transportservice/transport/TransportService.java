@@ -118,6 +118,7 @@ public class TransportService {
                                                                                                         .getTransportId());
             return matchingAccommodationCarTransport.get(0);
         }
+        carTransports.sort(Comparator.comparing(CarTransport::getTransportId).reversed());
         return carTransports.get(0);
     }
 
@@ -172,6 +173,7 @@ public class TransportService {
                                                                                                         .getTransportId());
             return matchingAccommodationTransportAir.get(0);
         }
+        transportAir.sort(Comparator.comparing(AirTransport::getTransportId).reversed());
         return transportAir.get(0);
     }
 
