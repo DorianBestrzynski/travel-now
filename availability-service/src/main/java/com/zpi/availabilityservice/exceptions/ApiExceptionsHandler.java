@@ -13,11 +13,11 @@ import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class ApiExceptionsHandler {
-    public final static ZoneId ZONE_ID = ZoneId.of("Europe/Warsaw");
 
+    public final static ZoneId ZONE_ID = ZoneId.of("Europe/Warsaw");
     @ExceptionHandler(value = {IllegalDatesException.class})
     public ResponseEntity<Object> handleIllegalDatesException(IllegalDatesException e){
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return handleExceptions(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
@@ -55,6 +55,5 @@ public class ApiExceptionsHandler {
         return ResponseEntity
                 .status(request)
                 .body(apiException);
-
     }
 }
