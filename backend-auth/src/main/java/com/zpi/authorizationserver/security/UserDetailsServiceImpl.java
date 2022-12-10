@@ -1,6 +1,7 @@
 package com.zpi.authorizationserver.security;
 
 
+import com.zpi.authorizationserver.exceptions.ApiPermissionException;
 import com.zpi.authorizationserver.user.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -19,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var appUser = appUserRepository.findAppUserByEmail(username).orElseThrow();
+        var appUser = appUserRepository.findAppUserByEmail(username).orElseThrow(() -> new ApiPermissionException("Incorrect email or password. Permission denied"));
 
         return new User(appUser.getEmail(), appUser.getPassword().getHashedPassword(), Collections.emptyList());
     }
