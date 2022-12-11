@@ -162,7 +162,7 @@ public class TransportService {
                                                     AccommodationInfoDto accommodationInfo, TripDataDto tripData,
                                                     Long accommodationId) {
         var transportAir = transportRepository.findAirTransport(accommodationTransportIds);
-        if (transportAir.isEmpty() || transportAir.stream().noneMatch(transport -> transport.getSource().equals(tripData.startingLocation()))) {
+        if (transportAir.isEmpty()) {
             var matchingAccommodationTransportAir = transportRepository.findMatchingAirTransport(tripData.startingLocation(), accommodationInfo.city(), tripData.startDate());
             if (matchingAccommodationTransportAir.isEmpty()) {
                 return null;
