@@ -1,3 +1,5 @@
+DROP SEQUENCE IF EXISTS "day_sequence";
+DROP SEQUENCE IF EXISTS "attraction_sequence";
 CREATE SEQUENCE "day_sequence"
     MINVALUE 1
     MAXVALUE 999999999

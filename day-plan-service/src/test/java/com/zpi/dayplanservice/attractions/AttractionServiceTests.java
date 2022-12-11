@@ -8,6 +8,7 @@ import com.zpi.dayplanservice.day_plan.DayPlanRepository;
 import com.zpi.dayplanservice.day_plan.DayPlanService;
 import com.zpi.dayplanservice.dto.AccommodationInfoDto;
 import com.zpi.dayplanservice.dto.AttractionCandidateDto;
+import com.zpi.dayplanservice.exception.ApiRequestException;
 import com.zpi.dayplanservice.proxies.TripGroupProxy;
 import com.zpi.dayplanservice.security.CustomUsernamePasswordAuthenticationToken;
 import org.junit.jupiter.api.Test;
@@ -228,6 +229,6 @@ public class AttractionServiceTests {
         assertThrows(IllegalArgumentException.class, () -> attractionService.addAttraction(new ArrayList<Long>(), null));
         assertThrows(IllegalArgumentException.class, () -> attractionService.addAttraction(List.of(1L), null));
         assertThrows(IllegalArgumentException.class, () -> attractionService.editAttraction(null));
-        assertThrows(IllegalArgumentException.class, () -> attractionService.editAttraction(new Attraction()));
+        assertThrows(ApiRequestException.class, () -> attractionService.editAttraction(new Attraction()));
     }
 }

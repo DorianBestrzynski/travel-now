@@ -1,3 +1,4 @@
+DROP SEQUENCE IF EXISTS "availability_sequence";
 CREATE SEQUENCE "availability_sequence"
     MINVALUE 1
     MAXVALUE 999999999
