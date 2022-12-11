@@ -4,6 +4,7 @@ import com.zpi.availabilityservice.availability.Availability;
 import com.zpi.availabilityservice.availability.AvailabilityRepository;
 import com.zpi.availabilityservice.dto.AvailabilityConstraintsDto;
 import com.zpi.availabilityservice.proxies.TripGroupProxy;
+import com.zpi.availabilityservice.security.CustomUsernamePasswordAuthenticationToken;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -12,11 +13,14 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +51,14 @@ class SharedGroupAvailabilityServiceTest {
     @Captor
     ArgumentCaptor<List<SharedGroupAvailability>> argumentCaptor;
 
+    void mockAuthorizeCoordinatorAspect() {
+        Authentication authentication = new CustomUsernamePasswordAuthenticationToken(null, null, 1L);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(sharedGroupAvailabilityRepository.findById(any())).thenReturn(Optional.of(new SharedGroupAvailability()));
+        doReturn(Boolean.TRUE).when(tripGroupProxy).isUserPartOfTheGroup(any(), any(), any());
+        doReturn(Boolean.TRUE).when(tripGroupProxy).isUserCoordinator(any(), any(), any());
+    }
+
     @Test
     void shouldGenerateSharedGroupAvailabilityForDisjointAvailabilities() {
         //given
@@ -57,6 +69,24 @@ class SharedGroupAvailabilityServiceTest {
         when(availabilityRepository.findAvailabilitiesByGroupId(anyLong())).thenReturn(availabilities);
         doNothing().when(sharedGroupAvailabilityRepository).deleteAllByGroupId(anyLong());
         sharedGroupAvailabilityService.generateSharedGroupAvailability(1L);
+
+        //then
+        verify(sharedGroupAvailabilityRepository).saveAll(argumentCaptor.capture());
+        assertEquals(1, argumentCaptor.getValue().size());
+        assertEquals(availabilities.get(1).getDateFrom(), argumentCaptor.getValue().get(0).getDateFrom());
+        assertEquals(availabilities.get(1).getDateTo(), argumentCaptor.getValue().get(0).getDateTo());
+    }
+
+    @Test
+    void shouldGenerateSharedGroupAvailabilityWithGivenParams() {
+        //given
+        var availabilities = getDisJointAvailabilities();
+
+        //when
+        doReturn(new AvailabilityConstraintsDto(3, 1, null)).when(tripGroupProxy).getAvailabilityConstraints(any(), any());
+        when(availabilityRepository.findAvailabilitiesByGroupId(anyLong())).thenReturn(availabilities);
+        doNothing().when(sharedGroupAvailabilityRepository).deleteAllByGroupId(anyLong());
+        sharedGroupAvailabilityService.generateSharedGroupAvailability(1L, 3, 1);
 
         //then
         verify(sharedGroupAvailabilityRepository).saveAll(argumentCaptor.capture());
@@ -256,5 +286,66 @@ class SharedGroupAvailabilityServiceTest {
         //then
         assertEquals(expectedResult, result);
     }
+
+    @Test
+    void shouldAcceptSharedAvailability() {
+        //given
+        mockAuthorizeCoordinatorAspect();
+        var sharedGroupAvailability = new SharedGroupAvailability(1L, List.of(1L,2L), LocalDate.of(2021, 1, 5), LocalDate.of(2021, 1, 7), 3, true);
+
+        //when
+        doNothing().when(tripGroupProxy).setSelectedAvailability(any(), any());
+        when(sharedGroupAvailabilityRepository.findById(1L)).thenReturn(Optional.of(sharedGroupAvailability));
+        sharedGroupAvailabilityService.acceptSharedGroupAvailability(1L);
+
+        //then
+        verify(sharedGroupAvailabilityRepository, times(2)).findById(1L);
+
+    }
+
+    @Test
+    void shouldCreateSharedGroupAvailability() {
+        //given
+        var av = new SharedGroupAvailability(1L, Collections.emptyList(), LocalDate.now(), LocalDate.now().plusDays(1), 1, true);
+        //when
+        doNothing().when(tripGroupProxy).setSelectedAvailability(any(), any());
+        when(sharedGroupAvailabilityRepository.save(any(SharedGroupAvailability.class))).thenReturn(av);
+        var result = sharedGroupAvailabilityService.createSharedGroupAvailability(LocalDate.now(), LocalDate.now().plusDays(1), 1L);
+
+        //then
+        assertEquals(result.getGroupId(), 1L);
+        assertEquals(result.getIsCreatedManually(), true);
+        assertEquals(result.getDateFrom(), LocalDate.now());
+        assertEquals(result.getDateTo(), LocalDate.now().plusDays(1));
+
+    }
+
+    @Test
+    void shouldGetSharedGroupAvailability() {
+        //given
+        var av = new SharedGroupAvailability(1L, Collections.emptyList(), LocalDate.now(), LocalDate.now().plusDays(1), 1, true);
+        //when
+        doNothing().when(tripGroupProxy).setSelectedAvailability(any(), any());
+        when(sharedGroupAvailabilityRepository.findById(1L)).thenReturn(Optional.of(av));
+        sharedGroupAvailabilityService.getSharedGroupAvailability(1L);
+
+        //then
+        verify(sharedGroupAvailabilityRepository).findById(1L);
+    }
+
+    @Test
+    void shouldNotGetSharedGroupAvailability() {
+        //given
+        var av = new SharedGroupAvailability(1L, Collections.emptyList(), LocalDate.now(), LocalDate.now().plusDays(1), 1, true);
+        //when
+        doNothing().when(tripGroupProxy).setSelectedAvailability(any(), any());
+        when(sharedGroupAvailabilityRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //then
+        assertThrows(EntityNotFoundException.class,
+                     () ->  sharedGroupAvailabilityService.getSharedGroupAvailability(1L));
+    }
+
+
 
 }

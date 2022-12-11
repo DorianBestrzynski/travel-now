@@ -21,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,6 +101,26 @@ public class AccommodationVoteServiceTests {
     }
 
     @Test
+    void shouldDeleteAllUserVotesInGroup() {
+        //given
+        mockAuthorizePartOfTheGroupAspect();
+        var accommodationVoteId = new AccommodationVoteId(1L, 1L);
+        var accommodationVote = new AccommodationVote(accommodationVoteId);
+        var accommodation = new Accommodation();
+        accommodation.setGivenVotes(1);
+
+        //given
+        when(accommodationVoteRepository.findAllByUserIdAndGroupId(anyLong(), anyLong())).thenReturn(List.of(accommodationVote));
+        when(accommodationRepository.findById(anyLong())).thenReturn(Optional.of(accommodation));
+        accommodationVoteService.deleteAllUserVotesInGroup(1L, 1L);
+
+        //then
+        assertEquals(0, accommodation.getGivenVotes());
+        verify(accommodationVoteRepository).deleteAll(List.of(accommodationVote));
+        verify(accommodationRepository).saveAll(List.of(accommodation));
+    }
+
+    @Test
     void shouldReturnVotesForAccommodation() {
         //when
         when(accommodationVoteRepository.findAllByIdAccommodationId(anyLong())).thenReturn(new ArrayList<>());
@@ -106,6 +128,16 @@ public class AccommodationVoteServiceTests {
 
         //then
         verify(accommodationVoteRepository).findAllByIdAccommodationId(anyLong());
+    }
+
+    @Test
+    void shouldReturnVotesForAccommodations() {
+        //when
+        when(accommodationVoteRepository.findAllByAccommodationsId(Collections.emptyList())).thenReturn(new ArrayList<>());
+        accommodationVoteService.getVotesForAccommodations(Collections.emptyList());
+
+        //then
+        verify(accommodationVoteRepository).findAllByAccommodationsId(Collections.emptyList());
     }
 
     @Test
