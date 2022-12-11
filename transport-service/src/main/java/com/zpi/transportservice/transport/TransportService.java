@@ -70,7 +70,6 @@ public class TransportService {
 
     private void adjustCorrectOrder(AirTransport airTransport) {
         var flightsList = airTransport.getFlight();
-        flightsList.sort(Comparator.comparing(Flight::getDepartureTime));
     }
 
     private CarTransport generateCarTransportForAccommodation(List<Long> accommodationTransportIdList,
@@ -163,7 +162,7 @@ public class TransportService {
                                                     AccommodationInfoDto accommodationInfo, TripDataDto tripData,
                                                     Long accommodationId) {
         var transportAir = transportRepository.findAirTransport(accommodationTransportIds);
-        if (transportAir.isEmpty()) {
+        if (transportAir.isEmpty() || transportAir.stream().noneMatch(transport -> transport.getSource().equals(tripData.startingLocation()))) {
             var matchingAccommodationTransportAir = transportRepository.findMatchingAirTransport(tripData.startingLocation(), accommodationInfo.city(), tripData.startDate());
             if (matchingAccommodationTransportAir.isEmpty()) {
                 return null;

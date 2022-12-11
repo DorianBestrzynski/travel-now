@@ -38,19 +38,12 @@ public class SharedGroupAvailabilityService {
     }
 
     private void processGeneration(Long groupId, Long selectedSharedAvailability) {
+
         var allAvailabilitiesInGroup = availabilityRepository.findAvailabilitiesByGroupId(groupId);
 
-        var firstDate = LocalDate.MAX;
-        var lastDate = LocalDate.MIN;
-        for (var availability: allAvailabilitiesInGroup) {
-            if (availability.getDateFrom().isBefore(firstDate))
-                firstDate = availability.getDateFrom();
+        var dates = findFirstAndLastDate(allAvailabilitiesInGroup);
 
-            if (availability.getDateTo().isAfter(lastDate))
-                lastDate = availability.getDateTo();
-        }
-
-        var userToDatesMap = createUserToDateMap(firstDate, lastDate, allAvailabilitiesInGroup);
+        var userToDatesMap = createUserToDateMap(dates.get(0), dates.get(1), allAvailabilitiesInGroup);
 
         var bestAvailabilities = findLongestSubset(userToDatesMap, groupId);
 
@@ -74,6 +67,19 @@ public class SharedGroupAvailabilityService {
         sharedGroupAvailabilityRepository.saveAll(filteredAvailabilities);
     }
 
+    private List<LocalDate> findFirstAndLastDate(List<Availability> allAvailabilitiesInGroup) {
+        var firstDate = LocalDate.MAX;
+        var lastDate = LocalDate.MIN;
+        for (var availability: allAvailabilitiesInGroup) {
+            if (availability.getDateFrom().isBefore(firstDate))
+                firstDate = availability.getDateFrom();
+
+            if (availability.getDateTo().isAfter(lastDate))
+                lastDate = availability.getDateTo();
+        }
+
+        return List.of(firstDate, lastDate);
+    }
     @Transactional
     public void generateSharedGroupAvailability(Long groupId, Integer givenMinimalNumberOfDays, Integer givenMinimalNumberOfParticipants) {
         var getAvailabilityConstraints = tripGroupProxy.getAvailabilityConstraints(INNER_COMMUNICATION,groupId);
@@ -204,6 +210,7 @@ public class SharedGroupAvailabilityService {
         }
         return userToDatesMap;
     }
+
 
     public List<SharedGroupAvailability> getGroupSharedAvailabilities(Long groupId) {
         return sharedGroupAvailabilityRepository.findAllByGroupId(groupId)

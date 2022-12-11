@@ -87,14 +87,14 @@ public class AvailabilityServiceTests {
         when(availabilityRepository.findOverlapping(availabilityDto.userId(),
                                                     availabilityDto.groupId(),
                                                     availabilityDto.dateFrom(),
-                                                    availabilityDto.dateTo())).thenReturn(new ArrayList<Availability>());
+                                                    availabilityDto.dateTo())).thenReturn(new ArrayList<>());
         when(availabilityRepository.save(any())).thenReturn(expected);
         var result = availabilityService.addNewAvailability(availabilityDto);
 
         //then
-        verify(availabilityRepository).save(any(Availability.class));
-        verify(availabilityRepository).deleteAll(new ArrayList<Availability>());
-        verify(generationAvailabilityPublisher).publishAvailabilityGenerationEvent(anyLong());
+        verify(availabilityRepository, times(1)).save(any(Availability.class));
+        verify(availabilityRepository, times(1)).deleteAll(new ArrayList<>());
+        verify(generationAvailabilityPublisher, times(1)).publishAvailabilityGenerationEvent(anyLong());
         assertThat(result).satisfies(
                 actual -> {
                     assertThat(actual.getGroupId()).isEqualTo(expected.getGroupId());

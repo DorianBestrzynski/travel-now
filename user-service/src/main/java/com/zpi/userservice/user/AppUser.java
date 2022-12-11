@@ -25,15 +25,18 @@ public class AppUser {
             sequenceName = "user_sequence", allocationSize = 1)
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
+
     @Getter
     @Column(name = "phoneNumber", nullable = false, length = 50)
     private String phoneNumber;
 
     @Column(name = "email", nullable = false, unique = true ,length = 150)
     private String email;
+
     @Getter
     @Column(name = "first_name", length = 50)
     private String firstName;
+
     @Getter
     @Column(name = "surname", length = 50)
     private String surname;

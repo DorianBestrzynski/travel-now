@@ -2,6 +2,7 @@ package com.zpi.tripgroupservice.user_group;
 
 import com.zpi.tripgroupservice.commons.Role;
 import com.zpi.tripgroupservice.exception.ApiRequestException;
+import com.zpi.tripgroupservice.proxy.AppUserProxy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,6 +24,9 @@ import static org.mockito.Mockito.*;
 class UserGroupServiceTest {
     @MockBean
     UserGroupRepository userGroupRepository;
+
+    @MockBean
+    AppUserProxy appUserProxy;
 
     @Autowired
     @InjectMocks
@@ -194,4 +198,77 @@ class UserGroupServiceTest {
         //then
         verify(userGroupRepository, times(1)).deleteById(any(UserGroupKey.class));
     }
+
+    @Test
+    void shouldGetNumberOfParticipants() {
+        //when
+        when(userGroupRepository.countAllById_GroupId(anyLong())).thenReturn(1);
+        var result = userGroupService.getNumberOfParticipants(1L);
+
+        //then
+        verify(userGroupRepository, times(1)).countAllById_GroupId(any());
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
+    void shouldGetAllUsersInGroup() {
+        //when
+        when(appUserProxy.getUsersByIds(anyString(), any())).thenReturn(List.of());
+        userGroupService.getAllUsersInGroup( 1L);
+
+        //then
+        verify(appUserProxy, times(1)).getUsersByIds(anyString(), any());
+    }
+
+    @Test
+    void shouldGetAllCoordinatorsInGroup() {
+        //when
+        when(appUserProxy.getUsersByIds(anyString(), any())).thenReturn(List.of());
+        userGroupService.getAllCoordinatorsInGroup( 1L);
+
+        //then
+        verify(appUserProxy, times(1)).getUsersByIds(anyString(), any());
+    }
+
+    @Test
+    void shouldGetAllCoordinatorIds() {
+        //when
+        when(userGroupRepository.findAllById_GroupIdAndRoleEquals(1L, Role.COORDINATOR)).thenReturn(List.of());
+        userGroupService.getAllCoordinatorsIdsInGroup( 1L);
+
+        //then
+        verify(userGroupRepository, times(1)).findAllById_GroupIdAndRoleEquals(1L, Role.COORDINATOR);
+    }
+
+    @Test
+    void shouldReturnErrorWhenGroupIdInvalid() {
+        //when
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> userGroupService.getAllUsersInGroup( null));
+
+        //then
+        assertThat(exception.getMessage()).isEqualTo("Group id is invalid. Id must be a positive number");
+    }
+
+    @Test
+    void shouldReturnErrorWhenGroupIdInvalidGetAllCoordinator() {
+        //when
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> userGroupService.getAllCoordinatorsInGroup( null));
+
+        //then
+        assertThat(exception.getMessage()).isEqualTo("Group id is invalid. Id must be a positive number");
+    }
+
+    @Test
+    void shouldReturnErrorWhenGroupIdInvalidGetAllCoordinatorIds() {
+        //when
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> userGroupService.getAllCoordinatorsIdsInGroup( null));
+
+        //then
+        assertThat(exception.getMessage()).isEqualTo("Group id is invalid. Id must be a positive number");
+    }
+
+
 }

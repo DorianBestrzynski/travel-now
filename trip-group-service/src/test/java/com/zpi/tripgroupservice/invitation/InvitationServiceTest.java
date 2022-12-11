@@ -69,7 +69,7 @@ class InvitationServiceTest {
         //then
         verify(invitationRepository, times(1)).save(invitationArgumentCaptor.capture());
         assertThat(result)
-                .isEqualTo("http://localhost:8080/api/v1/invitation/?token=" + invitationArgumentCaptor.getValue().getInvitationId());
+                .isEqualTo("https://travelnow.vercel.app/invite/?token=" + invitationArgumentCaptor.getValue().getInvitationId());
     }
 
     @Test
